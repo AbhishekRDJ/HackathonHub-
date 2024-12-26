@@ -77,11 +77,11 @@ class _LogInPageState extends State<LogInPage> {
                 },
                 child: RichText(text: const TextSpan(
                     text: "Don't have an account ? ",
-                style: TextStyle(color: Colors.black),
+                style: TextStyle(color: Colors.black,fontSize: 18),
                 children: [
                   TextSpan(
                     text: 'Register Now',
-                    style: TextStyle(color: Colors.blue)
+                    style: TextStyle(color: Colors.blue,fontSize: 18)
                   )
                 ]),
                 ),
