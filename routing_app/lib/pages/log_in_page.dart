@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:routing_app/widget/custom_button.dart';
 
 class LogInPage extends StatefulWidget {
@@ -16,7 +17,10 @@ class _LogInPageState extends State<LogInPage> {
       body: Column(
         mainAxisAlignment: MainAxisAlignment.spaceAround,
         children: [
-          Image.asset('assets/images/logo2.jpg'),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 10),
+            child: SvgPicture.asset('assets/images/logo3.svg'),
+          ),
 
           SizedBox(
             child: Column(
