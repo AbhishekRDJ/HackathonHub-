@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:routing_app/pages/log_in_page.dart';
 
 class MobileScreen extends StatefulWidget {
   const MobileScreen({super.key});
@@ -10,6 +11,6 @@ class MobileScreen extends StatefulWidget {
 class _MobileScreenState extends State<MobileScreen> {
   @override
   Widget build(BuildContext context) {
-    return const Placeholder();
+    return const LogInPage();
   }
 }
