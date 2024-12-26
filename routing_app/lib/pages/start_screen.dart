@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:routing_app/pages/log_in_page.dart';
+import 'package:routing_app/pages/sign_up_page.dart';
 import 'package:routing_app/widget/custom_button.dart';
 
 class StartScreen extends StatefulWidget {
@@ -37,7 +38,11 @@ class _LogInPageState extends State<StartScreen> {
                 CustomButton(color: Colors.white,
                     textColor: Colors.black,
                     label: "SignUp",
-                    onPressed: (){}),
+                    onPressed: (){
+                      Navigator.of(context).push(
+                          MaterialPageRoute(builder: (context)=>const SignUpPage())
+                      );
+                    }),
                 const SizedBox(height: 15,),
 
                 CustomButton(color: Colors.black,
