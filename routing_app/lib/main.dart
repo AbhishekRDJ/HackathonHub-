@@ -15,6 +15,7 @@ class MyApp extends StatelessWidget {
       title: 'Neo Route',
       theme: ThemeData(
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
+        fontFamily: 'lato',
         useMaterial3: true,
       ),
       home: const ResonsiveScreen(),
