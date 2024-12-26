@@ -239,7 +239,7 @@ packages:
       sha256: "664d3a9a64782fcdeb83ce9c6b39e78fd2971d4e37827b9b06c3aa1edc5e760c"
       url: "https://pub.dev"
     source: hosted
-    version: "0.7.2"
+    version: "0.7.3"
   typed_data:
     dependency: transitive
     description:
@@ -287,10 +287,7 @@ packages:
       sha256: f6be3ed8bd01289b34d679c2b62226f63c0e69f9fd2e50a6b3c1c729a961041b
       url: "https://pub.dev"
     source: hosted
-<<<<<<< HEAD
     version: "14.3.0"
-=======
-    version: "14.2.5"
   web:
     dependency: transitive
     description:
@@ -307,7 +304,6 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "6.5.0"
->>>>>>> 43d797c3f87b8ae48ef107c2d0dee0537b8c3544
 sdks:
   dart: ">=3.5.4 <4.0.0"
   flutter: ">=3.22.0"
