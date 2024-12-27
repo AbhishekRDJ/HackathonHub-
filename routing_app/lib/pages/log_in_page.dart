@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
+import 'package:routing_app/pages/home_page.dart';
 import 'package:routing_app/pages/sign_up_page.dart';
 import 'package:routing_app/widget/custom_button.dart';
 import 'package:routing_app/widget/custom_textfeild.dart';
@@ -62,7 +63,11 @@ class _LogInPageState extends State<LogInPage> {
 
             CustomButton(color: Colors.black87,
                 label: 'Log In',
-                onPressed: (){},
+                onPressed: (){
+                  Navigator.of(context).push(
+                      MaterialPageRoute(builder: (context)=> const HomePage())
+                  );
+                },
                 textColor: Colors.white),
 
 

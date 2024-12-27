@@ -1,6 +1,11 @@
+import 'dart:ui';
+
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:location/location.dart';
+import 'package:routing_app/widget/sliding_panel.dart';
+import 'package:sliding_up_panel/sliding_up_panel.dart';
+
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -29,21 +34,28 @@ class _HomePageState extends State<HomePage> {
 
       body: currentPosition == null ?
           const Center(child: CircularProgressIndicator(),):
-      GoogleMap(
-        initialCameraPosition: CameraPosition(
-          target: currentLoc, // Example: San Francisco
-          zoom: 10,
+      SlidingUpPanel(
+        panelBuilder: (controller)=>PanelWidget(controller: controller),
+        maxHeight: MediaQuery.of(context).size.height*0.9,
+        minHeight: MediaQuery.of(context).size.height*0.06,
+        borderRadius: BorderRadius.circular(18),
+
+        body: GoogleMap(
+          initialCameraPosition: CameraPosition(
+            target: currentLoc, // Example: San Francisco
+            zoom: 10,
+          ),
+          markers: {
+            Marker(
+                markerId: const MarkerId('current location'),
+              icon: BitmapDescriptor.defaultMarker,
+              position: currentPosition!
+            )
+          },
+          onMapCreated: (GoogleMapController controller) {
+            // Optional: Handle the map controller
+          },
         ),
-        markers: {
-          Marker(
-              markerId: const MarkerId('current location'),
-            icon: BitmapDescriptor.defaultMarker,
-            position: currentPosition!
-          )
-        },
-        onMapCreated: (GoogleMapController controller) {
-          // Optional: Handle the map controller
-        },
       )
     );
   }
