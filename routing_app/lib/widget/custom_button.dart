@@ -23,6 +23,7 @@ class CustomButton extends StatelessWidget {
             MediaQuery.of(context).size.width*0.9,
             MediaQuery.of(context).size.height*0.07
           )),
+          elevation: const WidgetStatePropertyAll(8),
           backgroundColor: WidgetStatePropertyAll(color),
           shape: WidgetStatePropertyAll(
               RoundedRectangleBorder(borderRadius: BorderRadius.circular(12),

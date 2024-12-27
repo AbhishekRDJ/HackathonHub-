@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:routing_app/pages/log_in_page.dart';
+
+import 'package:routing_app/pages/start_screen.dart';
 
 class MobileScreen extends StatefulWidget {
   const MobileScreen({super.key});
@@ -11,6 +12,6 @@ class MobileScreen extends StatefulWidget {
 class _MobileScreenState extends State<MobileScreen> {
   @override
   Widget build(BuildContext context) {
-    return const LogInPage();
+    return const StartScreen();
   }
 }

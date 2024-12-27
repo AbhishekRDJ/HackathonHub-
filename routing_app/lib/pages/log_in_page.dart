@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/flutter_svg.dart';
+import 'package:flutter_animate/flutter_animate.dart';
+import 'package:routing_app/pages/sign_up_page.dart';
 import 'package:routing_app/widget/custom_button.dart';
+import 'package:routing_app/widget/custom_textfeild.dart';
 
 class LogInPage extends StatefulWidget {
   const LogInPage({super.key});
@@ -10,42 +12,85 @@ class LogInPage extends StatefulWidget {
 }
 
 class _LogInPageState extends State<LogInPage> {
+
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(),
-      body: Column(
-        mainAxisAlignment: MainAxisAlignment.spaceAround,
-        children: [
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 10),
-            child: SvgPicture.asset('assets/images/logo3.svg'),
-          ),
+      resizeToAvoidBottomInset: false,
+      appBar: AppBar(
+        leading: IconButton(
+         onPressed: (){
+           Navigator.of(context).pop();
+         } ,
+            icon : const Icon(Icons.arrow_back_ios)),
+      ),
+      body: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 20),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            const Text("Welcome Back! Glade \nto see you, Again!",
 
-          SizedBox(
-            child: Column(
-              children: [
-                CustomButton(color: Colors.white,
-                    textColor: Colors.black,
-                    label: "SignUp",
-                    onPressed: (){}),
-                const SizedBox(height: 15,),
-
-                CustomButton(color: Colors.black,
-                    textColor: Colors.white,
-                    label: "LogIn",
-                    onPressed: (){}),
-              ],
+            style: TextStyle(
+              fontWeight: FontWeight.bold,
+              fontSize: 36,
+              color: Colors.white
             ),
-          ),
+            ).animate() // uses `Animate.defaultDuration`
+                .slideX(duration: const Duration(milliseconds: 650)).
+                tint(color: Colors.black,
+                delay: const Duration(microseconds: 100)
+            ),
 
-          const Text("Continue as guest",
-          style: TextStyle(
-            color: Colors.blue,
-            fontSize: 16,
-            fontWeight: FontWeight.bold
-          ),)
-        ],
+            const Spacer(),
+
+            const CustomTextField(text: 'Enter your email',
+                color: Colors.black,
+              isIcon: false,
+                ),
+            const SizedBox(height: 30,),
+
+            const CustomTextField(
+                text: 'Enter your password',
+                color: Colors.black,
+                icon: Icons.remove_red_eye,
+              isIcon: true,
+            ),
+
+            const Spacer(flex: 2,),
+
+            CustomButton(color: Colors.black87,
+                label: 'Log In',
+                onPressed: (){},
+                textColor: Colors.white),
+
+
+            const Spacer(flex: 3,),
+
+            Center(
+              child: GestureDetector(
+                onTap: (){
+                  Navigator.of(context).push(
+                    MaterialPageRoute(builder: (context)=>const SignUpPage())
+                  );
+                },
+                child: RichText(text: const TextSpan(
+                    text: "Don't have an account ? ",
+                style: TextStyle(color: Colors.black,fontSize: 18),
+                children: [
+                  TextSpan(
+                    text: 'Register Now',
+                    style: TextStyle(color: Colors.blue,fontSize: 18)
+                  )
+                ]),
+                ),
+              ),
+            ),
+
+            const Spacer(flex: 2,)
+          ],
+        ),
       ),
     );
   }
