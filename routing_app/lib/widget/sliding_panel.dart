@@ -18,6 +18,7 @@ class _PanelWidgetState extends State<PanelWidget> {
       child: ListView(
         controller: widget.controller,
         children: [
+
          Row(
            children: [
              Expanded(
@@ -34,7 +35,9 @@ class _PanelWidgetState extends State<PanelWidget> {
                        borderRadius: BorderRadius.circular(12)
                      )
                    ),
-                 )),
+                 )
+             ),
+
              const SizedBox(width: 20,),
              const CircleAvatar(
                child: Text("AM",style: TextStyle(color: Colors.grey,fontSize: 20),),
@@ -43,48 +46,7 @@ class _PanelWidgetState extends State<PanelWidget> {
          ),
           const SizedBox(height: 20,),
 
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-            children: [
-                Column(
-                  children: [
-                    IconButton(onPressed: (){}, 
-                        icon: const Icon(Icons.home,color: Colors.blue,size: 45,),
-                    style: const ButtonStyle(
-                      backgroundColor: WidgetStatePropertyAll(Color.fromARGB(30, 100, 100, 100)),
-                      fixedSize: WidgetStatePropertyAll(Size(70,70))
-                    ),),
-                    const Text("Home")
-                  ],
-                ),
 
-              Column(
-                children: [
-                  IconButton(onPressed: (){},
-                      icon: const Icon(Icons.shopping_bag,color: Colors.blue,size: 45,),
-                      style: const ButtonStyle(
-                       backgroundColor: WidgetStatePropertyAll(Color.fromARGB(30, 100, 100, 100)),
-                        fixedSize: WidgetStatePropertyAll(Size(70,70))
-                       ),
-                  ),
-                  const Text("Work")
-                ],
-              ),
-
-              Column(
-                children: [
-                  IconButton(onPressed: (){},
-                      icon: const Icon(Icons.add,color: Colors.blue,size: 45,),
-                      style: const ButtonStyle(
-                          backgroundColor: WidgetStatePropertyAll(Color.fromARGB(30, 100, 100, 100)),
-                          fixedSize: WidgetStatePropertyAll(Size(70,70))
-                  ) ,
-                  ),
-                  const Text("Add")
-                ],
-              )
-              ],
-          )
         ],
       ),
     );

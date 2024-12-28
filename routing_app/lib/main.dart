@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:routing_app/pages/home_page.dart';
 import 'package:routing_app/pages/start_screen.dart';
 import 'package:routing_app/resonsive/resonsive_screen.dart';
+
 
 void main() {
   runApp(const MyApp());
@@ -20,7 +20,7 @@ class MyApp extends StatelessWidget {
         fontFamily: 'lato',
         useMaterial3: true,
       ),
-      home: const StartScreen(),
+      home: const ResonsiveScreen(),
     );
   }
 }
