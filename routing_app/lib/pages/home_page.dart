@@ -61,9 +61,6 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
-
-
-
   Future<void> fetchLocationUpdate() async{
     bool serviceEnabled;
     PermissionStatus permissionGranted;

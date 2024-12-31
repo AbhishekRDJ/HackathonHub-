@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:routing_app/pages/home_page2.dart';
 import 'package:routing_app/widget/custome_dropdown.dart';
 
 class PanelWidget extends StatefulWidget {
@@ -87,7 +88,9 @@ class _PanelWidgetState extends State<PanelWidget> {
           ),
           
           ElevatedButton(onPressed: (){
-
+            Navigator.of(context).push(
+              MaterialPageRoute(builder: (context)=>HomePage2())
+            );
           },
             style: const ButtonStyle(
               backgroundColor: WidgetStatePropertyAll(Colors.lightBlue),
