@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:geocoding/geocoding.dart';
+import 'package:geolocator/geolocator.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 
@@ -12,10 +13,39 @@ class RealTimeSearchMap extends StatefulWidget {
 class _RealTimeSearchMapState extends State<RealTimeSearchMap> {
   final TextEditingController _searchController = TextEditingController();
   late GoogleMapController _mapController;
-  LatLng _initialPosition = LatLng(19.8758, 75.3393); // Default: Aurangabad
+  LatLng? _currentLocation; // User's current location
   LatLng? _searchedLocation;
-  LatLng? _currentLocation;
   Set<Polyline> _polylines = {};
+
+  // Fetch user's current location
+  Future<void> _getCurrentLocation() async {
+    try {
+      // Check location permissions
+      LocationPermission permission = await Geolocator.checkPermission();
+      if (permission == LocationPermission.denied ||
+          permission == LocationPermission.deniedForever) {
+        permission = await Geolocator.requestPermission();
+        if (permission == LocationPermission.denied) {
+          throw Exception("Location permission denied");
+        }
+      }
+
+      // Get the current position
+      Position position = await Geolocator.getCurrentPosition(
+          desiredAccuracy: LocationAccuracy.high);
+
+      setState(() {
+        _currentLocation = LatLng(position.latitude, position.longitude);
+      });
+    } catch (e) {
+      debugPrint("Error getting current location: $e");
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text("Unable to fetch current location. Please try again."),
+        ),
+      );
+    }
+  }
 
   // Update map to searched location
   Future<void> _updateMapLocation(String address) async {
@@ -97,69 +127,71 @@ class _RealTimeSearchMapState extends State<RealTimeSearchMap> {
   void initState() {
     super.initState();
 
-    // Set the initial location as the current location
-    _currentLocation = _initialPosition;
+    // Fetch the user's current location when the app starts
+    _getCurrentLocation();
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(title: Text("Real-Time Search Map")),
-      body: Stack(
-        children: [
-          GoogleMap(
-            initialCameraPosition: CameraPosition(
-              target: _initialPosition,
-              zoom: 12.0,
-            ),
-            onMapCreated: (GoogleMapController controller) {
-              _mapController = controller;
-            },
-            markers: _searchedLocation != null
-                ? {
-                    Marker(
-                      markerId: MarkerId("searchedLocation"),
-                      position: _searchedLocation!,
-                      infoWindow: InfoWindow(title: "Searched Location"),
-                    ),
-                  }
-                : {},
-            polylines: _polylines,
-          ),
-          Positioned(
-            top: 20,
-            left: 10,
-            right: 10,
-            child: Card(
-              elevation: 4.0,
-              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10.0)),
-              child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 8.0),
-                child: Row(
-                  children: [
-                    Expanded(
-                      child: TextField(
-                        controller: _searchController,
-                        decoration: InputDecoration(
-                          hintText: "Enter address",
-                          border: InputBorder.none,
-                          contentPadding: EdgeInsets.symmetric(vertical: 10),
-                        ),
+      body: _currentLocation == null
+          ? Center(child: CircularProgressIndicator()) // Show loader until location is fetched
+          : Stack(
+              children: [
+                GoogleMap(
+                  initialCameraPosition: CameraPosition(
+                    target: _currentLocation!,
+                    zoom: 12.0,
+                  ),
+                  onMapCreated: (GoogleMapController controller) {
+                    _mapController = controller;
+                  },
+                  markers: _searchedLocation != null
+                      ? {
+                          Marker(
+                            markerId: MarkerId("searchedLocation"),
+                            position: _searchedLocation!,
+                            infoWindow: InfoWindow(title: "Searched Location"),
+                          ),
+                        }
+                      : {},
+                  polylines: _polylines,
+                ),
+                Positioned(
+                  top: 20,
+                  left: 10,
+                  right: 10,
+                  child: Card(
+                    elevation: 4.0,
+                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10.0)),
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                      child: Row(
+                        children: [
+                          Expanded(
+                            child: TextField(
+                              controller: _searchController,
+                              decoration: InputDecoration(
+                                hintText: "Enter address",
+                                border: InputBorder.none,
+                                contentPadding: EdgeInsets.symmetric(vertical: 10),
+                              ),
+                            ),
+                          ),
+                          IconButton(
+                            icon: Icon(Icons.search),
+                            onPressed: () {
+                              _updateMapLocation(_searchController.text);
+                            },
+                          ),
+                        ],
                       ),
                     ),
-                    IconButton(
-                      icon: Icon(Icons.search),
-                      onPressed: () {
-                        _updateMapLocation(_searchController.text);
-                      },
-                    ),
-                  ],
+                  ),
                 ),
-              ),
+              ],
             ),
-          ),
-        ],
-      ),
     );
   }
 }

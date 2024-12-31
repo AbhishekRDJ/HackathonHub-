@@ -38,6 +38,7 @@ dependencies:
   dropdown_button2: ^2.3.9
   geocoding: ^2.0.5
   http: ^1.0.0
+  geolocator: ^13.0.2
 
 
   # The following adds the Cupertino Icons font to your application.
