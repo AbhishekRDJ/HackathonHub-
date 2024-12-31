@@ -74,7 +74,7 @@ class _StartScreenState extends State<StartScreen> with SingleTickerProviderStat
                     CustomButton(
                       color: Colors.white,
                       textColor: Colors.black,
-                      label: "SignUp",
+                      label: "Sign Up",
                       onPressed: () {
                         Navigator.of(context).push(
                             MaterialPageRoute(builder: (context) => const SignUpPage()));
@@ -84,7 +84,7 @@ class _StartScreenState extends State<StartScreen> with SingleTickerProviderStat
                     CustomButton(
                       color: Colors.black,
                       textColor: Colors.white,
-                      label: "LogIn",
+                      label: "Log In",
                       onPressed: () {
                         Navigator.of(context).push(
                             MaterialPageRoute(builder: (context) => const LogInPage()));

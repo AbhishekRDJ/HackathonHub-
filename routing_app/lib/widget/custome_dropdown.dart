@@ -1,5 +1,6 @@
 import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:flutter/material.dart';
+import 'package:routing_app/utils/parameter_info.dart';
 
 class CustomeDropdown extends StatefulWidget {
 
@@ -45,6 +46,7 @@ class _CustomeDropdownState extends State<CustomeDropdown> {
           onChanged: (String? newValue) {
             setState(() {
               val = newValue!;
+              addInfo(val!);
             }
             );
           },
