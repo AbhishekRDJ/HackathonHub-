@@ -21,7 +21,7 @@ class MyApp extends StatelessWidget {
         fontFamily: 'lato',
         useMaterial3: true,
       ),
-      home: ResonsiveScreen()
+      home: RealTimeSearchMap(),
     );
   }
 }
