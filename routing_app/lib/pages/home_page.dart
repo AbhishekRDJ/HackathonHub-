@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:location/location.dart';
 import 'package:routing_app/widget/sliding_panel.dart';
@@ -31,12 +32,26 @@ class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(
+        leading: Text(""),
+            centerTitle: true,
+            title: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 12.0),
+              child: SvgPicture.asset('assets/images/logo3.svg',width: 200,height: 55,),
+            ),
+        actions: const [
+          Padding(
+            padding: EdgeInsets.all(8.0),
+            child: CircleAvatar(),
+          )
+        ],
+      ),
       body: currentPosition == null ?
           const Center(child: CircularProgressIndicator(),):
       SlidingUpPanel(
         panelBuilder: (controller)=>PanelWidget(controller: controller),
-        maxHeight: MediaQuery.of(context).size.height*0.76,
-        minHeight: MediaQuery.of(context).size.height*0.09,
+        maxHeight: MediaQuery.of(context).size.height*0.75,
+        minHeight: MediaQuery.of(context).size.height*0.045,
         borderRadius: BorderRadius.circular(6),
 
         body: GoogleMap(

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:routing_app/pages/home_page2.dart';
+import 'package:routing_app/demo.dart';
+
 import 'package:routing_app/widget/custome_dropdown.dart';
 
 class PanelWidget extends StatefulWidget {
@@ -16,6 +17,8 @@ class _PanelWidgetState extends State<PanelWidget> {
   final List<String> vehicles = ['Car', 'Bike', 'Cycle', 'Auto'];
   final List<String> flue = ['Petrol','Diesel'];
   String selectedVehicle = 'Choose vehicle';
+  final List<String> age = ['<1','2','3','4','>=5'];
+  String selectedAge = 'Choose age';
   String selectedFule = 'Choose fule type';
   TextEditingController controller1 = TextEditingController();
 
@@ -27,37 +30,23 @@ class _PanelWidgetState extends State<PanelWidget> {
       child: ListView(
         controller: widget.controller,
         children: [
-          Center(
-            child: Container(
-              width: 32,
-              height: 5,
-              decoration: BoxDecoration(
-                color: Colors.grey,
-                borderRadius: BorderRadius.circular(16)
+
+          Padding(
+            padding: const EdgeInsets.symmetric(vertical: 10),
+            child: Center(
+              child: Container(
+                width: 32,
+                height: 5,
+                decoration: BoxDecoration(
+                  color: Colors.grey,
+                  borderRadius: BorderRadius.circular(16)
+                ),
               ),
             ),
           ),
           const SizedBox(height: 25,),
 
           const Text("Select your vehicle",
-          style: TextStyle(fontSize: 20,fontWeight: FontWeight.bold),),
-          const SizedBox(height: 20,),
-
-          CustomeDropdown(selectedVehicle: vehicles,
-              value: selectedVehicle),
-
-          const SizedBox(height: 30,),
-
-          const Text("Select your fule type",
-            style: TextStyle(fontSize: 20,fontWeight: FontWeight.bold),),
-          const SizedBox(height: 20,),
-
-          CustomeDropdown(selectedVehicle: flue,
-              value: selectedFule),
-
-          const SizedBox(height: 25,),
-
-          const Text("Enter your destination",
             style: TextStyle(fontSize: 20,fontWeight: FontWeight.bold),),
           const SizedBox(height: 20,),
 
@@ -83,13 +72,44 @@ class _PanelWidgetState extends State<PanelWidget> {
             ),
           ),
 
-          SizedBox(
-            height: MediaQuery.of(context).size.height*0.1,
-          ),
+          const SizedBox(height: 25,),
+
+          const Text("Select your vehicle",
+          style: TextStyle(fontSize: 20,fontWeight: FontWeight.bold),),
+          const SizedBox(height: 20,),
+
+          CustomeDropdown(selectedVehicle: vehicles,
+              value: selectedVehicle),
+
+          const SizedBox(height: 30,),
+
+          const Text("Select your fule type",
+            style: TextStyle(fontSize: 20,fontWeight: FontWeight.bold),),
+          const SizedBox(height: 20,),
+
+          CustomeDropdown(selectedVehicle: flue,
+              value: selectedFule),
+
+          const SizedBox(height: 25,),
+
+
+          const Text("Enter vehicle age",
+            style: TextStyle(fontSize: 20,fontWeight: FontWeight.bold),),
+          const SizedBox(height: 20,),
+
+          CustomeDropdown(selectedVehicle: age,
+              value: selectedAge),
+
+          const SizedBox(height: 25,),
+
+
+          const SizedBox(height: 25),
           
           ElevatedButton(onPressed: (){
             Navigator.of(context).push(
-              MaterialPageRoute(builder: (context)=>HomePage2())
+              MaterialPageRoute(builder: (context)=>RealTimeSearchMap(
+                destination: controller1.text,
+              ))
             );
           },
             style: const ButtonStyle(
