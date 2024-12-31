@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
+import 'package:routing_app/home_page/main_page.dart';
 import 'package:routing_app/pages/home_page.dart';
 
 import '../widget/custom_button.dart';
@@ -76,7 +77,7 @@ class _LogInPageState extends State<SignUpPage> {
                 label: 'Agree and Register',
                 onPressed: (){
               Navigator.of(context).push(
-                MaterialPageRoute(builder: (context)=> const HomePage())
+                MaterialPageRoute(builder: (context)=> const MainPage())
               );
                 },
                 textColor: Colors.white),

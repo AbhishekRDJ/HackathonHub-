@@ -17,6 +17,8 @@ class _HomePageState extends State<HomePage> {
   final locationController = Location();
   final currentLoc = LatLng(19.8758,75.3393);
 
+  GoogleMapController? mapController;
+
   LatLng? currentPosition;
 
   @override
@@ -29,34 +31,36 @@ class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-
       body: currentPosition == null ?
           const Center(child: CircularProgressIndicator(),):
       SlidingUpPanel(
         panelBuilder: (controller)=>PanelWidget(controller: controller),
-        maxHeight: MediaQuery.of(context).size.height*0.9,
-        minHeight: MediaQuery.of(context).size.height*0.06,
-        borderRadius: BorderRadius.circular(18),
+        maxHeight: MediaQuery.of(context).size.height*0.76,
+        minHeight: MediaQuery.of(context).size.height*0.09,
+        borderRadius: BorderRadius.circular(6),
 
         body: GoogleMap(
-          initialCameraPosition: CameraPosition(
-            target: currentLoc, // Example: San Francisco
-            zoom: 10,
-          ),
-          markers: {
-            Marker(
-                markerId: const MarkerId('current location'),
-              icon: BitmapDescriptor.defaultMarker,
-              position: currentPosition!
-            )
-          },
-          onMapCreated: (GoogleMapController controller) {
-            // Optional: Handle the map controller
-          },
+        initialCameraPosition: CameraPosition(
+          target: currentLoc, // Example: San Francisco
+          zoom: 16,
         ),
+        markers: {
+          Marker(
+              markerId: const MarkerId('current location'),
+            icon: BitmapDescriptor.defaultMarker,
+            position: currentPosition!
+          )
+        },
+        onMapCreated: (GoogleMapController controller) {
+          setState(() {
+            mapController = controller;
+          });
+        },
+                  ),
       )
     );
   }
+
 
   Future<void> fetchLocationUpdate() async{
     bool serviceEnabled;
