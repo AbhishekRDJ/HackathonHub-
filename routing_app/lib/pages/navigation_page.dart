@@ -4,6 +4,7 @@ import 'package:geocoding/geocoding.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:http/http.dart' as http;
 import 'package:routing_app/widget/sliding_panel.dart';
+import 'package:routing_app/widget/sliding_panel2.dart';
 import 'dart:convert';
 
 import 'package:sliding_up_panel/sliding_up_panel.dart';
@@ -143,16 +144,16 @@ class _RealTimeSearchMapState extends State<RealTimeSearchMap> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text("Real-Time Search Map")),
+      appBar: AppBar(title: Text("Routes")),
       body: _currentLocation == null
           ? Center(child: CircularProgressIndicator()) // Show loader until location is fetched
           : Stack(
               children: [
                 SlidingUpPanel(
-                  panelBuilder: (controller)=>PanelWidget(controller: controller),
+                  panelBuilder: (controller)=>SlidingPanel2(controller: controller),
                   maxHeight: MediaQuery.of(context).size.height*0.76,
                   minHeight: MediaQuery.of(context).size.height*0.09,
-                  borderRadius: BorderRadius.circular(6),
+                  borderRadius: BorderRadius.circular(12),
                   body: GoogleMap(
 
                     initialCameraPosition: CameraPosition(
