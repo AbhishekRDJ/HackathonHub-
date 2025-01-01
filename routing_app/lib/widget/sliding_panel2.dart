@@ -155,7 +155,7 @@ class _SlidingPanel2State extends State<SlidingPanel2>
                     // Handle Report an Issue
                   },
                   icon: const Icon(Icons.report),
-                  label: const Text('Report an issue'),
+                  label: const Text('AQI estimate'),
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Colors.red,
                   ),

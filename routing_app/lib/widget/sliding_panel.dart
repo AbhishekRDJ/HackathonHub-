@@ -19,11 +19,11 @@ class _PanelWidgetState extends State<PanelWidget> {
 
   final List<String> vehicles = ['Car', 'Bike', 'Cycle', 'Auto'];
   final List<String> flue = ['Petrol','Diesel'];
-  final List<String> age = ['<1','2','3','4','>=5'];
+  final List<String> age = ['<1','2','3','4','>5'];
 
   String selectedVehicle = 'Choose vehicle';
   String selectedAge = 'Choose age';
-  String selectedFule = 'Choose fule type';
+  String selectedFule = 'Choose fuel type';
 
   String? selectedVehicleType;
   String? selectedFuelType;
@@ -59,7 +59,7 @@ class _PanelWidgetState extends State<PanelWidget> {
           ),
           const SizedBox(height: 25,),
 
-          const Text("Select your vehicle",
+          const Text("Search your destination",
             style: TextStyle(fontSize: 20,fontWeight: FontWeight.bold),),
           const SizedBox(height: 20,),
 
@@ -86,7 +86,7 @@ class _PanelWidgetState extends State<PanelWidget> {
                     fillColor: const Color.fromARGB(40, 100, 100, 100),
                     prefixIcon: const Icon(Icons.location_on),
                     filled: true,
-                    hintText: 'Search here',
+                    hintText: 'location',
                     contentPadding: const EdgeInsets.symmetric(horizontal: 20),
                     enabledBorder: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(6),
@@ -119,7 +119,7 @@ class _PanelWidgetState extends State<PanelWidget> {
 
           const SizedBox(height: 30,),
 
-          const Text("Select your fule type",
+          const Text("Select your fuel type",
             style: TextStyle(fontSize: 20,fontWeight: FontWeight.bold),),
           const SizedBox(height: 20,),
 
