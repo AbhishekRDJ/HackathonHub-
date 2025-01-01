@@ -3,14 +3,23 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:geocoding/geocoding.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:http/http.dart' as http;
+import 'package:routing_app/widget/sliding_panel.dart';
 import 'dart:convert';
 
+import 'package:sliding_up_panel/sliding_up_panel.dart';
+
 class RealTimeSearchMap extends StatefulWidget {
+  final String destination;
+
+  const RealTimeSearchMap({super.key,
+  required this.destination});
+
   @override
   _RealTimeSearchMapState createState() => _RealTimeSearchMapState();
 }
 
 class _RealTimeSearchMapState extends State<RealTimeSearchMap> {
+
   final TextEditingController _searchController = TextEditingController();
   late GoogleMapController _mapController;
   LatLng? _currentLocation; // User's current location
@@ -139,59 +148,38 @@ class _RealTimeSearchMapState extends State<RealTimeSearchMap> {
           ? Center(child: CircularProgressIndicator()) // Show loader until location is fetched
           : Stack(
               children: [
-                GoogleMap(
-                  initialCameraPosition: CameraPosition(
-                    target: _currentLocation!,
-                    zoom: 12.0,
-                  ),
-                  onMapCreated: (GoogleMapController controller) {
-                    _mapController = controller;
-                  },
-                  markers: _searchedLocation != null
-                      ? {
-                          Marker(
-                            markerId: MarkerId("searchedLocation"),
-                            position: _searchedLocation!,
-                            infoWindow: InfoWindow(title: "Searched Location"),
-                          ),
-                        }
-                      : {},
-                  polylines: _polylines,
-                ),
-                Positioned(
-                  top: 20,
-                  left: 10,
-                  right: 10,
-                  child: Card(
-                    elevation: 4.0,
-                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10.0)),
-                    child: Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 8.0),
-                      child: Row(
-                        children: [
-                          Expanded(
-                            child: TextField(
-                              controller: _searchController,
-                              decoration: InputDecoration(
-                                hintText: "Enter address",
-                                border: InputBorder.none,
-                                contentPadding: EdgeInsets.symmetric(vertical: 10),
-                              ),
-                            ),
-                          ),
-                          IconButton(
-                            icon: Icon(Icons.search),
-                            onPressed: () {
-                              _updateMapLocation(_searchController.text);
-                            },
-                          ),
-                        ],
-                      ),
+                SlidingUpPanel(
+                  panelBuilder: (controller)=>PanelWidget(controller: controller),
+                  maxHeight: MediaQuery.of(context).size.height*0.76,
+                  minHeight: MediaQuery.of(context).size.height*0.09,
+                  borderRadius: BorderRadius.circular(6),
+                  body: GoogleMap(
+
+                    initialCameraPosition: CameraPosition(
+                      target: _currentLocation!,
+                      zoom: 12.0,
                     ),
+                    onMapCreated: (GoogleMapController controller) {
+                      _mapController = controller;
+                      _updateMapLocation(widget.destination);
+                    },
+                    markers: _searchedLocation != null
+                        ? {
+                            Marker(
+                              markerId: MarkerId("searchedLocation"),
+                              position: _searchedLocation!,
+                              infoWindow: InfoWindow(title: "Searched Location"),
+                            ),
+                          }
+                        : {},
+                    polylines: _polylines,
                   ),
                 ),
+
               ],
             ),
     );
   }
+
+
 }

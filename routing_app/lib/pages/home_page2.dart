@@ -4,14 +4,14 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:location/location.dart';
 import 'package:sliding_up_panel/sliding_up_panel.dart';
 
-class HomePage extends StatefulWidget {
-  const HomePage({super.key});
+class HomePage2 extends StatefulWidget {
+  const HomePage2({super.key});
 
   @override
-  State<HomePage> createState() => _HomePageState();
+  State<HomePage2> createState() => _HomePageState();
 }
 
-class _HomePageState extends State<HomePage>
+class _HomePageState extends State<HomePage2>
     with SingleTickerProviderStateMixin {
   final locationController = Location();
   final currentLoc = LatLng(19.8758, 75.3393);
