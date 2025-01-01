@@ -74,17 +74,30 @@ class _HomePageState extends State<HomePage>
                 body: GoogleMap(
                   initialCameraPosition: CameraPosition(
                     target: currentLoc, // Example: San Francisco
-                    zoom: 16,
+                    zoom: 12,
                   ),
-                  markers: {
+                  myLocationEnabled: true, // Enable default Google Maps location marker
+                  myLocationButtonEnabled: true, // Enable the default location button
+                  markers: currentPosition != null
+                      ? {
                     Marker(
-                        markerId: const MarkerId('current location'),
-                        icon: BitmapDescriptor.defaultMarker,
-                        position: currentPosition!)
-                  },
+                      markerId: MarkerId("searchedLocation"),
+                      position: currentPosition!,
+                      infoWindow: InfoWindow(title: "Your Location"),
+                    ),
+                  }
+                      : {},
                   onMapCreated: (GoogleMapController controller) {
                     setState(() {
                       mapController = controller;
+                      mapController?.animateCamera(
+                        CameraUpdate.newCameraPosition(
+                          CameraPosition(
+                            target: currentPosition!,
+                            zoom: 18,
+                          ),
+                        ),
+                      );
                     });
                   },
                 ),

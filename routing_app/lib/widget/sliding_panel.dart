@@ -3,7 +3,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:routing_app/pages/navigation_page.dart';
 import 'package:http/http.dart' as http;
-import 'package:routing_app/utils/parameter_info.dart';
+
 import 'package:routing_app/widget/custome_dropdown.dart';
 
 class PanelWidget extends StatefulWidget {
@@ -24,6 +24,11 @@ class _PanelWidgetState extends State<PanelWidget> {
   String selectedVehicle = 'Choose vehicle';
   String selectedAge = 'Choose age';
   String selectedFule = 'Choose fule type';
+
+  String? selectedVehicleType;
+  String? selectedFuelType;
+  String? _selectedAge;
+
 
   TextEditingController controller1 = TextEditingController();
 
@@ -104,7 +109,13 @@ class _PanelWidgetState extends State<PanelWidget> {
           const SizedBox(height: 20,),
 
           CustomeDropdown(selectedVehicle: vehicles,
-              value: selectedVehicle),
+              value: selectedVehicle,
+          onChanged: (value) {
+            setState(() {
+              selectedVehicleType = value;
+              selectedVehicle = value!;
+            });
+          },),
 
           const SizedBox(height: 30,),
 
@@ -113,7 +124,14 @@ class _PanelWidgetState extends State<PanelWidget> {
           const SizedBox(height: 20,),
 
           CustomeDropdown(selectedVehicle: flue,
-              value: selectedFule),
+              value: selectedFule,
+            onChanged: (value) {
+              setState(() {
+                selectedFuelType = value;
+                selectedFule = value!;
+              });
+            },
+          ),
 
           const SizedBox(height: 25,),
 
@@ -123,7 +141,13 @@ class _PanelWidgetState extends State<PanelWidget> {
           const SizedBox(height: 20,),
 
           CustomeDropdown(selectedVehicle: age,
-              value: selectedAge),
+              value: selectedAge,
+          onChanged: (value) {
+            setState(() {
+              _selectedAge = value;
+              selectedAge = value!;
+            });
+          },),
 
           const SizedBox(height: 25,),
 
@@ -135,9 +159,12 @@ class _PanelWidgetState extends State<PanelWidget> {
               Navigator.of(context).push(
                   MaterialPageRoute(builder: (context)=>RealTimeSearchMap(
                     destination: _searchController.text,
-                  ))
+                    vehicleType: selectedVehicleType!,
+                    fuelType: selectedFuelType!,
+                    age: _selectedAge!,
+                  )),
               );
-              debugPrint("${vehicleInfo}");
+
             }else{
               ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("please select location")));
             }

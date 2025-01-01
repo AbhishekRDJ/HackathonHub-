@@ -3,7 +3,21 @@ import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 
 class SlidingPanel2 extends StatefulWidget {
   final ScrollController controller;
-  const SlidingPanel2({super.key, required this.controller});
+  final String locInfo;
+  final String dis;
+  final String dur;
+  final String vehicleType;
+  final String fuelType;
+  final String age;
+
+  const SlidingPanel2({super.key,
+    required this.controller,
+    required this.dis,
+    required this.dur,
+  required this.locInfo,
+  required this.age,
+  required this.fuelType,
+  required this.vehicleType});
 
   @override
   State<SlidingPanel2> createState() => _SlidingPanel2State();
@@ -49,8 +63,8 @@ class _SlidingPanel2State extends State<SlidingPanel2>
               ),
             ),
             const SizedBox(height: 16),
-            const Text(
-              'La Jolla Parking Structure',
+            Text(
+              widget.locInfo,
               style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 8),
@@ -89,19 +103,39 @@ class _SlidingPanel2State extends State<SlidingPanel2>
               ],
             ),
             const SizedBox(height: 16),
+
             const Text(
-              'Siri Suggestions',
+              "Estimated distance ",
+              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+            ),
+
+            Text(
+              widget.dis,
               style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
             ),
-            const SizedBox(height: 8),
-            _buildAnimatedSuggestionCard(),
-            const SizedBox(height: 8),
-            _buildAnimatedSuggestionCard(),
             const SizedBox(height: 16),
+
             const Text(
-              'Details',
+              "Estimated duration ",
+              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+            ),
+
+            Text(
+              widget.dur,
               style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
             ),
+
+            const SizedBox(height: 16),
+
+            Text(
+              "your vehicle :- ${widget.vehicleType}\n"
+                  "your fuel type :- ${widget.fuelType}\n"
+                  "your vehicle age :- ${widget.age} years ",
+              style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+            ),
+
+
+
             const SizedBox(height: 8),
             _buildBarChart(),
             const SizedBox(height: 16),

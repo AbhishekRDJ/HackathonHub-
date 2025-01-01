@@ -1,14 +1,17 @@
 import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:flutter/material.dart';
-import 'package:routing_app/utils/parameter_info.dart';
+
 
 class CustomeDropdown extends StatefulWidget {
 
   final List<String> selectedVehicle;
+  final ValueChanged<String?> onChanged;
   String value;
 
   CustomeDropdown({super.key,
   required this.selectedVehicle,
+    required this.onChanged,
+
   required this.value}
   );
 
@@ -31,11 +34,12 @@ class _CustomeDropdownState extends State<CustomeDropdown> {
       ),
       child: DropdownButtonHideUnderline(
         child: DropdownButton2<String>(
+
           value: val,
           style: const TextStyle(color: Colors.black,fontWeight: FontWeight.bold,fontSize: 16),
           hint: Text("${widget.value}",
             style:
-            TextStyle(color: Colors.grey,fontWeight: FontWeight.bold,fontSize: 16),),
+            TextStyle(color: Colors.black,fontWeight: FontWeight.bold,fontSize: 16),),
           items: widget.selectedVehicle.map((String vehicle) {
             return DropdownMenuItem<String>(
               value: vehicle,
@@ -43,13 +47,7 @@ class _CustomeDropdownState extends State<CustomeDropdown> {
             );
           }
           ).toList(),
-          onChanged: (String? newValue) {
-            setState(() {
-              val = newValue!;
-              addInfo(val!);
-            }
-            );
-          },
+          onChanged: widget.onChanged,
         ),
       ),
     );

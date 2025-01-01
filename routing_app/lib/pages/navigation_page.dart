@@ -1,31 +1,38 @@
+import 'dart:convert';
 import 'package:flutter/material.dart';
-import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:geocoding/geocoding.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:http/http.dart' as http;
-import 'package:routing_app/widget/sliding_panel.dart';
 import 'package:routing_app/widget/sliding_panel2.dart';
-import 'dart:convert';
-
 import 'package:sliding_up_panel/sliding_up_panel.dart';
 
 class RealTimeSearchMap extends StatefulWidget {
   final String destination;
+  final String vehicleType;
+  final String fuelType;
+  final String age;
 
   const RealTimeSearchMap({super.key,
-  required this.destination});
+    required this.destination,
+    required this.age,
+    required this.fuelType,
+    required this.vehicleType});
 
   @override
   _RealTimeSearchMapState createState() => _RealTimeSearchMapState();
 }
 
 class _RealTimeSearchMapState extends State<RealTimeSearchMap> {
-
   final TextEditingController _searchController = TextEditingController();
   late GoogleMapController _mapController;
   LatLng? _currentLocation; // User's current location
   LatLng? _searchedLocation;
   Set<Polyline> _polylines = {};
+  final Set<Marker> _markers = {};
+  String locationInfo="";
+  String _distance="";
+  String _duration="";// Markers on the map
 
   // Fetch user's current location
   Future<void> _getCurrentLocation() async {
@@ -47,6 +54,12 @@ class _RealTimeSearchMapState extends State<RealTimeSearchMap> {
       setState(() {
         _currentLocation = LatLng(position.latitude, position.longitude);
       });
+
+      // Fetch location details for the user's current location
+      if (_currentLocation != null) {
+        await _fetchLocationDetails(_currentLocation!);
+
+      }
     } catch (e) {
       debugPrint("Error getting current location: $e");
       ScaffoldMessenger.of(context).showSnackBar(
@@ -55,6 +68,89 @@ class _RealTimeSearchMapState extends State<RealTimeSearchMap> {
         ),
       );
     }
+  }
+
+  Future<void> _fetchDistanceAndDuration(LatLng source, LatLng destination) async {
+    final apiKey = 'AIzaSyBx827KsGam_YfYb7ucls9iYpAWwXJk9PM'; // Replace with your API key
+    final url =
+        'https://maps.googleapis.com/maps/api/distancematrix/json?origins=${source.latitude},${source.longitude}&destinations=${destination.latitude},${destination.longitude}&key=$apiKey';
+
+    try {
+      final response = await http.get(Uri.parse(url));
+
+      if (response.statusCode == 200) {
+        final data = json.decode(response.body);
+
+        if (data['status'] == 'OK' &&
+            data['rows'] != null &&
+            data['rows'].isNotEmpty) {
+          final elements = data['rows'][0]['elements'][0];
+
+          if (elements['status'] == 'OK') {
+            final distance = elements['distance']['text']; // e.g., "5.4 km"
+            final duration = elements['duration']['text']; // e.g., "12 mins"
+
+            setState(() {
+              _distance = distance;
+              _duration = duration;
+            });
+
+          } else {
+            debugPrint('Error in Distance Matrix API response.');
+          }
+        } else {
+          debugPrint('No results found for Distance Matrix.');
+        }
+      } else {
+        debugPrint('Failed to fetch distance and duration: ${response.statusCode}');
+      }
+    } catch (e) {
+      debugPrint('Error fetching distance and duration: $e');
+    }
+  }
+
+
+  // Fetch location details using Geocoding API
+  Future<void> _fetchLocationDetails(LatLng location) async {
+    final apiKey = 'AIzaSyBx827KsGam_YfYb7ucls9iYpAWwXJk9PM'; // Replace with your API key
+    final url =
+        'https://maps.googleapis.com/maps/api/geocode/json?latlng=${location.latitude},${location.longitude}&key=$apiKey';
+
+    try {
+      final response = await http.get(Uri.parse(url));
+
+      if (response.statusCode == 200) {
+        final data = json.decode(response.body);
+
+        if (data['status'] == 'OK' && data['results'].isNotEmpty) {
+          final placeDetails = data['results'][0]; // Top result
+          final address = placeDetails['formatted_address']; // Full address
+
+          setState(() {
+            locationInfo = address;
+          });
+        } else {
+          debugPrint('No results found for the location.');
+        }
+      } else {
+        debugPrint('Failed to fetch location details: ${response.statusCode}');
+      }
+    } catch (e) {
+      debugPrint('Error fetching location details: $e');
+    }
+  }
+
+  // Add a marker to the map
+  void _addMarker(LatLng position, String title) {
+    setState(() {
+      _markers.add(
+        Marker(
+          markerId: MarkerId(title),
+          position: position,
+          infoWindow: InfoWindow(title: title),
+        ),
+      );
+    });
   }
 
   // Update map to searched location
@@ -77,6 +173,17 @@ class _RealTimeSearchMapState extends State<RealTimeSearchMap> {
             ),
           ),
         );
+
+        if (_currentLocation != null && _searchedLocation != null) {
+          await _fetchDistanceAndDuration(_currentLocation!, _searchedLocation!);
+        }
+
+
+        // Fetch location details for the searched location
+        if (_searchedLocation != null) {
+          await _fetchLocationDetails(_searchedLocation!);
+          _addMarker(_searchedLocation!, "Searched Location");
+        }
 
         // Fetch and display the route
         if (_currentLocation != null && _searchedLocation != null) {
@@ -102,7 +209,8 @@ class _RealTimeSearchMapState extends State<RealTimeSearchMap> {
       final response = await http.get(Uri.parse(url));
       if (response.statusCode == 200) {
         final data = json.decode(response.body);
-        final List<dynamic> coordinates = data['routes'][0]['geometry']['coordinates'];
+        final List<dynamic> coordinates =
+        data['routes'][0]['geometry']['coordinates'];
 
         // Convert the route's coordinates into a list of LatLng points
         List<LatLng> polylineCoordinates = coordinates
@@ -136,7 +244,6 @@ class _RealTimeSearchMapState extends State<RealTimeSearchMap> {
   @override
   void initState() {
     super.initState();
-
     // Fetch the user's current location when the app starts
     _getCurrentLocation();
   }
@@ -146,41 +253,41 @@ class _RealTimeSearchMapState extends State<RealTimeSearchMap> {
     return Scaffold(
       appBar: AppBar(title: Text("Routes")),
       body: _currentLocation == null
-          ? Center(child: CircularProgressIndicator()) // Show loader until location is fetched
+          ? Center(child: CircularProgressIndicator())
           : Stack(
-              children: [
-                SlidingUpPanel(
-                  panelBuilder: (controller)=>SlidingPanel2(controller: controller),
-                  maxHeight: MediaQuery.of(context).size.height*0.76,
-                  minHeight: MediaQuery.of(context).size.height*0.09,
-                  borderRadius: BorderRadius.circular(12),
-                  body: GoogleMap(
+        children: [
+          SlidingUpPanel(
+            panelBuilder: (controller) =>
+                SlidingPanel2(controller: controller,
+                locInfo: locationInfo,
+                  dis: _distance,
+                    dur: _duration,
+                    vehicleType: widget.vehicleType,
+                    fuelType: widget.fuelType,
+                    age: widget.age,
 
-                    initialCameraPosition: CameraPosition(
-                      target: _currentLocation!,
-                      zoom: 12.0,
-                    ),
-                    onMapCreated: (GoogleMapController controller) {
-                      _mapController = controller;
-                      _updateMapLocation(widget.destination);
-                    },
-                    markers: _searchedLocation != null
-                        ? {
-                            Marker(
-                              markerId: MarkerId("searchedLocation"),
-                              position: _searchedLocation!,
-                              infoWindow: InfoWindow(title: "Searched Location"),
-                            ),
-                          }
-                        : {},
-                    polylines: _polylines,
-                  ),
                 ),
+            maxHeight: MediaQuery.of(context).size.height * 0.76,
+            minHeight: MediaQuery.of(context).size.height * 0.09,
+            borderRadius: BorderRadius.circular(12),
 
-              ],
+            body: GoogleMap(
+              initialCameraPosition: CameraPosition(
+                target: _currentLocation!,
+                zoom: 12.0,
+              ),
+              onMapCreated: (GoogleMapController controller) {
+                _mapController = controller;
+                _updateMapLocation(widget.destination);
+              },
+              myLocationButtonEnabled: true,
+              myLocationEnabled: true,
+              markers: _markers,
+              polylines: _polylines,
             ),
+          ),
+        ],
+      ),
     );
   }
-
-
 }
