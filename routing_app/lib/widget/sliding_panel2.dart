@@ -138,6 +138,9 @@ class _SlidingPanel2State extends State<SlidingPanel2>
                 ),
               ],
             ),
+            const SizedBox(height: 16),
+            // Gemini Suggestions at the bottom slider
+            _buildGeminiSuggestions(),
           ],
         ),
       ),
@@ -226,6 +229,51 @@ class _SlidingPanel2State extends State<SlidingPanel2>
             ),
           ),
         ],
+      ),
+    );
+  }
+
+  // Gemini Suggestions placed at the bottom slider
+  Widget _buildGeminiSuggestions() {
+    return AnimatedBuilder(
+      animation: _animationController,
+      builder: (context, child) {
+        return Opacity(
+          opacity: _animationController.value,
+          child: Transform.translate(
+            offset: Offset(0, (1 - _animationController.value) * 20),
+            child: child,
+          ),
+        );
+      },
+      child: Container(
+        padding: const EdgeInsets.all(16.0),
+        decoration: BoxDecoration(
+          color: Colors.blue.shade50,
+          borderRadius: BorderRadius.circular(12),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black12,
+              blurRadius: 8,
+              offset: Offset(0, 4),
+            ),
+          ],
+        ),
+        child: Row(
+          children: [
+            const CircleAvatar(
+              backgroundColor: Colors.blue,
+              child: Icon(Icons.person, color: Colors.white),
+            ),
+            const SizedBox(width: 16),
+            Expanded(
+              child: Text(
+                "Here's Gemini's advice based on your input. It will appear dynamically.",
+                style: TextStyle(fontSize: 16),
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
