@@ -13,11 +13,12 @@ class RealTimeSearchMap extends StatefulWidget {
   final String fuelType;
   final String age;
 
-  const RealTimeSearchMap({super.key,
-    required this.destination,
-    required this.age,
-    required this.fuelType,
-    required this.vehicleType});
+  const RealTimeSearchMap(
+      {super.key,
+      required this.destination,
+      required this.age,
+      required this.fuelType,
+      required this.vehicleType});
 
   @override
   _RealTimeSearchMapState createState() => _RealTimeSearchMapState();
@@ -30,12 +31,12 @@ class _RealTimeSearchMapState extends State<RealTimeSearchMap> {
   LatLng? _searchedLocation;
   Set<Polyline> _polylines = {};
   final Set<Marker> _markers = {};
-  String locationInfo="";
-  String _distance="";
-  String _duration="";
-  double _fuelConsumption=0;
-  String _newdist = "";// Markers on the map
- double calculateMileage(String vehicleType, String age) {
+  String locationInfo = "";
+  String _distance = "";
+  String _duration = "";
+  double _fuelConsumption = 0;
+  String _newdist = ""; // Markers on the map
+  double calculateMileage(String vehicleType, String age) {
     // Use nested conditions to assign mileage values
     if (vehicleType == 'Car') {
       if (age == '<1') return 18.0;
@@ -60,6 +61,7 @@ class _RealTimeSearchMapState extends State<RealTimeSearchMap> {
     }
     return 0; // Default mileage if none matches
   }
+
   // Fetch user's current location
   Future<void> _getCurrentLocation() async {
     try {
@@ -84,7 +86,6 @@ class _RealTimeSearchMapState extends State<RealTimeSearchMap> {
       // Fetch location details for the user's current location
       if (_currentLocation != null) {
         await _fetchLocationDetails(_currentLocation!);
-
       }
     } catch (e) {
       debugPrint("Error getting current location: $e");
@@ -96,8 +97,10 @@ class _RealTimeSearchMapState extends State<RealTimeSearchMap> {
     }
   }
 
-  Future<void> _fetchDistanceAndDuration(LatLng source, LatLng destination) async {
-    final apiKey = 'AIzaSyBx827KsGam_YfYb7ucls9iYpAWwXJk9PM'; // Replace with your API key
+  Future<void> _fetchDistanceAndDuration(
+      LatLng source, LatLng destination) async {
+    final apiKey =
+        'AIzaSyBx827KsGam_YfYb7ucls9iYpAWwXJk9PM'; // Replace with your API key
     final url =
         'https://maps.googleapis.com/maps/api/distancematrix/json?origins=${source.latitude},${source.longitude}&destinations=${destination.latitude},${destination.longitude}&key=$apiKey';
 
@@ -115,18 +118,16 @@ class _RealTimeSearchMapState extends State<RealTimeSearchMap> {
           if (elements['status'] == 'OK') {
             final distance = elements['distance']['text']; // e.g., "5.4 km"
             final duration = elements['duration']['text']; // e.g., "12 mins"
-            final distanceValue = elements['distance']['value']/1000;
+            final distanceValue = elements['distance']['value'] / 1000;
 
             final mileage = calculateMileage(widget.vehicleType, widget.age);
-            final fuelConsumption = distanceValue / mileage ;
-
+            final fuelConsumption = distanceValue / mileage;
 
             setState(() {
               _distance = distance;
               _duration = duration;
               _fuelConsumption = fuelConsumption;
             });
-
           } else {
             debugPrint('Error in Distance Matrix API response.');
           }
@@ -134,17 +135,18 @@ class _RealTimeSearchMapState extends State<RealTimeSearchMap> {
           debugPrint('No results found for Distance Matrix.');
         }
       } else {
-        debugPrint('Failed to fetch distance and duration: ${response.statusCode}');
+        debugPrint(
+            'Failed to fetch distance and duration: ${response.statusCode}');
       }
     } catch (e) {
       debugPrint('Error fetching distance and duration: $e');
     }
   }
 
-
   // Fetch location details using Geocoding API
   Future<void> _fetchLocationDetails(LatLng location) async {
-    final apiKey = 'AIzaSyBx827KsGam_YfYb7ucls9iYpAWwXJk9PM'; // Replace with your API key
+    final apiKey =
+        'AIzaSyBx827KsGam_YfYb7ucls9iYpAWwXJk9PM'; // Replace with your API key
     final url =
         'https://maps.googleapis.com/maps/api/geocode/json?latlng=${location.latitude},${location.longitude}&key=$apiKey';
 
@@ -207,9 +209,9 @@ class _RealTimeSearchMapState extends State<RealTimeSearchMap> {
         );
 
         if (_currentLocation != null && _searchedLocation != null) {
-          await _fetchDistanceAndDuration(_currentLocation!, _searchedLocation!);
+          await _fetchDistanceAndDuration(
+              _currentLocation!, _searchedLocation!);
         }
-
 
         // Fetch location details for the searched location
         if (_searchedLocation != null) {
@@ -242,12 +244,11 @@ class _RealTimeSearchMapState extends State<RealTimeSearchMap> {
       if (response.statusCode == 200) {
         final data = json.decode(response.body);
         final List<dynamic> coordinates =
-        data['routes'][0]['geometry']['coordinates'];
+            data['routes'][0]['geometry']['coordinates'];
 
         // Convert the route's coordinates into a list of LatLng points
-        List<LatLng> polylineCoordinates = coordinates
-            .map((coord) => LatLng(coord[1], coord[0]))
-            .toList();
+        List<LatLng> polylineCoordinates =
+            coordinates.map((coord) => LatLng(coord[1], coord[0])).toList();
 
         // Add the polyline to the map
         setState(() {
@@ -287,42 +288,40 @@ class _RealTimeSearchMapState extends State<RealTimeSearchMap> {
       body: _currentLocation == null
           ? Center(child: CircularProgressIndicator())
           : Stack(
-        children: [
-          SlidingUpPanel(
-            panelBuilder: (controller) =>
-                SlidingPanel2(controller: controller,
-                locInfo: locationInfo,
-                  dis: _distance,
+              children: [
+                SlidingUpPanel(
+                  panelBuilder: (controller) => SlidingPanel2(
+                    controller: controller,
+                    locInfo: locationInfo,
+                    dis: _distance,
                     dur: _duration,
                     vehicleType: widget.vehicleType,
                     fuelType: widget.fuelType,
                     age: widget.age,
-                    cost: 0, 
-                    fuelConsumption: _fuelConsumption,// Add the required cost argument
-                    
-
+                    cost: 0,
+                    fuelConsumption:
+                        _fuelConsumption, // Add the required cost argument
+                  ),
+                  maxHeight: MediaQuery.of(context).size.height * 0.76,
+                  minHeight: MediaQuery.of(context).size.height * 0.09,
+                  borderRadius: BorderRadius.circular(12),
+                  body: GoogleMap(
+                    initialCameraPosition: CameraPosition(
+                      target: _currentLocation!,
+                      zoom: 12.0,
+                    ),
+                    onMapCreated: (GoogleMapController controller) {
+                      _mapController = controller;
+                      _updateMapLocation(widget.destination);
+                    },
+                    myLocationButtonEnabled: true,
+                    myLocationEnabled: true,
+                    markers: _markers,
+                    polylines: _polylines,
+                  ),
                 ),
-            maxHeight: MediaQuery.of(context).size.height * 0.76,
-            minHeight: MediaQuery.of(context).size.height * 0.09,
-            borderRadius: BorderRadius.circular(12),
-
-            body: GoogleMap(
-              initialCameraPosition: CameraPosition(
-                target: _currentLocation!,
-                zoom: 12.0,
-              ),
-              onMapCreated: (GoogleMapController controller) {
-                _mapController = controller;
-                _updateMapLocation(widget.destination);
-              },
-              myLocationButtonEnabled: true,
-              myLocationEnabled: true,
-              markers: _markers,
-              polylines: _polylines,
+              ],
             ),
-          ),
-        ],
-      ),
     );
   }
 }

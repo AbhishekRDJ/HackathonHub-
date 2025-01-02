@@ -133,11 +133,13 @@ class _SlidingPanel2State extends State<SlidingPanel2>
           children: [
             Center(
               child: Container(
-                width: 40,
-                height: 5,
+                width: 50,
+                height: 6,
                 decoration: BoxDecoration(
-                  color: Colors.grey,
-                  borderRadius: BorderRadius.circular(10),
+                  gradient: LinearGradient(
+                    colors: [Colors.blue, Colors.purple],
+                  ),
+                  borderRadius: BorderRadius.circular(12),
                 ),
               ),
             ),
@@ -146,12 +148,12 @@ class _SlidingPanel2State extends State<SlidingPanel2>
             
             
 
-            const SizedBox(height: 16),
+            const SizedBox(height: 20),
             Text(
               widget.locInfo,
-              style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+              style: const TextStyle(fontSize: 22, fontWeight: FontWeight.w600),
             ),
-            const SizedBox(height: 8),
+            const SizedBox(height: 12),
             Row(
               children: [
                 RatingBarIndicator(
@@ -176,7 +178,7 @@ class _SlidingPanel2State extends State<SlidingPanel2>
                 ),
               ],
             ),
-            const SizedBox(height: 16),
+            const SizedBox(height: 20),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
@@ -186,36 +188,63 @@ class _SlidingPanel2State extends State<SlidingPanel2>
                 _buildHoverButton(Icons.share, 'Share', Colors.red),
               ],
             ),
-            const SizedBox(height: 16),
-
+            const SizedBox(height: 20),
+            Container(
+              padding: const EdgeInsets.all(16),
+              decoration: BoxDecoration(
+                gradient: LinearGradient(
+                  colors: [Colors.blue.shade50, Colors.blue.shade100],
+                ),
+                borderRadius: BorderRadius.circular(12),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black12,
+                    blurRadius: 10,
+                    offset: const Offset(0, 4),
+                  ),
+                ],
+              ),
+              child: Column(
+                children: [
+                  Text(
+                    "Fuel consumption for your vehicle: ${widget.vehicleType}",
+                    style: const TextStyle(
+                        fontSize: 18, fontWeight: FontWeight.w500),
+                  ),
+                  const SizedBox(height: 8),
+                  Text(
+                    widget.vehicleType == "Cycle"
+                        ? "Cycles do not consume fuel."
+                        : "${widget.fuelConsumption.toStringAsFixed(2)} liters",
+                    style: const TextStyle(fontSize: 16),
+                  ),
+                ],
+              ),
+            ),
+            const SizedBox(height: 20),
             const Text(
-              "Estimated distance ",
+              "Estimated distance:",
               style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
             ),
-
             Text(
               widget.dis,
-              style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+              style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w400),
             ),
-            const SizedBox(height: 16),
-
+            const SizedBox(height: 20),
             const Text(
-              "Estimated duration ",
+              "Estimated duration:",
               style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
             ),
-
             Text(
               widget.dur,
-              style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+              style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w400),
             ),
-
-            const SizedBox(height: 16),
-
+            const SizedBox(height: 20),
             Text(
-              "your vehicle :- ${widget.vehicleType}\n"
-              "your fuel type :- ${widget.fuelType}\n"
-              "your vehicle age :- ${widget.age} years ",
-              style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+              "Your vehicle: ${widget.vehicleType}\n"
+              "Your fuel type: ${widget.fuelType}\n"
+              "Vehicle age: ${widget.age} years",
+              style: const TextStyle(fontSize: 16),
             ),
 
 
@@ -258,12 +287,15 @@ class _SlidingPanel2State extends State<SlidingPanel2>
               children: [
                 ElevatedButton.icon(
                   onPressed: () {
-                    // Handle Report an Issue
+                    // Handle AQI estimation
                   },
                   icon: const Icon(Icons.report),
-                  label: const Text('AQI estimate'),
+                  label: const Text('AQI Estimate'),
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.red,
+                    backgroundColor: Colors.redAccent,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
                   ),
                 ),
                 ElevatedButton.icon(
@@ -273,13 +305,15 @@ class _SlidingPanel2State extends State<SlidingPanel2>
                   icon: const Icon(Icons.star),
                   label: const Text('Add to Favorites'),
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.blue,
+                    backgroundColor: Colors.blueAccent,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
                   ),
                 ),
               ],
             ),
-            const SizedBox(height: 16),
-            // Gemini Suggestions at the bottom slider
+            const SizedBox(height: 20),
             _buildGeminiSuggestions(),
           ],
         ),
@@ -369,33 +403,20 @@ class _SlidingPanel2State extends State<SlidingPanel2>
         cursor: SystemMouseCursors.click,
         child: Column(
           children: [
-            Icon(icon, size: 30, color: color),
+            Container(
+              padding: const EdgeInsets.all(8),
+              decoration: BoxDecoration(
+                color: color.withOpacity(0.2),
+                shape: BoxShape.circle,
+              ),
+              child: Icon(icon, size: 30, color: color),
+            ),
             const SizedBox(height: 4),
             Text(
               label,
-              style: TextStyle(color: color, fontWeight: FontWeight.bold),
+              style: TextStyle(color: color, fontWeight: FontWeight.w600),
             ),
           ],
-        ),
-      ),
-    );
-  }
-
-  Widget _buildAnimatedSuggestionCard() {
-    return ScaleTransition(
-      scale: CurvedAnimation(
-        parent: _animationController,
-        curve: Curves.easeInOut,
-      ),
-      child: Card(
-        elevation: 4,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(12),
-        ),
-        child: ListTile(
-          leading: Icon(Icons.directions_car, color: Colors.blue),
-          title: const Text('Parked Car'),
-          subtitle: const Text('290 m away, near ulica Krasnoarmejska'),
         ),
       ),
     );
@@ -411,7 +432,7 @@ class _SlidingPanel2State extends State<SlidingPanel2>
           BoxShadow(
             color: Colors.black12,
             blurRadius: 8,
-            offset: Offset(0, 2),
+            offset: const Offset(0, 2),
           ),
         ],
       ),
@@ -446,7 +467,6 @@ class _SlidingPanel2State extends State<SlidingPanel2>
     );
   }
 
-  // Gemini Suggestions placed at the bottom slider
   Widget _buildGeminiSuggestions() {
     return AnimatedBuilder(
       animation: _animationController,
@@ -468,7 +488,7 @@ class _SlidingPanel2State extends State<SlidingPanel2>
             BoxShadow(
               color: Colors.black12,
               blurRadius: 8,
-              offset: Offset(0, 4),
+              offset: const Offset(0, 4),
             ),
           ],
         ),
@@ -481,8 +501,8 @@ class _SlidingPanel2State extends State<SlidingPanel2>
             const SizedBox(width: 16),
             Expanded(
               child: Text(
-                "Here's Gemini's advice based on your input. It will appear dynamically.",
-                style: TextStyle(fontSize: 16),
+                "Here's Gemini's advice based on your input.",
+                style: const TextStyle(fontSize: 16),
               ),
             ),
           ],
