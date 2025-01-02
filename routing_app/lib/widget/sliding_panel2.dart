@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
+import 'package:routing_app/widget/custom_container.dart';
 
 class SlidingPanel2 extends StatefulWidget {
   final ScrollController controller;
@@ -111,63 +112,20 @@ class _SlidingPanel2State extends State<SlidingPanel2>
               ],
             ),
             const SizedBox(height: 20),
-            Container(
-              padding: const EdgeInsets.all(16),
-              decoration: BoxDecoration(
-                gradient: LinearGradient(
-                  colors: [Colors.blue.shade50, Colors.blue.shade100],
-                ),
-                borderRadius: BorderRadius.circular(12),
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.black12,
-                    blurRadius: 10,
-                    offset: const Offset(0, 4),
-                  ),
-                ],
-              ),
-              child: Column(
-                children: [
-                  Text(
-                    "Fuel consumption for your vehicle: ${widget.vehicleType}",
-                    style: const TextStyle(
-                        fontSize: 18, fontWeight: FontWeight.w500),
-                  ),
-                  const SizedBox(height: 8),
-                  Text(
-                    widget.vehicleType == "Cycle"
-                        ? "Cycles do not consume fuel."
-                        : "${widget.fuelConsumption.toStringAsFixed(2)} liters",
-                    style: const TextStyle(fontSize: 16),
-                  ),
-                ],
-              ),
-            ),
+
+
             const SizedBox(height: 20),
-            const Text(
-              "Estimated distance:",
-              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-            ),
-            Text(
-              widget.dis,
-              style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w400),
-            ),
+
+            CustomContainer(data1: "Estimated distance", data2: widget.dis),
+
             const SizedBox(height: 20),
-            const Text(
-              "Estimated duration:",
-              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-            ),
-            Text(
-              widget.dur,
-              style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w400),
-            ),
+
+            CustomContainer(data1: "Estimated duration", data2: widget.dur),
+
             const SizedBox(height: 20),
-            Text(
-              "Your vehicle: ${widget.vehicleType}\n"
-              "Your fuel type: ${widget.fuelType}\n"
-              "Vehicle age: ${widget.age} years",
-              style: const TextStyle(fontSize: 16),
-            ),
+
+            CustomContainer(data1: "Estimated fuel consumption", data2: "${widget.fuelConsumption.toStringAsFixed(2)} litres"),
+
             const SizedBox(height: 20),
             _buildBarChart(),
             const SizedBox(height: 20),
