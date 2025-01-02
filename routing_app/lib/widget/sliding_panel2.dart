@@ -33,32 +33,6 @@ class _SlidingPanel2State extends State<SlidingPanel2>
     with SingleTickerProviderStateMixin {
   late AnimationController _animationController;
 
-  double calculateMileage(String vehicleType, String age) {
-    // Use nested conditions to assign mileage values
-    if (vehicleType == 'Car') {
-      if (age == '<1') return 18;
-      if (age == '2') return 16;
-      if (age == '3') return 14;
-      if (age == '4') return 12;
-      if (age == '>5') return 10;
-    } else if (vehicleType == 'Bike') {
-      if (age == '<1') return 45;
-      if (age == '2') return 42;
-      if (age == '3') return 40;
-      if (age == '4') return 38;
-      if (age == '>5') return 35;
-    } else if (vehicleType == 'Cycle') {
-      return 0; // Cycles do not have mileage
-    } else if (vehicleType == 'Auto') {
-      if (age == '<1') return 25;
-      if (age == '2') return 23;
-      if (age == '3') return 21;
-      if (age == '4') return 20;
-      if (age == '>5') return 18;
-    }
-    return 0; // Default mileage if none matches
-  }
-
   @override
   void initState() {
     super.initState();
@@ -86,20 +60,22 @@ class _SlidingPanel2State extends State<SlidingPanel2>
           children: [
             Center(
               child: Container(
-                width: 40,
-                height: 5,
+                width: 50,
+                height: 6,
                 decoration: BoxDecoration(
-                  color: Colors.grey,
-                  borderRadius: BorderRadius.circular(10),
+                  gradient: LinearGradient(
+                    colors: [Colors.blue, Colors.purple],
+                  ),
+                  borderRadius: BorderRadius.circular(12),
                 ),
               ),
             ),
-            const SizedBox(height: 16),
+            const SizedBox(height: 20),
             Text(
               widget.locInfo,
-              style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+              style: const TextStyle(fontSize: 22, fontWeight: FontWeight.w600),
             ),
-            const SizedBox(height: 8),
+            const SizedBox(height: 12),
             Row(
               children: [
                 RatingBarIndicator(
@@ -124,7 +100,7 @@ class _SlidingPanel2State extends State<SlidingPanel2>
                 ),
               ],
             ),
-            const SizedBox(height: 16),
+            const SizedBox(height: 20),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
@@ -134,61 +110,67 @@ class _SlidingPanel2State extends State<SlidingPanel2>
                 _buildHoverButton(Icons.share, 'Share', Colors.red),
               ],
             ),
-            const SizedBox(height: 16),
-            // New Section for "7 minutes"
+            const SizedBox(height: 20),
             Container(
-              height: 100,
+              padding: const EdgeInsets.all(16),
               decoration: BoxDecoration(
-                color: Colors.grey[200],
+                gradient: LinearGradient(
+                  colors: [Colors.blue.shade50, Colors.blue.shade100],
+                ),
                 borderRadius: BorderRadius.circular(12),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black12,
+                    blurRadius: 10,
+                    offset: const Offset(0, 4),
+                  ),
+                ],
               ),
               child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   Text(
                     "Fuel consumption for your vehicle: ${widget.vehicleType}",
-                    style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                    style: const TextStyle(
+                        fontSize: 18, fontWeight: FontWeight.w500),
                   ),
-                  SizedBox(height: 8),
+                  const SizedBox(height: 8),
                   Text(
                     widget.vehicleType == "Cycle"
                         ? "Cycles do not consume fuel."
-                        // : "Estimated fuel consumption: ${(double.tryParse(widget.newdist) ?? 0 / (calculateMileage(widget.vehicleType, widget.age) > 0 ? calculateMileage(widget.vehicleType, widget.age) : 1)).toStringAsFixed(2)} liters",
-                        : widget.fuelConsumption.toString(),
-                    style: TextStyle(fontSize: 16),
+                        : "${widget.fuelConsumption.toStringAsFixed(2)} liters",
+                    style: const TextStyle(fontSize: 16),
                   ),
                 ],
               ),
             ),
-
-            const SizedBox(height: 16),
+            const SizedBox(height: 20),
             const Text(
               "Estimated distance:",
               style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
             ),
             Text(
               widget.dis,
-              style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+              style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w400),
             ),
-            const SizedBox(height: 16),
+            const SizedBox(height: 20),
             const Text(
               "Estimated duration:",
               style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
             ),
             Text(
               widget.dur,
-              style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+              style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w400),
             ),
-            const SizedBox(height: 16),
+            const SizedBox(height: 20),
             Text(
               "Your vehicle: ${widget.vehicleType}\n"
               "Your fuel type: ${widget.fuelType}\n"
               "Vehicle age: ${widget.age} years",
-              style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+              style: const TextStyle(fontSize: 16),
             ),
-            const SizedBox(height: 16),
+            const SizedBox(height: 20),
             _buildBarChart(),
-            const SizedBox(height: 16),
+            const SizedBox(height: 20),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
@@ -199,7 +181,10 @@ class _SlidingPanel2State extends State<SlidingPanel2>
                   icon: const Icon(Icons.report),
                   label: const Text('AQI Estimate'),
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.red,
+                    backgroundColor: Colors.redAccent,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
                   ),
                 ),
                 ElevatedButton.icon(
@@ -209,12 +194,15 @@ class _SlidingPanel2State extends State<SlidingPanel2>
                   icon: const Icon(Icons.star),
                   label: const Text('Add to Favorites'),
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.blue,
+                    backgroundColor: Colors.blueAccent,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
                   ),
                 ),
               ],
             ),
-            const SizedBox(height: 16),
+            const SizedBox(height: 20),
             _buildGeminiSuggestions(),
           ],
         ),
@@ -231,11 +219,18 @@ class _SlidingPanel2State extends State<SlidingPanel2>
         cursor: SystemMouseCursors.click,
         child: Column(
           children: [
-            Icon(icon, size: 30, color: color),
+            Container(
+              padding: const EdgeInsets.all(8),
+              decoration: BoxDecoration(
+                color: color.withOpacity(0.2),
+                shape: BoxShape.circle,
+              ),
+              child: Icon(icon, size: 30, color: color),
+            ),
             const SizedBox(height: 4),
             Text(
               label,
-              style: TextStyle(color: color, fontWeight: FontWeight.bold),
+              style: TextStyle(color: color, fontWeight: FontWeight.w600),
             ),
           ],
         ),
