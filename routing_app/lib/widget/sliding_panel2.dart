@@ -9,6 +9,8 @@ class SlidingPanel2 extends StatefulWidget {
   final String vehicleType;
   final String fuelType;
   final String age;
+  final int  cost;
+  final double fuelConsumption;
 
   const SlidingPanel2({super.key,
     required this.controller,
@@ -17,7 +19,12 @@ class SlidingPanel2 extends StatefulWidget {
   required this.locInfo,
   required this.age,
   required this.fuelType,
-  required this.vehicleType});
+  required this.vehicleType, 
+  required this.cost,
+  required this.fuelConsumption,
+  });
+
+  
 
   @override
   State<SlidingPanel2> createState() => _SlidingPanel2State();
@@ -26,6 +33,32 @@ class SlidingPanel2 extends StatefulWidget {
 class _SlidingPanel2State extends State<SlidingPanel2>
     with SingleTickerProviderStateMixin {
   late AnimationController _animationController;
+
+  double calculateMileage(String vehicleType, String age) {
+    // Use nested conditions to assign mileage values
+    if (vehicleType == 'Car') {
+      if (age == '<1') return 18;
+      if (age == '2') return 16;
+      if (age == '3') return 14;
+      if (age == '4') return 12;
+      if (age == '>5') return 10;
+    } else if (vehicleType == 'Bike') {
+      if (age == '<1') return 45;
+      if (age == '2') return 42;
+      if (age == '3') return 40;
+      if (age == '4') return 38;
+      if (age == '>5') return 35;
+    } else if (vehicleType == 'Cycle') {
+      return 0; // Cycles do not have mileage
+    } else if (vehicleType == 'Auto') {
+      if (age == '<1') return 25;
+      if (age == '2') return 23;
+      if (age == '3') return 21;
+      if (age == '4') return 20;
+      if (age == '>5') return 18;
+    }
+    return 0; // Default mileage if none matches
+  }
 
   @override
   void initState() {
@@ -140,12 +173,30 @@ class _SlidingPanel2State extends State<SlidingPanel2>
             _buildBarChart(),
             const SizedBox(height: 16),
             Container(
-              height: 100,
-              decoration: BoxDecoration(
-                color: Colors.grey[200],
-                borderRadius: BorderRadius.circular(12),
-              ),
-            ),
+  height: 100,
+  decoration: BoxDecoration(
+    color: Colors.grey[200],
+    borderRadius: BorderRadius.circular(12),
+  ),
+  child: Column(
+    mainAxisAlignment: MainAxisAlignment.center,
+    children: [
+      Text(
+        "Fuel consumption for your vehicle: ${widget.vehicleType}",
+        style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+      ),
+      SizedBox(height: 8),
+      Text(
+        widget.vehicleType == "Cycle"
+            ? "Cycles do not consume fuel."
+            // : "Estimated fuel consumption: ${(double.tryParse(widget.newdist) ?? 0 / (calculateMileage(widget.vehicleType, widget.age) > 0 ? calculateMileage(widget.vehicleType, widget.age) : 1)).toStringAsFixed(2)} liters",
+            :widget.fuelConsumption.toString(),
+        style: TextStyle(fontSize: 16),
+      ),
+    ],
+  ),
+),
+
             const SizedBox(height: 16),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,

@@ -32,8 +32,34 @@ class _RealTimeSearchMapState extends State<RealTimeSearchMap> {
   final Set<Marker> _markers = {};
   String locationInfo="";
   String _distance="";
-  String _duration="";// Markers on the map
-
+  String _duration="";
+  double _fuelConsumption=0;
+  String _newdist = "";// Markers on the map
+ double calculateMileage(String vehicleType, String age) {
+    // Use nested conditions to assign mileage values
+    if (vehicleType == 'Car') {
+      if (age == '<1') return 18.0;
+      if (age == '2') return 16.0;
+      if (age == '3') return 14.0;
+      if (age == '4') return 12.0;
+      if (age == '>5') return 10.0;
+    } else if (vehicleType == 'Bike') {
+      if (age == '<1') return 45.0;
+      if (age == '2') return 42.0;
+      if (age == '3') return 40.0;
+      if (age == '4') return 38.0;
+      if (age == '>5') return 35.0;
+    } else if (vehicleType == 'Cycle') {
+      return 0; // Cycles do not have mileage
+    } else if (vehicleType == 'Auto') {
+      if (age == '<1') return 25.0;
+      if (age == '2') return 23.0;
+      if (age == '3') return 21.0;
+      if (age == '4') return 20.0;
+      if (age == '>5') return 18.0;
+    }
+    return 0; // Default mileage if none matches
+  }
   // Fetch user's current location
   Future<void> _getCurrentLocation() async {
     try {
@@ -89,10 +115,16 @@ class _RealTimeSearchMapState extends State<RealTimeSearchMap> {
           if (elements['status'] == 'OK') {
             final distance = elements['distance']['text']; // e.g., "5.4 km"
             final duration = elements['duration']['text']; // e.g., "12 mins"
+            final distanceValue = elements['distance']['value']/1000;
+
+            final mileage = calculateMileage(widget.vehicleType, widget.age);
+            final fuelConsumption = distanceValue / mileage ;
+
 
             setState(() {
               _distance = distance;
               _duration = duration;
+              _fuelConsumption = fuelConsumption;
             });
 
           } else {
@@ -265,6 +297,9 @@ class _RealTimeSearchMapState extends State<RealTimeSearchMap> {
                     vehicleType: widget.vehicleType,
                     fuelType: widget.fuelType,
                     age: widget.age,
+                    cost: 0, 
+                    fuelConsumption: _fuelConsumption,// Add the required cost argument
+                    
 
                 ),
             maxHeight: MediaQuery.of(context).size.height * 0.76,
