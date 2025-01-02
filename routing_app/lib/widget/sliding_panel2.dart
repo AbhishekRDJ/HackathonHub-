@@ -111,62 +111,20 @@ class _SlidingPanel2State extends State<SlidingPanel2>
               ],
             ),
             const SizedBox(height: 20),
-            Container(
-              padding: const EdgeInsets.all(16),
-              decoration: BoxDecoration(
-                gradient: LinearGradient(
-                  colors: [Colors.blue.shade50, Colors.blue.shade100],
-                ),
-                borderRadius: BorderRadius.circular(12),
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.black12,
-                    blurRadius: 10,
-                    offset: const Offset(0, 4),
-                  ),
-                ],
-              ),
-              child: Column(
-                children: [
-                  Text(
-                    "Fuel consumption for your vehicle: ${widget.vehicleType}",
-                    style: const TextStyle(
-                        fontSize: 18, fontWeight: FontWeight.w500),
-                  ),
-                  const SizedBox(height: 8),
-                  Text(
-                    widget.vehicleType == "Cycle"
-                        ? "Cycles do not consume fuel."
-                        : "${widget.fuelConsumption.toStringAsFixed(2)} liters",
-                    style: const TextStyle(fontSize: 16),
-                  ),
-                ],
-              ),
+            _buildInfoContainer(
+              title: "Estimated Distance",
+              content: widget.dis,
             ),
             const SizedBox(height: 20),
-            const Text(
-              "Estimated distance:",
-              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-            ),
-            Text(
-              widget.dis,
-              style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w400),
+            _buildInfoContainer(
+              title: "Estimated Duration",
+              content: widget.dur,
             ),
             const SizedBox(height: 20),
-            const Text(
-              "Estimated duration:",
-              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-            ),
-            Text(
-              widget.dur,
-              style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w400),
-            ),
-            const SizedBox(height: 20),
-            Text(
-              "Your vehicle: ${widget.vehicleType}\n"
-              "Your fuel type: ${widget.fuelType}\n"
-              "Vehicle age: ${widget.age} years",
-              style: const TextStyle(fontSize: 16),
+            _buildInfoContainer(
+              title: "Vehicle Details",
+              content:
+                  "Type: ${widget.vehicleType} Fuel: ${widget.fuelType} Age: ${widget.age} years",
             ),
             const SizedBox(height: 20),
             _buildBarChart(),
@@ -206,6 +164,41 @@ class _SlidingPanel2State extends State<SlidingPanel2>
             _buildGeminiSuggestions(),
           ],
         ),
+      ),
+    );
+  }
+
+  Widget _buildInfoContainer({required String title, required String content}) {
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        gradient: LinearGradient(
+          colors: [Colors.blue.shade50, Colors.blue.shade100],
+        ),
+        borderRadius: BorderRadius.circular(12),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black12,
+            blurRadius: 10,
+            offset: const Offset(0, 4),
+          ),
+        ],
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            title,
+            style: const TextStyle(
+                fontSize: 18, fontWeight: FontWeight.bold, color: Colors.blue),
+          ),
+          const SizedBox(height: 8),
+          Text(
+            content,
+            style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w400),
+          ),
+        ],
       ),
     );
   }
