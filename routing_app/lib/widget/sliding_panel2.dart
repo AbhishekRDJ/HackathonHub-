@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
+import 'dart:convert';
+import 'package:http/http.dart' as http;
 
 class SlidingPanel2 extends StatefulWidget {
   final ScrollController controller;
@@ -9,22 +11,21 @@ class SlidingPanel2 extends StatefulWidget {
   final String vehicleType;
   final String fuelType;
   final String age;
-  final int  cost;
+  final int cost;
   final double fuelConsumption;
 
-  const SlidingPanel2({super.key,
+  const SlidingPanel2({
+    super.key,
     required this.controller,
     required this.dis,
     required this.dur,
-  required this.locInfo,
-  required this.age,
-  required this.fuelType,
-  required this.vehicleType, 
-  required this.cost,
-  required this.fuelConsumption,
+    required this.locInfo,
+    required this.age,
+    required this.fuelType,
+    required this.vehicleType,
+    required this.cost,
+    required this.fuelConsumption,
   });
-
-  
 
   @override
   State<SlidingPanel2> createState() => _SlidingPanel2State();
@@ -60,6 +61,10 @@ class _SlidingPanel2State extends State<SlidingPanel2>
     return 0; // Default mileage if none matches
   }
 
+  List<int> aqiData = [];
+  bool isLoading = true;
+  String errorMessage = '';
+
   @override
   void initState() {
     super.initState();
@@ -68,6 +73,47 @@ class _SlidingPanel2State extends State<SlidingPanel2>
       duration: const Duration(milliseconds: 800),
     );
     _animationController.forward();
+    _fetchAQIData();
+  }
+
+  Future<void> _fetchAQIData() async {
+    const String token = "c2462c6c46be8a23f08c47b110d493265397d745"; // Replace with your API token
+    const double latitude = 26.268249; // Replace with actual latitude
+    const double longitude = 73.0193853; // Replace with actual longitude
+
+    final String url =
+        "https://api.waqi.info/feed/geo:$latitude;$longitude/?token=$token";
+
+    try {
+      final response = await http.get(Uri.parse(url));
+
+      if (response.statusCode == 200) {
+        final data = json.decode(response.body);
+
+        if (data["status"] == "ok") {
+          final forecast = data["data"]["forecast"]["daily"]["pm25"];
+          setState(() {
+            aqiData = forecast.map<int>((item) => item["avg"] as int).toList();
+            isLoading = false;
+          });
+        } else {
+          setState(() {
+            errorMessage = data["data"]["message"] ?? "Unknown error";
+            isLoading = false;
+          });
+        }
+      } else {
+        setState(() {
+          errorMessage = "Failed to fetch AQI data.";
+          isLoading = false;
+        });
+      }
+    } catch (e) {
+      setState(() {
+        errorMessage = "An error occurred: $e";
+        isLoading = false;
+      });
+    }
   }
 
   @override
@@ -95,6 +141,11 @@ class _SlidingPanel2State extends State<SlidingPanel2>
                 ),
               ),
             ),
+
+            const SizedBox(height: 16),
+            
+            
+
             const SizedBox(height: 16),
             Text(
               widget.locInfo,
@@ -162,40 +213,44 @@ class _SlidingPanel2State extends State<SlidingPanel2>
 
             Text(
               "your vehicle :- ${widget.vehicleType}\n"
-                  "your fuel type :- ${widget.fuelType}\n"
-                  "your vehicle age :- ${widget.age} years ",
+              "your fuel type :- ${widget.fuelType}\n"
+              "your vehicle age :- ${widget.age} years ",
               style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
             ),
-
 
 
             const SizedBox(height: 8),
             _buildBarChart(),
             const SizedBox(height: 16),
             Container(
-  height: 100,
-  decoration: BoxDecoration(
-    color: Colors.grey[200],
-    borderRadius: BorderRadius.circular(12),
-  ),
-  child: Column(
-    mainAxisAlignment: MainAxisAlignment.center,
-    children: [
-      Text(
-        "Fuel consumption for your vehicle: ${widget.vehicleType}",
-        style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-      ),
-      SizedBox(height: 8),
-      Text(
-        widget.vehicleType == "Cycle"
-            ? "Cycles do not consume fuel."
-            // : "Estimated fuel consumption: ${(double.tryParse(widget.newdist) ?? 0 / (calculateMileage(widget.vehicleType, widget.age) > 0 ? calculateMileage(widget.vehicleType, widget.age) : 1)).toStringAsFixed(2)} liters",
-            :widget.fuelConsumption.toString(),
-        style: TextStyle(fontSize: 16),
-      ),
-    ],
-  ),
-),
+              height: 100,
+              decoration: BoxDecoration(
+                color: Colors.grey[200],
+                borderRadius: BorderRadius.circular(12),
+              ),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Text(
+                    "Fuel consumption for your vehicle: ${widget.vehicleType}",
+                    style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                  ),
+                  SizedBox(height: 8),
+                  Text(
+                    widget.vehicleType == "Cycle"
+                        ? "Cycles do not consume fuel."
+                        // : "Estimated fuel consumption: ${(double.tryParse(widget.newdist) ?? 0 / (calculateMileage(widget.vehicleType, widget.age) > 0 ? calculateMileage(widget.vehicleType, widget.age) : 1)).toStringAsFixed(2)} liters",
+                        : widget.fuelConsumption.toString(),
+                    style: TextStyle(fontSize: 16),
+                  ),
+                ],
+              ),
+
+              
+            ),
+
+             const SizedBox(height: 8),
+            _buildAQIGraph(),
 
             const SizedBox(height: 16),
             Row(
@@ -231,6 +286,79 @@ class _SlidingPanel2State extends State<SlidingPanel2>
       ),
     );
   }
+
+  Widget _buildAQIGraph() {
+    if (isLoading) {
+      return const Center(child: CircularProgressIndicator());
+    }
+
+    if (errorMessage.isNotEmpty) {
+      return Text(
+        errorMessage,
+        style: const TextStyle(color: Colors.red),
+      );
+    }
+
+    return Container(
+      height: 200,
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(12),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black12,
+            blurRadius: 8,
+            offset: Offset(0, 2),
+          ),
+        ],
+      ),
+      padding: const EdgeInsets.all(16),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const Text(
+            'Air Quality Index (AQI)',
+            style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+          ),
+          const SizedBox(height: 8),
+          Expanded(
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.end,
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: List.generate(aqiData.length, (index) {
+                final aqiValue = aqiData[index];
+                final color = _getAQIColor(aqiValue);
+
+                return Container(
+                  width: 16,
+                  height: aqiValue.toDouble(),
+                  decoration: BoxDecoration(
+                    color: color,
+                    borderRadius: BorderRadius.circular(4),
+                  ),
+                );
+              }),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Color _getAQIColor(int aqi) {
+    if (aqi <= 50) {
+      return Colors.green;
+    } else if (aqi <= 100) {
+      return Colors.yellow;
+    } else if (aqi <= 150) {
+      return Colors.orange;
+    } else if (aqi <= 200) {
+      return Colors.red;
+    } else {
+      return Colors.purple;
+    }
+  }
+
 
   Widget _buildHoverButton(IconData icon, String label, Color color) {
     return GestureDetector(
