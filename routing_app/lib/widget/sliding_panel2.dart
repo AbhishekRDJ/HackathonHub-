@@ -260,17 +260,27 @@ class _SlidingPanel2State extends State<SlidingPanel2>
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Text(
-                    "Fuel consumption for your vehicle: ${widget.vehicleType}",
-                    style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-                  ),
+                  
                   SizedBox(height: 8),
                   Text(
                     widget.vehicleType == "Cycle"
                         ? "Cycles do not consume fuel."
                         // : "Estimated fuel consumption: ${(double.tryParse(widget.newdist) ?? 0 / (calculateMileage(widget.vehicleType, widget.age) > 0 ? calculateMileage(widget.vehicleType, widget.age) : 1)).toStringAsFixed(2)} liters",
-                        : widget.fuelConsumption.toString(),
+                        // : widget.fuelConsumption.toString(),
+                        : (widget.fuelType == "Petrol")
+                          ? "Your emission are: ${(widget.fuelConsumption * 2.31).toStringAsFixed(2)} kg of CO2"
+                          : (widget.fuelType == "Diesel")
+                          ? "Your emission are: ${(widget.fuelConsumption * 2.68).toStringAsFixed(2)} kg of CO2"
+                          : (widget.fuelType == "CNG")
+                          ? "Your emission are: ${(widget.fuelConsumption * 1.52).toStringAsFixed(2)} kg of CO2"
+                          : (widget.fuelType == "Electric")
+                          ? "Your emission are: ${(widget.fuelConsumption * 0.0).toStringAsFixed(2)} kg of CO2"
+                          : "Your emission are: ${(widget.fuelConsumption * 2.31).toStringAsFixed(2)} kg of CO2",
                     style: TextStyle(fontSize: 16),
+                  ),
+                  Text(
+                    " in this trip for vehicle-${widget.vehicleType} &fuel-${widget.fuelType}",
+                    style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
                   ),
                 ],
               ),
