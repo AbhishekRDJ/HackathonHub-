@@ -4,6 +4,7 @@ import 'package:geocoding/geocoding.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:http/http.dart' as http;
+import 'package:routing_app/utils/secrets.dart';
 import 'package:routing_app/widget/sliding_panel2.dart';
 import 'package:sliding_up_panel/sliding_up_panel.dart';
 
@@ -35,6 +36,7 @@ class _RealTimeSearchMapState extends State<RealTimeSearchMap> {
   String locationInfo = "";
   String _distance = "";
   String _duration = "";
+  Map<String, dynamic> weatherData = {};
   double _fuelConsumption = 0;
   double calculateMileage(String vehicleType, String age) {
     // Use nested conditions to assign mileage values
@@ -196,7 +198,9 @@ class _RealTimeSearchMapState extends State<RealTimeSearchMap> {
         final location = locations.first;
         setState(() {
           _searchedLocation = LatLng(location.latitude, location.longitude);
-        });
+
+        }
+        );
 
         // Animate the camera to the searched location
         _mapController.animateCamera(
@@ -217,6 +221,10 @@ class _RealTimeSearchMapState extends State<RealTimeSearchMap> {
         if (_searchedLocation != null) {
           await _fetchLocationDetails(_searchedLocation!);
           _addMarker(_searchedLocation!, "Searched Location");
+        }
+
+        if (_searchedLocation != null) {
+          weatherData = await getWeatherDetails(_searchedLocation!);
         }
 
         // Fetch and display the route
@@ -274,6 +282,27 @@ class _RealTimeSearchMapState extends State<RealTimeSearchMap> {
     }
   }
 
+  Future<Map<String, dynamic>> getWeatherDetails(LatLng location) async {
+    final String apiKey = weatherKey; // Replace with your OpenWeatherMap API key
+    final String url =
+        "https://api.openweathermap.org/data/2.5/forecast?lat=${location.latitude}&lon=${location.longitude}&appid=$apiKey&units=metric";
+
+    try {
+      final response = await http.get(Uri.parse(url));
+      if (response.statusCode == 200) {
+        final data = json.decode(response.body);
+
+        // Extract necessary details
+
+        return data;
+      } else {
+        throw Exception("Failed to fetch weather data: ${response.statusCode}");
+      }
+    } catch (error) {
+      throw Exception("Error fetching weather details: $error");
+    }
+  }
+
   @override
   void initState() {
     super.initState();
@@ -292,6 +321,7 @@ class _RealTimeSearchMapState extends State<RealTimeSearchMap> {
                 SlidingUpPanel(
                   panelBuilder: (controller) => SlidingPanel2(
                     controller: controller,
+                    destination: weatherData,
                     locInfo: locationInfo,
                     dis: _distance,
                     dur: _duration,
@@ -313,6 +343,7 @@ class _RealTimeSearchMapState extends State<RealTimeSearchMap> {
                     onMapCreated: (GoogleMapController controller) {
                       _mapController = controller;
                       _updateMapLocation(widget.destination);
+
                     },
                     myLocationButtonEnabled: true,
                     myLocationEnabled: true,
@@ -328,7 +359,8 @@ class _RealTimeSearchMapState extends State<RealTimeSearchMap> {
                     onPressed: () {
                       setState(() {
                         _showTraffic = !_showTraffic; // Toggle traffic layer
-                      });
+                      }
+                      );
                     },
                     child: Icon(
                       _showTraffic ? Icons.traffic : Icons.traffic_outlined,

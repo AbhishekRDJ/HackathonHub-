@@ -72,18 +72,18 @@ class ProfilePage extends StatelessWidget {
             ),
             const SizedBox(height: 10),
             const Text(
-              'Janhavi',
+              'Aditya',
               style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 10),
             ProfileDetailCard(
               title: 'Name',
-              value: 'Gayatri',
+              value: 'Aditya',
               onTap: () {
                 _showEditDialog(
                   context: context,
                   title: 'Name',
-                  initialValue: 'Gayatri',
+                  initialValue: 'Aditya',
                   onSave: (newValue) {
                     // Handle name save
                     ScaffoldMessenger.of(context).showSnackBar(
