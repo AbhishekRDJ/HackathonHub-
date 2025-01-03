@@ -11,26 +11,19 @@ class MainPage extends StatefulWidget {
 }
 
 class _MainPageState extends State<MainPage> {
-
   int index = 0;
 
-  final pages = [
-    const HomePage(),
-    const YourInfoPage(),
-    const ProfilePage()
-  ];
+  final pages = [const HomePage(), const YourInfoPage(), const ProfilePage()];
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-
       bottomNavigationBar: BottomNavigationBar(
-        onTap: (val){
-          setState(() {
-            index = val;
-          }
-          );
-        },
+          onTap: (val) {
+            setState(() {
+              index = val;
+            });
+          },
           currentIndex: index,
           selectedFontSize: 14,
           unselectedFontSize: 14,
@@ -42,22 +35,10 @@ class _MainPageState extends State<MainPage> {
           iconSize: 30,
           items: const [
             BottomNavigationBarItem(
-                icon: Icon(Icons.location_on),
-              label: "Explore"
-            ),
-
-            BottomNavigationBarItem(
-                icon: Icon(Icons.bookmark),
-                label: "You"
-            ),
-
-            BottomNavigationBarItem(
-                icon: Icon(Icons.person),
-                label: "Profile"
-            )
-          ]
-      ),
-
+                icon: Icon(Icons.location_on), label: "Explore"),
+            BottomNavigationBarItem(icon: Icon(Icons.bookmark), label: "You"),
+            BottomNavigationBarItem(icon: Icon(Icons.person), label: "Profile")
+          ]),
       body: IndexedStack(
         index: index,
         children: pages,
