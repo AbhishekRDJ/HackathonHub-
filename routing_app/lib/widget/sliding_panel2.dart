@@ -36,7 +36,6 @@ class _SlidingPanel2State extends State<SlidingPanel2>
   late AnimationController _animationController;
 
   double calculateMileage(String vehicleType, String age) {
-    // Use nested conditions to assign mileage values
     if (vehicleType == 'Car') {
       if (age == '<1') return 18;
       if (age == '2') return 16;
@@ -50,7 +49,7 @@ class _SlidingPanel2State extends State<SlidingPanel2>
       if (age == '4') return 38;
       if (age == '>5') return 35;
     } else if (vehicleType == 'Cycle') {
-      return 0; // Cycles do not have mileage
+      return 0;
     } else if (vehicleType == 'Auto') {
       if (age == '<1') return 25;
       if (age == '2') return 23;
@@ -58,7 +57,7 @@ class _SlidingPanel2State extends State<SlidingPanel2>
       if (age == '4') return 20;
       if (age == '>5') return 18;
     }
-    return 0; // Default mileage if none matches
+    return 0;
   }
 
   List<int> aqiData = [];
@@ -77,9 +76,9 @@ class _SlidingPanel2State extends State<SlidingPanel2>
   }
 
   Future<void> _fetchAQIData() async {
-    const String token = "c2462c6c46be8a23f08c47b110d493265397d745"; // Replace with your API token
-    const double latitude = 26.268249; // Replace with actual latitude
-    const double longitude = 73.0193853; // Replace with actual longitude
+    const String token = "c2462c6c46be8a23f08c47b110d493265397d745";
+    const double latitude = 26.268249;
+    const double longitude = 73.0193853;
 
     final String url =
         "https://api.waqi.info/feed/geo:$latitude;$longitude/?token=$token";
@@ -143,12 +142,7 @@ class _SlidingPanel2State extends State<SlidingPanel2>
                 ),
               ),
             ),
-
             const SizedBox(height: 16),
-            
-            
-
-            const SizedBox(height: 20),
             Text(
               widget.locInfo,
               style: const TextStyle(fontSize: 22, fontWeight: FontWeight.w600),
@@ -189,46 +183,14 @@ class _SlidingPanel2State extends State<SlidingPanel2>
               ],
             ),
             const SizedBox(height: 20),
-            Container(
-              padding: const EdgeInsets.all(16),
-              decoration: BoxDecoration(
-                gradient: LinearGradient(
-                  colors: [Colors.blue.shade50, Colors.blue.shade100],
-                ),
-                borderRadius: BorderRadius.circular(12),
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.black12,
-                    blurRadius: 10,
-                    offset: const Offset(0, 4),
-                  ),
-                ],
-              ),
-              child: Column(
-                children: [
-                  Text(
-                    "Fuel consumption for your vehicle: ${widget.vehicleType}",
-                    style: const TextStyle(
-                        fontSize: 18, fontWeight: FontWeight.w500),
-                  ),
-                  const SizedBox(height: 8),
-                  Text(
-                    widget.vehicleType == "Cycle"
-                        ? "Cycles do not consume fuel."
-                        : "${widget.fuelConsumption.toStringAsFixed(2)} liters",
-                    style: const TextStyle(fontSize: 16),
-                  ),
-                ],
-              ),
+            _buildInfoContainer(
+              title: "Estimated Distance",
+              content: widget.dis,
             ),
             const SizedBox(height: 20),
-            const Text(
-              "Estimated distance:",
-              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-            ),
-            Text(
-              widget.dis,
-              style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w400),
+            _buildInfoContainer(
+              title: "Estimated Duration",
+              content: widget.dur,
             ),
             const SizedBox(height: 20),
             const Text(
@@ -246,8 +208,6 @@ class _SlidingPanel2State extends State<SlidingPanel2>
               "Vehicle age: ${widget.age} years",
               style: const TextStyle(fontSize: 16),
             ),
-
-
             const SizedBox(height: 8),
             _buildBarChart(),
             const SizedBox(height: 16),
@@ -255,7 +215,6 @@ class _SlidingPanel2State extends State<SlidingPanel2>
 
              const SizedBox(height: 8),
             _buildAQIGraph(),
-
             const SizedBox(height: 16),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -332,6 +291,30 @@ class _SlidingPanel2State extends State<SlidingPanel2>
     );
   }
 
+  Widget _buildInfoContainer({required String title, required String content}) {
+    return Container(
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: Colors.grey[200],
+        borderRadius: BorderRadius.circular(12),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            title,
+            style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+          ),
+          const SizedBox(height: 8),
+          Text(
+            content,
+            style: const TextStyle(fontSize: 16),
+          ),
+        ],
+      ),
+    );
+  }
+
   Widget _buildAQIGraph() {
     if (isLoading) {
       return const Center(child: CircularProgressIndicator());
@@ -353,7 +336,7 @@ class _SlidingPanel2State extends State<SlidingPanel2>
           BoxShadow(
             color: Colors.black12,
             blurRadius: 8,
-            offset: Offset(0, 2),
+            offset: const Offset(0, 2),
           ),
         ],
       ),
@@ -403,7 +386,6 @@ class _SlidingPanel2State extends State<SlidingPanel2>
       return Colors.purple;
     }
   }
-
 
   Widget _buildHoverButton(IconData icon, String label, Color color) {
     return GestureDetector(
