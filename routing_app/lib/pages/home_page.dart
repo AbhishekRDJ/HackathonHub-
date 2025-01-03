@@ -68,7 +68,7 @@ class _HomePageState extends State<HomePage>
             : SlidingUpPanel(
                 panelBuilder: (controller) =>
                     PanelWidget(controller: controller),
-                maxHeight: MediaQuery.of(context).size.height * 0.75,
+                maxHeight: MediaQuery.of(context).size.height * 0.8,
                 minHeight: MediaQuery.of(context).size.height * 0.045,
                 borderRadius: BorderRadius.circular(6),
                 body: GoogleMap(

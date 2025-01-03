@@ -5,12 +5,14 @@ class CustomTextField extends StatelessWidget {
   final String text;
   final Color color;
   final IconData? icon;
+  final IconData? preIcon;
   final bool isIcon;
 
   const CustomTextField({super.key,
     required this.text,
     required this.color,
     this.icon,
+    this.preIcon,
     required this.isIcon
   }
   );
@@ -29,6 +31,7 @@ class CustomTextField extends StatelessWidget {
             color: Colors.grey
         ),
         suffixIcon: isIcon ? Icon(icon) : null,
+          prefixIcon: Icon(preIcon),
 
         enabledBorder: OutlineInputBorder(
           borderSide: const BorderSide(color: Color.fromARGB(50, 80,80,80)),

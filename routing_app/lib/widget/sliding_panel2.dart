@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
-import 'package:routing_app/widget/custom_container.dart';
 
 class SlidingPanel2 extends StatefulWidget {
   final ScrollController controller;
@@ -37,7 +36,6 @@ class _SlidingPanel2State extends State<SlidingPanel2>
   late AnimationController _animationController;
 
   double calculateMileage(String vehicleType, String age) {
-    // Use nested conditions to assign mileage values
     if (vehicleType == 'Car') {
       if (age == '<1') return 18;
       if (age == '2') return 16;
@@ -51,7 +49,7 @@ class _SlidingPanel2State extends State<SlidingPanel2>
       if (age == '4') return 38;
       if (age == '>5') return 35;
     } else if (vehicleType == 'Cycle') {
-      return 0; // Cycles do not have mileage
+      return 0;
     } else if (vehicleType == 'Auto') {
       if (age == '<1') return 25;
       if (age == '2') return 23;
@@ -59,7 +57,7 @@ class _SlidingPanel2State extends State<SlidingPanel2>
       if (age == '4') return 20;
       if (age == '>5') return 18;
     }
-    return 0; // Default mileage if none matches
+    return 0;
   }
 
   List<int> aqiData = [];
@@ -78,9 +76,9 @@ class _SlidingPanel2State extends State<SlidingPanel2>
   }
 
   Future<void> _fetchAQIData() async {
-    const String token = "c2462c6c46be8a23f08c47b110d493265397d745"; // Replace with your API token
-    const double latitude = 26.268249; // Replace with actual latitude
-    const double longitude = 73.0193853; // Replace with actual longitude
+    const String token = "c2462c6c46be8a23f08c47b110d493265397d745";
+    const double latitude = 26.268249;
+    const double longitude = 73.0193853;
 
     final String url =
         "https://api.waqi.info/feed/geo:$latitude;$longitude/?token=$token";
@@ -144,12 +142,7 @@ class _SlidingPanel2State extends State<SlidingPanel2>
                 ),
               ),
             ),
-
             const SizedBox(height: 16),
-            
-            
-
-            const SizedBox(height: 20),
             Text(
               widget.locInfo,
               style: const TextStyle(fontSize: 22, fontWeight: FontWeight.w600),
@@ -191,47 +184,71 @@ class _SlidingPanel2State extends State<SlidingPanel2>
             ),
             const SizedBox(height: 20),
 
-            CustomContainer(data1: "Estimated fuel consumption",
-                data2: widget.vehicleType == "Cycle"
-                    ? "Cycles do not consume fuel."
-                    : "${widget.fuelConsumption.toStringAsFixed(2)} liters"),
-
-            const SizedBox(height: 20),
-            const Text(
-              "Estimated distance:",
-              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-            ),
-            Text(
-              widget.dis,
-              style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w400),
-            ),
-            const SizedBox(height: 20),
-            const Text(
-              "Estimated duration:",
-              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-            ),
-            Text(
-              widget.dur,
-              style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w400),
-            ),
-            const SizedBox(height: 20),
-
+           Container(
+             padding: const EdgeInsets.symmetric(horizontal: 10,vertical: 10),
+             decoration: BoxDecoration(
+               color: Colors.blue,
+               borderRadius: BorderRadius.circular(16)
+             ),
+             child: Row(
+               mainAxisAlignment: MainAxisAlignment.center,
+               children: [
+                 Icon(widget.vehicleType=='Bike'?Icons.motorcycle_rounded:Icons.directions_car,
+                   color: Colors.white,
+                 size: 35,),
+                 const SizedBox(width: 15,),
+                 Text(widget.dur,
+                 style: const TextStyle(fontWeight: FontWeight.bold,fontSize: 18,color: Colors.white),)
+                     
+               ],
+             ),
+           ),
+            const SizedBox(height: 25),
+            
             Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                CustomContainer(data1: "vehicle type", data2: widget.vehicleType),
-                CustomContainer(data1: "fuel type", data2: widget.fuelType),
-                CustomContainer(data1: "Age", data2: widget.age)
+                Text("Estimated fuel consumption :- ${widget.fuelConsumption.toStringAsFixed(2)} litres",
+                style: const TextStyle(
+                  fontSize: 16,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.green
+                ),
+                ),
+                const SizedBox(width: 10,),
+                const Icon(Icons.energy_savings_leaf,
+                color: Colors.green,)
               ],
             ),
+            const SizedBox(height: 20),
+            const Divider(),
+            const SizedBox(height: 20),
 
+            Container(
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(16),
+                color: Colors.white
+              ),
+              child: ListTile(
+                title: Text(widget.vehicleType),
+                subtitle: Text("Distance :- ${widget.dis}   Fuel type :- ${widget.fuelType},",
+                style: const TextStyle(color: Colors.grey,fontSize: 14),),
+                leading: CircleAvatar(
+                  backgroundColor: Colors.blue,
+                  child: Icon(
+                    color: Colors.white,
+                    size: 33,
+                    widget.vehicleType == 'Bike' ? Icons.motorcycle_rounded :
+                        Icons.directions_car
+                  ),
+                ),
+              ),
+            ),
 
-
+            
             const SizedBox(height: 8),
             _buildBarChart(),
             const SizedBox(height: 16),
             Container(
-              padding: const EdgeInsets.symmetric(horizontal: 20,vertical: 15),
               height: 100,
               decoration: BoxDecoration(
                 color: Colors.grey[200],
@@ -240,34 +257,32 @@ class _SlidingPanel2State extends State<SlidingPanel2>
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  
-                  SizedBox(height: 8),
+                  const SizedBox(height: 8),
                   Text(
                     widget.vehicleType == "Cycle"
                         ? "Cycles do not consume fuel."
-                        // : "Estimated fuel consumption: ${(double.tryParse(widget.newdist) ?? 0 / (calculateMileage(widget.vehicleType, widget.age) > 0 ? calculateMileage(widget.vehicleType, widget.age) : 1)).toStringAsFixed(2)} liters",
-                        // : widget.fuelConsumption.toString(),
                         : (widget.fuelType == "Petrol")
-                          ? "Your emission are: ${(widget.fuelConsumption * 2.31).toStringAsFixed(2)} kg of CO2"
-                          : (widget.fuelType == "Diesel")
-                          ? "Your emission are: ${(widget.fuelConsumption * 2.68).toStringAsFixed(2)} kg of CO2"
-                          : (widget.fuelType == "CNG")
-                          ? "Your emission are: ${(widget.fuelConsumption * 1.52).toStringAsFixed(2)} kg of CO2"
-                          : (widget.fuelType == "Electric")
-                          ? "Your emission are: ${(widget.fuelConsumption * 0.0).toStringAsFixed(2)} kg of CO2"
-                          : "Your emission are: ${(widget.fuelConsumption * 2.31).toStringAsFixed(2)} kg of CO2",
-                    style: TextStyle(fontSize: 16),
+                            ? "Your emission are: ${(widget.fuelConsumption * 2.31).toStringAsFixed(2)} kg of CO2"
+                            : (widget.fuelType == "Diesel")
+                                ? "Your emission are: ${(widget.fuelConsumption * 2.68).toStringAsFixed(2)} kg of CO2"
+                                : (widget.fuelType == "CNG")
+                                    ? "Your emission are: ${(widget.fuelConsumption * 1.52).toStringAsFixed(2)} kg of CO2"
+                                    : (widget.fuelType == "Electric")
+                                        ? "Your emission are: ${(widget.fuelConsumption * 0.0).toStringAsFixed(2)} kg of CO2"
+                                        : "Your emission are: ${(widget.fuelConsumption * 2.31).toStringAsFixed(2)} kg of CO2",
+                    style: const TextStyle(fontSize: 16),
                   ),
 
                 ],
               ),
+            ),
+            const SizedBox(height: 12),
 
-              
+            Container(
+
             ),
 
-             const SizedBox(height: 8),
             _buildAQIGraph(),
-
             const SizedBox(height: 16),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -308,6 +323,30 @@ class _SlidingPanel2State extends State<SlidingPanel2>
     );
   }
 
+  Widget _buildInfoContainer({required String title, required String content}) {
+    return Container(
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: Colors.grey[200],
+        borderRadius: BorderRadius.circular(12),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            title,
+            style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+          ),
+          const SizedBox(height: 8),
+          Text(
+            content,
+            style: const TextStyle(fontSize: 16),
+          ),
+        ],
+      ),
+    );
+  }
+
   Widget _buildAQIGraph() {
     if (isLoading) {
       return const Center(child: CircularProgressIndicator());
@@ -329,7 +368,7 @@ class _SlidingPanel2State extends State<SlidingPanel2>
           BoxShadow(
             color: Colors.black12,
             blurRadius: 8,
-            offset: Offset(0, 2),
+            offset: const Offset(0, 2),
           ),
         ],
       ),
@@ -379,7 +418,6 @@ class _SlidingPanel2State extends State<SlidingPanel2>
       return Colors.purple;
     }
   }
-
 
   Widget _buildHoverButton(IconData icon, String label, Color color) {
     return GestureDetector(

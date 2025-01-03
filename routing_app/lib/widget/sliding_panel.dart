@@ -34,9 +34,6 @@ class _PanelWidgetState extends State<PanelWidget> {
 
   final TextEditingController _searchController = TextEditingController();
 
-
-
-
   @override
   Widget build(BuildContext context) {
     return Padding(
@@ -84,18 +81,24 @@ class _PanelWidgetState extends State<PanelWidget> {
                   controller: textController,
                   focusNode: focusNode,
                   decoration: InputDecoration(
-                    fillColor: const Color.fromARGB(40, 100, 100, 100),
-                    prefixIcon: const Icon(Icons.location_on),
+                    fillColor: const Color.fromARGB(10, 50, 100, 100),
                     filled: true,
-                    hintText: 'location',
-                    contentPadding: const EdgeInsets.symmetric(horizontal: 20),
-                    enabledBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(6),
-                      borderSide: const BorderSide(color: Colors.black),
+                    contentPadding: const EdgeInsets.symmetric(horizontal: 20,vertical: 20),
+                    hintText: "Search",
+                    hintStyle: const TextStyle(
+                        fontSize: 16,
+                        color: Colors.grey
                     ),
+                    prefixIcon: Icon(Icons.location_on),
+
+                    enabledBorder: OutlineInputBorder(
+                        borderSide: const BorderSide(color: Color.fromARGB(50, 80,80,80)),
+                        borderRadius: BorderRadius.circular(12)
+                    ),
+
                     focusedBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(6),
-                      borderSide: const BorderSide(color: Colors.black),
+                        borderSide: const BorderSide(color: Color.fromARGB(50, 80,80,80)),
+                        borderRadius: BorderRadius.circular(12)
                     ),
                   ),
                 );
@@ -153,31 +156,35 @@ class _PanelWidgetState extends State<PanelWidget> {
           const SizedBox(height: 25,),
 
 
-          const SizedBox(height: 25),
-          
+          const SizedBox(height: 20),
+
           ElevatedButton(onPressed: (){
-            if(_searchController.text!=""){
+            if(_searchController.text!="" &&
+            selectedVehicleType!=null &&
+            selectedFuelType!=null &&
+            _selectedAge != null
+            ){
               Navigator.of(context).push(
-                  MaterialPageRoute(builder: (context)=>RealTimeSearchMap(
-                    destination: _searchController.text,
-                    vehicleType: selectedVehicleType!,
-                    fuelType: selectedFuelType!,
-                    age: _selectedAge!,
-                  )),
+                MaterialPageRoute(builder: (context)=>RealTimeSearchMap(
+                  destination: _searchController.text,
+                  vehicleType: selectedVehicleType!,
+                  fuelType: selectedFuelType!,
+                  age: _selectedAge!,
+                )),
               );
 
             }else{
-              ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("please select location")));
+              ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("please select all details")));
             }
           },
             style: const ButtonStyle(
-              backgroundColor: WidgetStatePropertyAll(Colors.lightBlue),
+              backgroundColor: WidgetStatePropertyAll(Colors.black),
               padding: WidgetStatePropertyAll(EdgeInsets.symmetric(vertical: 12)),
             ),
 
             child: const Text("Fetch best route",
                 style: TextStyle(
-                    fontSize: 18,color: Colors.black,fontWeight: FontWeight.bold)
+                    fontSize: 18,color: Colors.white,fontWeight: FontWeight.bold)
             ),
           )
 
