@@ -4,10 +4,8 @@ import 'package:geocoding/geocoding.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:http/http.dart' as http;
-import 'package:routing_app/utils/secrets.dart';
 import 'package:routing_app/widget/sliding_panel2.dart';
 import 'package:sliding_up_panel/sliding_up_panel.dart';
-
 
 class RealTimeSearchMap extends StatefulWidget {
   final String destination;
@@ -27,18 +25,17 @@ class RealTimeSearchMap extends StatefulWidget {
 }
 
 class _RealTimeSearchMapState extends State<RealTimeSearchMap> {
-
+  final TextEditingController _searchController = TextEditingController();
   late GoogleMapController _mapController;
-  String city = "";
   LatLng? _currentLocation; // User's current location
   LatLng? _searchedLocation;
   Set<Polyline> _polylines = {};
   final Set<Marker> _markers = {};
+  bool _showTraffic = false; // Traffic layer toggle
   String locationInfo = "";
   String _distance = "";
   String _duration = "";
   double _fuelConsumption = 0;
-  // Markers on the map
   double calculateMileage(String vehicleType, String age) {
     // Use nested conditions to assign mileage values
     if (vehicleType == 'Car') {
@@ -100,30 +97,6 @@ class _RealTimeSearchMapState extends State<RealTimeSearchMap> {
     }
   }
 
-
-  Future<Map<String, dynamic>> fetchDestinationWeather(LatLng destination) async {
-    final weatherApiKey = weatherKey; // Replace with your OpenWeatherMap API key
-    final weatherUrl =
-        'https://api.openweathermap.org/data/2.5/weather?lat=${destination.latitude}&lon=${destination.longitude}&appid=$weatherApiKey&units=metric';
-
-    try {
-      final response = await http.get(Uri.parse(weatherUrl));
-      if (response.statusCode == 200) {
-        final weatherData = json.decode(response.body);
-        return {
-          'temperature': weatherData['main']['temp'],
-          'description': weatherData['weather'][0]['description'],
-          'location': weatherData['name']
-        };
-      } else {
-        throw Exception('Failed to fetch weather data: ${response.statusCode}');
-      }
-    } catch (e) {
-      throw Exception('Error fetching weather: $e');
-    }
-  }
-
-
   Future<void> _fetchDistanceAndDuration(
       LatLng source, LatLng destination) async {
     final apiKey =
@@ -172,7 +145,8 @@ class _RealTimeSearchMapState extends State<RealTimeSearchMap> {
 
   // Fetch location details using Geocoding API
   Future<void> _fetchLocationDetails(LatLng location) async {
-    final apiKey = googleApiKey;// Replace with your API key
+    final apiKey =
+        'AIzaSyBx827KsGam_YfYb7ucls9iYpAWwXJk9PM'; // Replace with your API key
     final url =
         'https://maps.googleapis.com/maps/api/geocode/json?latlng=${location.latitude},${location.longitude}&key=$apiKey';
 
@@ -184,16 +158,7 @@ class _RealTimeSearchMapState extends State<RealTimeSearchMap> {
 
         if (data['status'] == 'OK' && data['results'].isNotEmpty) {
           final placeDetails = data['results'][0]; // Top result
-          final address = placeDetails['formatted_address'];
-
-          final addressComponents = placeDetails['address_components'];
-          for (var component in addressComponents) {
-            if (component['types'].contains('locality')) {
-              city = component['long_name']; // City name
-              break;
-            }
-          }
-          debugPrint(city);
+          final address = placeDetails['formatted_address']; // Full address
 
           setState(() {
             locationInfo = address;
@@ -221,9 +186,6 @@ class _RealTimeSearchMapState extends State<RealTimeSearchMap> {
       );
     });
   }
-  // For LatLng
-
-
 
   // Update map to searched location
   Future<void> _updateMapLocation(String address) async {
@@ -321,8 +283,6 @@ class _RealTimeSearchMapState extends State<RealTimeSearchMap> {
 
   @override
   Widget build(BuildContext context) {
-
-
     return Scaffold(
       appBar: AppBar(title: Text("Routes")),
       body: _currentLocation == null
@@ -350,7 +310,7 @@ class _RealTimeSearchMapState extends State<RealTimeSearchMap> {
                       target: _currentLocation!,
                       zoom: 12.0,
                     ),
-                    onMapCreated: (GoogleMapController controller){
+                    onMapCreated: (GoogleMapController controller) {
                       _mapController = controller;
                       _updateMapLocation(widget.destination);
                     },
@@ -358,6 +318,24 @@ class _RealTimeSearchMapState extends State<RealTimeSearchMap> {
                     myLocationEnabled: true,
                     markers: _markers,
                     polylines: _polylines,
+                    trafficEnabled: _showTraffic, // Enable traffic layer
+                  ),
+                ),
+                Positioned(
+                  bottom: 111,
+                  right: 20,
+                  child: FloatingActionButton(
+                    onPressed: () {
+                      setState(() {
+                        _showTraffic = !_showTraffic; // Toggle traffic layer
+                      });
+                    },
+                    child: Icon(
+                      _showTraffic ? Icons.traffic : Icons.traffic_outlined,
+                    ),
+                    tooltip: _showTraffic
+                        ? "Hide Traffic Layer"
+                        : "Show Traffic Layer",
                   ),
                 ),
               ],
