@@ -322,7 +322,7 @@ class _RealTimeSearchMapState extends State<RealTimeSearchMap> {
                   ),
                 ),
                 Positioned(
-                  bottom: 20,
+                  bottom: 111,
                   right: 20,
                   child: FloatingActionButton(
                     onPressed: () {
