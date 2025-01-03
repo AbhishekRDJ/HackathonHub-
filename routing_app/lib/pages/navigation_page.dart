@@ -31,11 +31,11 @@ class _RealTimeSearchMapState extends State<RealTimeSearchMap> {
   LatLng? _searchedLocation;
   Set<Polyline> _polylines = {};
   final Set<Marker> _markers = {};
+  bool _showTraffic = false; // Traffic layer toggle
   String locationInfo = "";
   String _distance = "";
   String _duration = "";
   double _fuelConsumption = 0;
-  String _newdist = ""; // Markers on the map
   double calculateMileage(String vehicleType, String age) {
     // Use nested conditions to assign mileage values
     if (vehicleType == 'Car') {
@@ -318,6 +318,24 @@ class _RealTimeSearchMapState extends State<RealTimeSearchMap> {
                     myLocationEnabled: true,
                     markers: _markers,
                     polylines: _polylines,
+                    trafficEnabled: _showTraffic, // Enable traffic layer
+                  ),
+                ),
+                Positioned(
+                  bottom: 20,
+                  right: 20,
+                  child: FloatingActionButton(
+                    onPressed: () {
+                      setState(() {
+                        _showTraffic = !_showTraffic; // Toggle traffic layer
+                      });
+                    },
+                    child: Icon(
+                      _showTraffic ? Icons.traffic : Icons.traffic_outlined,
+                    ),
+                    tooltip: _showTraffic
+                        ? "Hide Traffic Layer"
+                        : "Show Traffic Layer",
                   ),
                 ),
               ],

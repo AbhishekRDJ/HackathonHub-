@@ -211,39 +211,9 @@ class _SlidingPanel2State extends State<SlidingPanel2>
             const SizedBox(height: 8),
             _buildBarChart(),
             const SizedBox(height: 16),
-            Container(
-              height: 100,
-              decoration: BoxDecoration(
-                color: Colors.grey[200],
-                borderRadius: BorderRadius.circular(12),
-              ),
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  const SizedBox(height: 8),
-                  Text(
-                    widget.vehicleType == "Cycle"
-                        ? "Cycles do not consume fuel."
-                        : (widget.fuelType == "Petrol")
-                            ? "Your emission are: ${(widget.fuelConsumption * 2.31).toStringAsFixed(2)} kg of CO2"
-                            : (widget.fuelType == "Diesel")
-                                ? "Your emission are: ${(widget.fuelConsumption * 2.68).toStringAsFixed(2)} kg of CO2"
-                                : (widget.fuelType == "CNG")
-                                    ? "Your emission are: ${(widget.fuelConsumption * 1.52).toStringAsFixed(2)} kg of CO2"
-                                    : (widget.fuelType == "Electric")
-                                        ? "Your emission are: ${(widget.fuelConsumption * 0.0).toStringAsFixed(2)} kg of CO2"
-                                        : "Your emission are: ${(widget.fuelConsumption * 2.31).toStringAsFixed(2)} kg of CO2",
-                    style: const TextStyle(fontSize: 16),
-                  ),
-                  Text(
-                    " in this trip for vehicle-${widget.vehicleType} &fuel-${widget.fuelType}",
-                    style: const TextStyle(
-                        fontSize: 16, fontWeight: FontWeight.bold),
-                  ),
-                ],
-              ),
-            ),
-            const SizedBox(height: 8),
+            
+
+             const SizedBox(height: 8),
             _buildAQIGraph(),
             const SizedBox(height: 16),
             Row(
@@ -277,6 +247,42 @@ class _SlidingPanel2State extends State<SlidingPanel2>
                 ),
               ],
             ),
+
+            Container(
+              height: 100,
+              decoration: BoxDecoration(
+                color: Colors.grey[200],
+                borderRadius: BorderRadius.circular(12),
+              ),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Text(
+                    widget.vehicleType == "Cycle"
+                        ? "Cycles do not consume fuel."
+                        // : "Estimated fuel consumption: ${(double.tryParse(widget.newdist) ?? 0 / (calculateMileage(widget.vehicleType, widget.age) > 0 ? calculateMileage(widget.vehicleType, widget.age) : 1)).toStringAsFixed(2)} liters",
+                        // : widget.fuelConsumption.toString(),
+                        : (widget.fuelType == "Petrol")
+                          ? "Do you know? : ${(widget.fuelConsumption * 2.31).toStringAsFixed(2)} kg of CO2"
+                          : (widget.fuelType == "Diesel")
+                          ? "Do you know? : ${(widget.fuelConsumption * 2.68).toStringAsFixed(2)} kg of CO2"
+                          : (widget.fuelType == "CNG")
+                          ? "Do you know? : ${(widget.fuelConsumption * 1.52).toStringAsFixed(2)} kg of CO2"
+                          : (widget.fuelType == "Electric")
+                          ? "Do you know? : ${(widget.fuelConsumption * 0.0).toStringAsFixed(2)} kg of CO2"
+                          : "Do you know? : ${(widget.fuelConsumption * 2.31).toStringAsFixed(2)} kg of CO2",
+                    style: TextStyle(fontSize: 16),
+                  ),
+                  Text(
+                    " are your esimated carbon footprints in this trip \n ",
+                    style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                  ),
+                  SizedBox(height: 8),
+                  
+                ],
+              ),
+            ),
+            
             const SizedBox(height: 20),
             _buildGeminiSuggestions(),
           ],
