@@ -44,6 +44,7 @@ class ProfilePage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        leading: const Text(""),
         title: const Text('Profile'),
         centerTitle: true,
         actions: [

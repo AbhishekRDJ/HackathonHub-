@@ -45,6 +45,12 @@ class _LogInPageState extends State<SignUpPage> {
 
             const Spacer(),
 
+            const CustomTextField(text: 'Name',
+              color: Colors.black,
+              isIcon: false,
+            ),
+            const SizedBox(height: 30,),
+
             const CustomTextField(text: 'Username',
               color: Colors.black,
               isIcon: false,

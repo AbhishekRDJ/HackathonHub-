@@ -7,6 +7,7 @@ class YourInfoPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        leading: const Text(""),
         title: const Text(
           'History',
           style: TextStyle(color: Colors.black),

@@ -15,6 +15,7 @@ class LogInPage extends StatefulWidget {
 
 class _LogInPageState extends State<LogInPage> {
 
+  bool isObsute = true;
 
   @override
   Widget build(BuildContext context) {

@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "716917883143",
+    "project_id": "neoroute-968fa",
+    "storage_bucket": "neoroute-968fa.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:716917883143:android:0dfd5029bf4253f5bd45a2",
+        "android_client_info": {
+          "package_name": "com.example.routing_app"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyD_HaxGvB_okrCaiihpOPw9qdC6hPvqXYY"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

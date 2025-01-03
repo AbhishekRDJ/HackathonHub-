@@ -1,10 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
-import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:intl/intl.dart';
-import 'package:routing_app/utils/secrets.dart';
 import 'package:routing_app/widget/hourly_forcaste.dart';
 
 class SlidingPanel2 extends StatefulWidget {
@@ -372,29 +370,6 @@ class _SlidingPanel2State extends State<SlidingPanel2>
     );
   }
 
-  Widget _buildInfoContainer({required String title, required String content}) {
-    return Container(
-      padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        color: Colors.grey[200],
-        borderRadius: BorderRadius.circular(12),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
-            title,
-            style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-          ),
-          const SizedBox(height: 8),
-          Text(
-            content,
-            style: const TextStyle(fontSize: 16),
-          ),
-        ],
-      ),
-    );
-  }
 
   Widget _buildAQIGraph() {
     if (isLoading) {
@@ -496,50 +471,6 @@ class _SlidingPanel2State extends State<SlidingPanel2>
     );
   }
 
-  Widget _buildBarChart() {
-    return Container(
-      height: 200,
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(12),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black12,
-            blurRadius: 8,
-            offset: const Offset(0, 2),
-          ),
-        ],
-      ),
-      padding: const EdgeInsets.all(16),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          const Text(
-            'Traffic Analysis',
-            style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-          ),
-          const SizedBox(height: 8),
-          Expanded(
-            child: Row(
-              crossAxisAlignment: CrossAxisAlignment.end,
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              children: List.generate(12, (index) {
-                final isPeak = index == 6;
-                return Container(
-                  width: 16,
-                  height: (index + 1) * 10.0,
-                  decoration: BoxDecoration(
-                    color: isPeak ? Colors.red : Colors.blue,
-                    borderRadius: BorderRadius.circular(4),
-                  ),
-                );
-              }),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
 
   Widget _buildGeminiSuggestions() {
     return AnimatedBuilder(
