@@ -55,6 +55,7 @@ class ProfilePage extends StatelessWidget {
           ),
         ],
       ),
+      backgroundColor: Colors.white, // Set background color to white
       body: SingleChildScrollView(
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.center,
