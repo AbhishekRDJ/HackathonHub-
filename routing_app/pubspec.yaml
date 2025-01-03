@@ -39,7 +39,7 @@ dependencies:
   geocoding: ^2.0.5
   http: ^1.0.0
   geolocator: ^13.0.2
-  fl_chart: ^0.70.0
+  fl_chart: ^0.69.2
   image_picker: ^0.8.7+4
 
   # The following adds the Cupertino Icons font to your application.

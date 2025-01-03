@@ -183,37 +183,105 @@ class _SlidingPanel2State extends State<SlidingPanel2>
               ],
             ),
             const SizedBox(height: 20),
-            _buildInfoContainer(
-              title: "Estimated Distance",
-              content: widget.dis,
+
+           Container(
+             padding: const EdgeInsets.symmetric(horizontal: 10,vertical: 10),
+             decoration: BoxDecoration(
+               color: Colors.blue,
+               borderRadius: BorderRadius.circular(16)
+             ),
+             child: Row(
+               mainAxisAlignment: MainAxisAlignment.center,
+               children: [
+                 Icon(widget.vehicleType=='Bike'?Icons.motorcycle_rounded:Icons.directions_car,
+                   color: Colors.white,
+                 size: 35,),
+                 const SizedBox(width: 15,),
+                 Text(widget.dur,
+                 style: const TextStyle(fontWeight: FontWeight.bold,fontSize: 18,color: Colors.white),)
+                     
+               ],
+             ),
+           ),
+            const SizedBox(height: 25),
+            
+            Row(
+              children: [
+                Text("Estimated fuel consumption :- ${widget.fuelConsumption.toStringAsFixed(2)} litres",
+                style: const TextStyle(
+                  fontSize: 16,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.green
+                ),
+                ),
+                const SizedBox(width: 10,),
+                const Icon(Icons.energy_savings_leaf,
+                color: Colors.green,)
+              ],
             ),
             const SizedBox(height: 20),
-            _buildInfoContainer(
-              title: "Estimated Duration",
-              content: widget.dur,
-            ),
+            const Divider(),
             const SizedBox(height: 20),
-            const Text(
-              "Estimated duration:",
-              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+
+            Container(
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(16),
+                color: Colors.white
+              ),
+              child: ListTile(
+                title: Text(widget.vehicleType),
+                subtitle: Text("Distance :- ${widget.dis}   Fuel type :- ${widget.fuelType},",
+                style: const TextStyle(color: Colors.grey,fontSize: 14),),
+                leading: CircleAvatar(
+                  backgroundColor: Colors.blue,
+                  child: Icon(
+                    color: Colors.white,
+                    size: 33,
+                    widget.vehicleType == 'Bike' ? Icons.motorcycle_rounded :
+                        Icons.directions_car
+                  ),
+                ),
+              ),
             ),
-            Text(
-              widget.dur,
-              style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w400),
-            ),
-            const SizedBox(height: 20),
-            Text(
-              "Your vehicle: ${widget.vehicleType}\n"
-              "Your fuel type: ${widget.fuelType}\n"
-              "Vehicle age: ${widget.age} years",
-              style: const TextStyle(fontSize: 16),
-            ),
+
+            
             const SizedBox(height: 8),
             _buildBarChart(),
             const SizedBox(height: 16),
-            
+            Container(
+              height: 100,
+              decoration: BoxDecoration(
+                color: Colors.grey[200],
+                borderRadius: BorderRadius.circular(12),
+              ),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  const SizedBox(height: 8),
+                  Text(
+                    widget.vehicleType == "Cycle"
+                        ? "Cycles do not consume fuel."
+                        : (widget.fuelType == "Petrol")
+                            ? "Your emission are: ${(widget.fuelConsumption * 2.31).toStringAsFixed(2)} kg of CO2"
+                            : (widget.fuelType == "Diesel")
+                                ? "Your emission are: ${(widget.fuelConsumption * 2.68).toStringAsFixed(2)} kg of CO2"
+                                : (widget.fuelType == "CNG")
+                                    ? "Your emission are: ${(widget.fuelConsumption * 1.52).toStringAsFixed(2)} kg of CO2"
+                                    : (widget.fuelType == "Electric")
+                                        ? "Your emission are: ${(widget.fuelConsumption * 0.0).toStringAsFixed(2)} kg of CO2"
+                                        : "Your emission are: ${(widget.fuelConsumption * 2.31).toStringAsFixed(2)} kg of CO2",
+                    style: const TextStyle(fontSize: 16),
+                  ),
 
-             const SizedBox(height: 8),
+                ],
+              ),
+            ),
+            const SizedBox(height: 12),
+
+            Container(
+
+            ),
+
             _buildAQIGraph(),
             const SizedBox(height: 16),
             Row(
@@ -247,42 +315,6 @@ class _SlidingPanel2State extends State<SlidingPanel2>
                 ),
               ],
             ),
-
-            Container(
-              height: 100,
-              decoration: BoxDecoration(
-                color: Colors.grey[200],
-                borderRadius: BorderRadius.circular(12),
-              ),
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Text(
-                    widget.vehicleType == "Cycle"
-                        ? "Cycles do not consume fuel."
-                        // : "Estimated fuel consumption: ${(double.tryParse(widget.newdist) ?? 0 / (calculateMileage(widget.vehicleType, widget.age) > 0 ? calculateMileage(widget.vehicleType, widget.age) : 1)).toStringAsFixed(2)} liters",
-                        // : widget.fuelConsumption.toString(),
-                        : (widget.fuelType == "Petrol")
-                          ? "Do you know? : ${(widget.fuelConsumption * 2.31).toStringAsFixed(2)} kg of CO2"
-                          : (widget.fuelType == "Diesel")
-                          ? "Do you know? : ${(widget.fuelConsumption * 2.68).toStringAsFixed(2)} kg of CO2"
-                          : (widget.fuelType == "CNG")
-                          ? "Do you know? : ${(widget.fuelConsumption * 1.52).toStringAsFixed(2)} kg of CO2"
-                          : (widget.fuelType == "Electric")
-                          ? "Do you know? : ${(widget.fuelConsumption * 0.0).toStringAsFixed(2)} kg of CO2"
-                          : "Do you know? : ${(widget.fuelConsumption * 2.31).toStringAsFixed(2)} kg of CO2",
-                    style: TextStyle(fontSize: 16),
-                  ),
-                  Text(
-                    " are your esimated carbon footprints in this trip \n ",
-                    style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-                  ),
-                  SizedBox(height: 8),
-                  
-                ],
-              ),
-            ),
-            
             const SizedBox(height: 20),
             _buildGeminiSuggestions(),
           ],
