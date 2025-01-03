@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:intl/intl.dart';
@@ -16,6 +17,7 @@ class SlidingPanel2 extends StatefulWidget {
   final int cost;
   final double fuelConsumption;
   final Map<String,dynamic> destination;
+  final LatLng? desti;
 
 
   const SlidingPanel2({
@@ -30,6 +32,7 @@ class SlidingPanel2 extends StatefulWidget {
     required this.vehicleType,
     required this.cost,
     required this.fuelConsumption,
+    required this.desti,
 
   });
 
@@ -67,6 +70,7 @@ class _SlidingPanel2State extends State<SlidingPanel2>
   }
 
   List<int> aqiData = [];
+  List<String> aqiDates = [];
   bool isVisible = false;
   bool isLoading = true;
   bool isVisible2 = false;
@@ -80,16 +84,16 @@ class _SlidingPanel2State extends State<SlidingPanel2>
       duration: const Duration(milliseconds: 800),
     );
     _animationController.forward();
-    _fetchAQIData();
+    _fetchAQIData(widget.desti!);
   }
 
-  Future<void> _fetchAQIData() async {
+  Future<void> _fetchAQIData(LatLng desti) async {
     const String token = "c2462c6c46be8a23f08c47b110d493265397d745";
     const double latitude = 26.268249;
     const double longitude = 73.0193853;
 
     final String url =
-        "https://api.waqi.info/feed/geo:$latitude;$longitude/?token=$token";
+        "https://api.waqi.info/feed/geo:${desti.latitude};${desti.longitude}/?token=$token";
 
     try {
       final response = await http.get(Uri.parse(url));
@@ -101,8 +105,13 @@ class _SlidingPanel2State extends State<SlidingPanel2>
           final forecast = data["data"]["forecast"]["daily"]["pm25"];
           setState(() {
             aqiData = forecast.map<int>((item) => item["avg"] as int).toList();
-            isLoading = false;
-          });
+           aqiDates = forecast.map<String>((item) {
+            DateTime date = DateTime.parse(item["day"]);
+            return DateFormat("dd/MM").format(date); // Example: 02 Jan 2025
+          }).toList();
+
+          isLoading = false;
+        });
         } else {
           setState(() {
             errorMessage = data["data"]["message"] ?? "Unknown error";
@@ -384,7 +393,7 @@ class _SlidingPanel2State extends State<SlidingPanel2>
     }
 
     return Container(
-      height: 200,
+      height: 250,
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(12),
@@ -409,18 +418,36 @@ class _SlidingPanel2State extends State<SlidingPanel2>
             child: Row(
               crossAxisAlignment: CrossAxisAlignment.end,
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              children: List.generate(aqiData.length, (index) {
+              children: List.generate(aqiData.take(5).length, 
+              (index) {
                 final aqiValue = aqiData[index];
                 final color = _getAQIColor(aqiValue);
+                final date = aqiDates[index]; // Fetch date from aqiDates list
 
-                return Container(
-                  width: 16,
-                  height: aqiValue.toDouble(),
-                  decoration: BoxDecoration(
-                    color: color,
-                    borderRadius: BorderRadius.circular(4),
-                  ),
+                 return Column(
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  children: [
+                    Text(
+                      aqiValue.toString(),
+                      style: const TextStyle(fontSize: 12),
+                    ),
+                    const SizedBox(height: 4),
+                    Container(
+                      width: 16,
+                      height: aqiValue.toDouble(),
+                      decoration: BoxDecoration(
+                        color: color,
+                        borderRadius: BorderRadius.circular(4),
+                      ),
+                    ),
+                    const SizedBox(height: 4),
+                    Text(
+                      date,
+                      style: const TextStyle(fontSize: 10, color: Colors.grey),
+                    ),
+                  ],
                 );
+                
               }),
             ),
           ),

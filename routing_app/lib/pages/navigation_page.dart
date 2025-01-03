@@ -105,7 +105,6 @@ class _RealTimeSearchMapState extends State<RealTimeSearchMap> {
         'AIzaSyBx827KsGam_YfYb7ucls9iYpAWwXJk9PM'; // Replace with your API key
     final url =
         'https://maps.googleapis.com/maps/api/distancematrix/json?origins=${source.latitude},${source.longitude}&destinations=${destination.latitude},${destination.longitude}&key=$apiKey';
-
     try {
       final response = await http.get(Uri.parse(url));
 
@@ -331,6 +330,7 @@ class _RealTimeSearchMapState extends State<RealTimeSearchMap> {
                     cost: 0,
                     fuelConsumption:
                         _fuelConsumption, // Add the required cost argument
+                    desti: _searchedLocation,
                   ),
                   maxHeight: MediaQuery.of(context).size.height * 0.76,
                   minHeight: MediaQuery.of(context).size.height * 0.09,
