@@ -1,19 +1,56 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:routing_app/home_page/main_page.dart';
-import 'package:routing_app/pages/home_page.dart';
-
+import 'package:firebase_auth/firebase_auth.dart';
 import '../widget/custom_button.dart';
 import '../widget/custom_textfeild.dart';
 
 class SignUpPage extends StatefulWidget {
   const SignUpPage({super.key});
 
+
+
   @override
   State<SignUpPage> createState() => _LogInPageState();
 }
 
 class _LogInPageState extends State<SignUpPage> {
+
+  TextEditingController name = TextEditingController();
+  TextEditingController email = TextEditingController();
+  TextEditingController pass = TextEditingController();
+  TextEditingController confirmPass = TextEditingController();
+
+
+  Future<void> createUserAndPassword() async{
+    try{
+      await FirebaseAuth.instance.createUserWithEmailAndPassword(
+          email: email.text.trim(),
+          password: pass.text.trim()
+      );
+      Navigator.of(context).pushReplacement(
+        MaterialPageRoute(builder: (context)=>const MainPage())
+      );
+    }
+
+    on FirebaseAuthException catch(e){
+    showAdaptiveDialog(context: context,
+    builder: (context){
+    return AlertDialog.adaptive(
+    icon: const Icon(Icons.warning),
+    title: Text(e.message.toString()),
+    actions: [
+    TextButton(onPressed: (){
+    Navigator.of(context).pop();
+    }, child: const Text("ok"))
+    ],
+    );
+    }
+    );
+    }
+  }
+
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -45,35 +82,33 @@ class _LogInPageState extends State<SignUpPage> {
 
             const Spacer(),
 
-            const CustomTextField(text: 'Name',
+            CustomTextField(text: 'Name',
               color: Colors.black,
+              controller: name,
               isIcon: false,
             ),
             const SizedBox(height: 30,),
 
-            const CustomTextField(text: 'Username',
-              color: Colors.black,
-              isIcon: false,
-            ),
-            const SizedBox(height: 30,),
 
-            const CustomTextField(
+            CustomTextField(
               text: 'Email',
               color: Colors.black,
-              icon: Icons.remove_red_eye,
+              controller: email,
               isIcon: false,
             ),
             const SizedBox(height: 30,),
 
-            const CustomTextField(text: 'Enter password',
+            CustomTextField(text: 'Enter password',
               color: Colors.black,
+              controller: pass,
               isIcon: true,
             ),
             const SizedBox(height: 30,),
 
-            const CustomTextField(
+            CustomTextField(
               text: 'Confirm password',
               color: Colors.black,
+              controller: confirmPass,
               isIcon: true,
             ),
 
@@ -82,9 +117,26 @@ class _LogInPageState extends State<SignUpPage> {
             CustomButton(color: Colors.black87,
                 label: 'Agree and Register',
                 onPressed: (){
-              Navigator.of(context).push(
-                MaterialPageRoute(builder: (context)=> const MainPage())
-              );
+
+                  if(name.text!="" && email.text!="" &&
+                  pass.text == confirmPass.text){
+                    createUserAndPassword();
+                  }
+
+                  else if(pass.text != confirmPass.text){
+                    ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+                        content: Text("password does not match ")
+                    )
+                    );
+                  }
+
+                  else{
+                    ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+                        content: Text("please enter the details ")
+                    )
+                    );
+                  }
+
                 },
                 textColor: Colors.white),
 

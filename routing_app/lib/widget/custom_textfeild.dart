@@ -7,19 +7,22 @@ class CustomTextField extends StatelessWidget {
   final IconData? icon;
   final IconData? preIcon;
   final bool isIcon;
+  final TextEditingController? controller;
 
   const CustomTextField({super.key,
     required this.text,
     required this.color,
     this.icon,
     this.preIcon,
-    required this.isIcon
+    required this.isIcon,
+    this.controller
   }
   );
 
   @override
   Widget build(BuildContext context) {
     return TextField(
+      controller: controller,
       obscureText: isIcon ? true : false,
       decoration: InputDecoration(
         fillColor: const Color.fromARGB(10, 50, 100, 100),

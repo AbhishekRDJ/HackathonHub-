@@ -1,7 +1,7 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:routing_app/home_page/main_page.dart';
-import 'package:routing_app/pages/home_page.dart';
 import 'package:routing_app/pages/sign_up_page.dart';
 import 'package:routing_app/widget/custom_button.dart';
 import 'package:routing_app/widget/custom_textfeild.dart';
@@ -16,6 +16,40 @@ class LogInPage extends StatefulWidget {
 class _LogInPageState extends State<LogInPage> {
 
   bool isObsute = true;
+  TextEditingController username = TextEditingController();
+  TextEditingController pass = TextEditingController();
+
+  Future<void> getUserLogIn() async{
+    try{
+      await FirebaseAuth.instance.signInWithEmailAndPassword(
+          email: username.text.trim(),
+          password: pass.text.trim());
+
+      if(context.mounted){
+        Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (context)=>const MainPage()));
+      }
+    }
+    on FirebaseAuthException catch(e){
+
+      if(context.mounted){
+        showAdaptiveDialog(context: context,
+            builder: (context){
+              return AlertDialog.adaptive(
+                icon: const Icon(Icons.warning),
+                title: Text(e.message.toString(),
+                style: const TextStyle(fontSize: 16,fontWeight: FontWeight.bold,fontFamily: "lato"),),
+                actions: [
+                  TextButton(onPressed: (){
+                    Navigator.of(context).pop();
+                  }, child: const Text("ok",
+                  style: TextStyle(fontSize: 16,fontWeight: FontWeight.bold,fontFamily: "lato"),))
+                ],
+              );
+            }
+        );
+      }
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -48,15 +82,17 @@ class _LogInPageState extends State<LogInPage> {
 
             const Spacer(),
 
-            const CustomTextField(text: 'Enter your email',
+            CustomTextField(text: 'Enter your email',
                 color: Colors.black,
+              controller: username,
               isIcon: false,
                 ),
             const SizedBox(height: 30,),
 
-            const CustomTextField(
+            CustomTextField(
                 text: 'Enter your password',
                 color: Colors.black,
+                controller: pass,
                 icon: Icons.remove_red_eye,
               isIcon: true,
             ),
@@ -66,9 +102,13 @@ class _LogInPageState extends State<LogInPage> {
             CustomButton(color: Colors.black87,
                 label: 'Log In',
                 onPressed: (){
-                  Navigator.of(context).push(
-                      MaterialPageRoute(builder: (context)=> const MainPage())
-                  );
+                  if(username.text!="" && pass.text!=""){
+                    getUserLogIn();
+                  }
+                  else{
+                    ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+                        content: Text("username or password field is empty")));
+                  }
                 },
                 textColor: Colors.white),
 
@@ -79,7 +119,7 @@ class _LogInPageState extends State<LogInPage> {
               child: GestureDetector(
                 onTap: (){
                   Navigator.of(context).push(
-                    MaterialPageRoute(builder: (context)=>const SignUpPage())
+                      MaterialPageRoute(builder: (context)=> const SignUpPage())
                   );
                 },
                 child: RichText(text: const TextSpan(
