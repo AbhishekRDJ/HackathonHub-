@@ -4,6 +4,7 @@ import 'package:routing_app/pages/profile_page.dart';
 import 'package:routing_app/pages/your_info_page.dart';
 
 class MainPage extends StatefulWidget {
+
   const MainPage({super.key});
 
   @override
@@ -13,7 +14,7 @@ class MainPage extends StatefulWidget {
 class _MainPageState extends State<MainPage> {
   int index = 0;
 
-  final pages = [const HomePage(), const YourInfoPage(), const ProfilePage()];
+  final pages = [const HomePage(), const YourInfoPage(), ProfilePage()];
 
   @override
   Widget build(BuildContext context) {
@@ -36,7 +37,7 @@ class _MainPageState extends State<MainPage> {
           items: const [
             BottomNavigationBarItem(
                 icon: Icon(Icons.location_on), label: "Explore"),
-            BottomNavigationBarItem(icon: Icon(Icons.bookmark), label: "You"),
+            BottomNavigationBarItem(icon: Icon(Icons.bookmark), label: "Saved"),
             BottomNavigationBarItem(icon: Icon(Icons.person), label: "Profile")
           ]),
       body: IndexedStack(

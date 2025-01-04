@@ -1,3 +1,7 @@
+import 'dart:math';
+
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
@@ -16,15 +20,17 @@ class _HomePageState extends State<HomePage>
     with SingleTickerProviderStateMixin {
   final locationController = Location();
   final currentLoc = LatLng(19.8758, 75.3393);
+  String user ='NA';
 
   GoogleMapController? mapController;
-
+  Color? randomColor ;
   LatLng? currentPosition;
   late AnimationController _animationController;
 
   @override
   void initState() {
     super.initState();
+
     _animationController = AnimationController(
       vsync: this,
       duration: const Duration(milliseconds: 800),
@@ -32,6 +38,8 @@ class _HomePageState extends State<HomePage>
     _animationController.forward();
     WidgetsBinding.instance
         .addPostFrameCallback((_) async => await fetchLocationUpdate());
+    randomColor = _generateRandomColor();
+
   }
 
   @override
@@ -40,24 +48,61 @@ class _HomePageState extends State<HomePage>
     super.dispose();
   }
 
+  Future<String?> fetchNameByUid(String uid) async {
+    final QuerySnapshot querySnapshot = await FirebaseFirestore.instance
+        .collection('userInfo')
+        .where('userid', isEqualTo: uid)
+        .get();
+
+    if (querySnapshot.docs.isNotEmpty) {
+      final String name = querySnapshot.docs.first['name']; // Get the 'name' field
+      return name;
+    } else {
+      return null; // No matching documents found
+    }
+  }
+
+  void getUserName() async {
+    final String currentUid = FirebaseAuth.instance.currentUser!.uid;
+    final String? name = await fetchNameByUid(currentUid);
+      user = name!;
+
+  }
+
+  Color _generateRandomColor() {
+    final Random random = Random();
+    return Color.fromARGB(
+      255,                   // Fully opaque
+      random.nextInt(256),   // Red (0-255)
+      random.nextInt(256),   // Green (0-255)
+      random.nextInt(256),   // Blue (0-255)
+    );
+  }
+
+
   @override
   Widget build(BuildContext context) {
+    getUserName();
     return Scaffold(
         appBar: AppBar(
-          leading: Text(""),
+          leading: const Text(""),
           centerTitle: true,
           title: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 12.0),
+            padding: const EdgeInsets.symmetric(horizontal: 30),
             child: SvgPicture.asset(
               'assets/images/logo3.svg',
               width: 200,
               height: 55,
             ),
           ),
-          actions: const [
+          actions: [
             Padding(
-              padding: EdgeInsets.all(8.0),
-              child: CircleAvatar(),
+              padding: const EdgeInsets.all(8.0),
+              child: CircleAvatar(
+                backgroundColor: randomColor,
+                child: Text(user[0],
+                  style: const TextStyle(color: Colors.white),),
+              ),
             )
           ],
         ),
@@ -69,7 +114,7 @@ class _HomePageState extends State<HomePage>
                 panelBuilder: (controller) =>
                     PanelWidget(controller: controller),
                 maxHeight: MediaQuery.of(context).size.height * 0.8,
-                minHeight: MediaQuery.of(context).size.height * 0.045,
+                minHeight: MediaQuery.of(context).size.height * 0.2,
                 borderRadius: BorderRadius.circular(6),
                 body: GoogleMap(
                   initialCameraPosition: CameraPosition(

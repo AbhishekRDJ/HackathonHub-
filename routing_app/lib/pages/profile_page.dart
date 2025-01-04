@@ -1,9 +1,13 @@
+import 'dart:math';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:routing_app/pages/start_screen.dart';
 class ProfilePage extends StatefulWidget {
-  const ProfilePage({super.key});
+
+  ProfilePage({super.key,
+  });
 
   @override
   State<ProfilePage> createState() => _ProfilePageState();
@@ -47,6 +51,17 @@ class _ProfilePageState extends State<ProfilePage> {
     );
   }
 
+  Color _generateRandomColor() {
+    final Random random = Random();
+    return Color.fromARGB(
+      255,                   // Fully opaque
+      random.nextInt(256),   // Red (0-255)
+      random.nextInt(256),   // Green (0-255)
+      random.nextInt(256),   // Blue (0-255)
+    );
+  }
+
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -88,7 +103,8 @@ class _ProfilePageState extends State<ProfilePage> {
         isEqualTo: FirebaseAuth.instance.currentUser!.uid).snapshots(),
          builder: (context,snapshot) {
 
-           return SingleChildScrollView(
+           return snapshot.data == null ? Center(child: CircularProgressIndicator(),):
+             SingleChildScrollView(
 
              child: Column(
                crossAxisAlignment: CrossAxisAlignment.center,
@@ -96,9 +112,9 @@ class _ProfilePageState extends State<ProfilePage> {
                  const SizedBox(height: 20),
                  CircleAvatar(
                    radius: 50,
-                   backgroundColor: Colors.orange,
+                   backgroundColor: _generateRandomColor(),
                    child: Text(snapshot.data!.docs[0].data()['name'].toString().substring(0,1).toUpperCase(),
-                   style: const TextStyle(fontSize: 32,color: Colors.white),)
+                   style: const TextStyle(fontSize: 50,color: Colors.white),)
                  ),
                  const SizedBox(height: 10),
                  Text(
@@ -118,7 +134,10 @@ class _ProfilePageState extends State<ProfilePage> {
                        initialValue: '${snapshot.data!.docs[0].data()['name']}',
                        onSave: (newValue) {
                          setState(() {
-
+                            FirebaseFirestore.instance.collection('userInfo').
+                           doc(snapshot.data!.docs[0].id).update({
+                              'name':newValue
+                            });
                          });
                          ScaffoldMessenger.of(context).showSnackBar(
                            SnackBar(content: Text("Name updated to $newValue")),
@@ -154,7 +173,12 @@ class _ProfilePageState extends State<ProfilePage> {
                        title: 'Phone Number',
                        initialValue: '+91 6952346752',
                        onSave: (newValue) {
-                         // Handle phone number save
+                         setState(() {
+                           FirebaseFirestore.instance.collection('userInfo').
+                           doc(snapshot.data!.docs[0].id).update({
+                             'phone':newValue
+                           });
+                         });
                          ScaffoldMessenger.of(context).showSnackBar(
                            SnackBar(
                                content: Text(
@@ -166,15 +190,20 @@ class _ProfilePageState extends State<ProfilePage> {
                  ),
                  ProfileAboutSection(
                    aboutText:
-                   'tell us about you',
+                   '${snapshot.data!.docs[0].data()['about']}',
                    onTap: () {
                      _showEditDialog(
                        context: context,
                        title: 'About',
                        initialValue:
-                       '',
+                       '${snapshot.data!.docs[0].data()['about']}',
                        onSave: (newValue) {
-                         // Handle about save
+                         setState(() {
+                           FirebaseFirestore.instance.collection('userInfo').
+                           doc(snapshot.data!.docs[0].id).update({
+                             'about':newValue
+                           });
+                         });
                          ScaffoldMessenger.of(context).showSnackBar(
                            SnackBar(
                                content: Text("About updated to $newValue")),

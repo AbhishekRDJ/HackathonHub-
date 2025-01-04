@@ -1,8 +1,22 @@
+import 'dart:math';
+
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
 class YourInfoPage extends StatelessWidget {
   const YourInfoPage({super.key});
 
+  Color _generateRandomColor() {
+    final Random random = Random();
+    return Color.fromARGB(
+      255,                   // Fully opaque
+      random.nextInt(256),   // Red (0-255)
+      random.nextInt(256),   // Green (0-255)
+      random.nextInt(256),   // Blue (0-255)
+    );
+  }
+  
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -30,171 +44,58 @@ class YourInfoPage extends StatelessWidget {
             end: Alignment.bottomCenter,
           ),
         ),
-        child: Padding(
-          padding: const EdgeInsets.all(16.0),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              // User Info Section
-              Row(
+        child: StreamBuilder(
+          stream: FirebaseFirestore.instance.collection('userInfo').where("userid",
+              isEqualTo: FirebaseAuth.instance.currentUser!.uid).snapshots(),
+          builder: (context,snapshot) {
+            return snapshot.data == null ? const Center(child: CircularProgressIndicator()) :
+              Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  CircleAvatar(
-                    radius: 30,
-                    backgroundColor: Colors.blue[100],
-                    child:
-                        const Icon(Icons.person, size: 30, color: Colors.blue),
+                  // User Info Section
+                  Row(
+                    children: [
+                      CircleAvatar(
+                        radius: 25,
+                        backgroundColor: _generateRandomColor(),
+                        child:
+                        Text(snapshot.data!.docs[0].data()['name'].toString()[0].toUpperCase()
+                        ,style: const TextStyle(fontSize: 28),),
+                      ),
+                      const SizedBox(width: 16),
+                      Text(
+                        "${snapshot.data!.docs[0].data()['name']}",
+                        style: const TextStyle(
+                          fontSize: 22,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.black87,
+                        ),
+                      ),
+                    ],
                   ),
-                  const SizedBox(width: 16),
+                  const SizedBox(height: 20),
+                  // Transaction List Header
                   const Text(
-                    "User Name",
+                    "Recent Locations",
                     style: TextStyle(
-                      fontSize: 22,
+                      fontSize: 18,
                       fontWeight: FontWeight.bold,
-                      color: Colors.black87,
+                      color: Colors.black54,
                     ),
                   ),
+                  const SizedBox(height: 16),
+                  // Transaction List
+
                 ],
               ),
-              const SizedBox(height: 20),
-              // Transaction List Header
-              const Text(
-                "Recent Locations",
-                style: TextStyle(
-                  fontSize: 18,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.black54,
-                ),
-              ),
-              const SizedBox(height: 16),
-              // Transaction List
-              Expanded(
-                child: ListView(
-                  children: [
-                    _buildTransactionTile(
-                      title: 'Location 1',
-                      subtitle: 'Near Downtown',
-                      amount: '46L',
-                      time: '10:30 AM',
-                      tags: ['Fuel Type', 'Emission'],
-                    ),
-                    _buildTransactionTile(
-                      title: 'Location 2',
-                      subtitle: 'Highway Stop',
-                      amount: '95L',
-                      time: '09:00 AM',
-                      tags: ['Fuel Type', 'Emission'],
-                    ),
-                    _buildTransactionTile(
-                      title: 'Location 3',
-                      subtitle: 'Main Street',
-                      amount: '460L',
-                      time: '11:15 AM',
-                      tags: ['Fuel Type', 'Emission'],
-                    ),
-                    _buildTransactionTile(
-                      title: 'Location 4',
-                      subtitle: 'City Center',
-                      amount: '120L',
-                      time: '03:45 PM',
-                      tags: ['Fuel Type', 'Emission'],
-                    ),
-                  ],
-                ),
-              ),
-            ],
+            );
+          }
           ),
-        ),
       ),
     );
   }
 
-  Widget _buildTransactionTile({
-    required String title,
-    required String subtitle,
-    required String amount,
-    required String time,
-    required List<String> tags,
-  }) {
-    return Container(
-      margin: const EdgeInsets.symmetric(vertical: 8.0),
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(12),
-        color: Colors.white,
-        boxShadow: [
-          BoxShadow(
-            color: Colors.grey.withOpacity(0.1),
-            blurRadius: 8,
-            offset: const Offset(0, 2),
-          ),
-        ],
-      ),
-      child: ListTile(
-        contentPadding: const EdgeInsets.all(16.0),
-        leading: CircleAvatar(
-          radius: 25,
-          backgroundColor: Colors.green[100],
-          child: const Icon(Icons.location_on, color: Colors.green),
-        ),
-        title: Text(
-          title,
-          style: const TextStyle(
-            fontWeight: FontWeight.bold,
-            fontSize: 16,
-          ),
-        ),
-        subtitle: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              subtitle,
-              style: const TextStyle(color: Colors.black54),
-            ),
-            const SizedBox(height: 8),
-            Row(
-              children: tags.map((tag) {
-                return Container(
-                  margin: const EdgeInsets.only(right: 8),
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                  decoration: BoxDecoration(
-                    color: Colors.blue[50],
-                    borderRadius: BorderRadius.circular(8),
-                  ),
-                  child: Text(
-                    tag,
-                    style: const TextStyle(
-                      fontSize: 12,
-                      color: Colors.blue,
-                    ),
-                  ),
-                );
-              }).toList(),
-            ),
-          ],
-        ),
-        trailing: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          crossAxisAlignment: CrossAxisAlignment.end,
-          children: [
-            Text(
-              amount,
-              style: const TextStyle(
-                fontWeight: FontWeight.bold,
-                fontSize: 16,
-                color: Colors.black87,
-              ),
-            ),
-            const SizedBox(height: 4),
-            Text(
-              time,
-              style: const TextStyle(
-                fontSize: 12,
-                color: Colors.black54,
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
+
 }

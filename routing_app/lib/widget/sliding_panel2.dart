@@ -85,7 +85,6 @@ class _SlidingPanel2State extends State<SlidingPanel2>
     );
     _animationController.forward();
     _fetchGeminiAdvice();
-    _fetchAQIData(widget.desti!);
   }
 
   Future<void> _fetchGeminiAdvice() async {
@@ -465,9 +464,10 @@ Fuel Consumption: ${widget.fuelConsumption ?? 'N/A'}
                 ),
               ),
             ),
-            const SizedBox(height: 16),
-            const SizedBox(height: 20),
-            _buildGeminiSuggestions(),
+
+            const SizedBox(height: 15),
+
+          _buildGeminiSuggestions()
           ],
         ),
       ),
@@ -604,11 +604,11 @@ Fuel Consumption: ${widget.fuelConsumption ?? 'N/A'}
         decoration: BoxDecoration(
           color: Colors.blue.shade50,
           borderRadius: BorderRadius.circular(12),
-          boxShadow: [
+          boxShadow: const [
             BoxShadow(
               color: Colors.black12,
               blurRadius: 8,
-              offset: const Offset(0, 4),
+              offset: Offset(0, 4),
             ),
           ],
         ),
@@ -621,7 +621,7 @@ Fuel Consumption: ${widget.fuelConsumption ?? 'N/A'}
             const SizedBox(width: 16),
             Expanded(
               child: isGeminiLoading
-                  ? const CircularProgressIndicator()
+                  ? const Center(child: CircularProgressIndicator())
                   : Text(
                       _geminiAdvice,
                       style: const TextStyle(fontSize: 16),

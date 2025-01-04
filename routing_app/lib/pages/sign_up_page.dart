@@ -6,6 +6,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import '../widget/custom_button.dart';
 import '../widget/custom_textfeild.dart';
 
+
 class SignUpPage extends StatefulWidget {
   const SignUpPage({super.key});
 
@@ -22,6 +23,7 @@ class _LogInPageState extends State<SignUpPage> {
   TextEditingController pass = TextEditingController();
   TextEditingController confirmPass = TextEditingController();
   TextEditingController phone = TextEditingController();
+  TextEditingController about = TextEditingController();
 
 
   Future<void> createUserAndPassword() async{
@@ -31,17 +33,18 @@ class _LogInPageState extends State<SignUpPage> {
           password: pass.text.trim()
       );
 
-      await FirebaseFirestore.instance.collection('userInfo').add({
+       await FirebaseFirestore.instance.collection('userInfo').add({
         'name':name.text.trim(),
         'phone':phone.text.trim(),
         'email':email.text.trim(),
         'pass':pass.text.trim(),
-        'userid':FirebaseAuth.instance.currentUser!.uid
+         'about':about.text.trim(),
+        'userid':FirebaseAuth.instance.currentUser!.uid,
       }
       );
 
       Navigator.of(context).pushReplacement(
-        MaterialPageRoute(builder: (context)=>const MainPage())
+        MaterialPageRoute(builder: (context)=> const MainPage())
       );
 
     }
@@ -62,6 +65,7 @@ class _LogInPageState extends State<SignUpPage> {
     );
     }
   }
+
 
 
   @override
@@ -136,6 +140,15 @@ class _LogInPageState extends State<SignUpPage> {
               controller: confirmPass,
               isIcon: true,
               isPreIcon: false,
+            ),
+
+            const SizedBox(height: 30,),
+
+            CustomTextField(text: 'About',
+              color: Colors.black,
+              controller: about,
+              isPreIcon: false,
+              isIcon: false,
             ),
 
             const Spacer(flex: 2,),
