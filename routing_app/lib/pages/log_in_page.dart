@@ -86,12 +86,14 @@ class _LogInPageState extends State<LogInPage> {
                 color: Colors.black,
               controller: username,
               isIcon: false,
+              isPreIcon: false,
                 ),
             const SizedBox(height: 30,),
 
             CustomTextField(
                 text: 'Enter your password',
                 color: Colors.black,
+              isPreIcon: false,
                 controller: pass,
                 icon: Icons.remove_red_eye,
               isIcon: true,

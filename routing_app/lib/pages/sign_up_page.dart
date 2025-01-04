@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:routing_app/home_page/main_page.dart';
@@ -20,6 +21,7 @@ class _LogInPageState extends State<SignUpPage> {
   TextEditingController email = TextEditingController();
   TextEditingController pass = TextEditingController();
   TextEditingController confirmPass = TextEditingController();
+  TextEditingController phone = TextEditingController();
 
 
   Future<void> createUserAndPassword() async{
@@ -28,9 +30,20 @@ class _LogInPageState extends State<SignUpPage> {
           email: email.text.trim(),
           password: pass.text.trim()
       );
+
+      await FirebaseFirestore.instance.collection('userInfo').add({
+        'name':name.text.trim(),
+        'phone':phone.text.trim(),
+        'email':email.text.trim(),
+        'pass':pass.text.trim(),
+        'userid':FirebaseAuth.instance.currentUser!.uid
+      }
+      );
+
       Navigator.of(context).pushReplacement(
         MaterialPageRoute(builder: (context)=>const MainPage())
       );
+
     }
 
     on FirebaseAuthException catch(e){
@@ -82,19 +95,30 @@ class _LogInPageState extends State<SignUpPage> {
 
             const Spacer(),
 
-            CustomTextField(text: 'Name',
+            CustomTextField(text: 'Enter name',
               color: Colors.black,
               controller: name,
+              isPreIcon: false,
               isIcon: false,
+            ),
+            const SizedBox(height: 30,),
+
+            CustomTextField(text: 'Enter phone no',
+              color: Colors.black,
+              controller: phone,
+              isIcon: false,
+              isPreIcon: false,
+
             ),
             const SizedBox(height: 30,),
 
 
             CustomTextField(
-              text: 'Email',
+              text: 'Enter email',
               color: Colors.black,
               controller: email,
               isIcon: false,
+              isPreIcon: false,
             ),
             const SizedBox(height: 30,),
 
@@ -102,6 +126,7 @@ class _LogInPageState extends State<SignUpPage> {
               color: Colors.black,
               controller: pass,
               isIcon: true,
+              isPreIcon: false,
             ),
             const SizedBox(height: 30,),
 
@@ -110,6 +135,7 @@ class _LogInPageState extends State<SignUpPage> {
               color: Colors.black,
               controller: confirmPass,
               isIcon: true,
+              isPreIcon: false,
             ),
 
             const Spacer(flex: 2,),

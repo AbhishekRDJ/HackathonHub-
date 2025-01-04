@@ -353,24 +353,29 @@ Fuel Consumption: ${widget.fuelConsumption ?? 'N/A'}
               style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 10),
-            SizedBox(
-              height: 120,
-              child: ListView.builder(
-                  scrollDirection: Axis.horizontal,
-                  itemCount: 10,
-                  itemBuilder: (context, index) {
-                    final currentSk = widget.destination['list'][index + 1]
-                        ['weather'][0]['main'];
-                    final date = DateTime.parse(
-                        widget.destination['list'][index + 1]['dt_txt']);
-                    return HourlyForecast(
-                        icon: currentSk == 'Clouds' || currentSk == 'Rainy'
-                            ? Icons.cloud
-                            : Icons.sunny,
-                        time: DateFormat.j().format(date),
-                        val:
-                            "${(widget.destination['list'][index + 1]['main']['temp'].toString().substring(0, 2))} °C");
-                  }),
+            Center(
+              child: SizedBox(
+                height: 120,
+                child: widget.destination.isEmpty
+                    ? const Center(child: CircularProgressIndicator())
+                    : ListView.builder(
+                        scrollDirection: Axis.horizontal,
+                        itemCount: 10,
+                        itemBuilder: (context, index) {
+                          final currentSk = widget.destination['list']
+                              [index + 1]['weather'][0]['main'];
+                          final date = DateTime.parse(
+                              widget.destination['list'][index + 1]['dt_txt']);
+                          return HourlyForecast(
+                              icon:
+                                  currentSk == 'Clouds' || currentSk == 'Rainy'
+                                      ? Icons.cloud
+                                      : Icons.sunny,
+                              time: DateFormat.j().format(date),
+                              val:
+                                  "${(widget.destination['list'][index + 1]['main']['temp'].toString().substring(0, 2))} °C");
+                        }),
+              ),
             ),
             const SizedBox(height: 25),
             Row(
@@ -378,6 +383,7 @@ Fuel Consumption: ${widget.fuelConsumption ?? 'N/A'}
               children: [
                 ElevatedButton.icon(
                   onPressed: () {
+                    _fetchAQIData(widget.desti!);
                     setState(() {
                       isVisible = true;
                       isVisible2 = false;
@@ -481,19 +487,18 @@ Fuel Consumption: ${widget.fuelConsumption ?? 'N/A'}
     }
 
     return Container(
-      height: 250,
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(12),
-        boxShadow: [
+        boxShadow: const [
           BoxShadow(
             color: Colors.black12,
             blurRadius: 8,
-            offset: const Offset(0, 2),
+            offset: Offset(0, 2),
           ),
         ],
       ),
-      padding: const EdgeInsets.all(16),
+      padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 25),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -502,40 +507,38 @@ Fuel Consumption: ${widget.fuelConsumption ?? 'N/A'}
             style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
           ),
           const SizedBox(height: 8),
-          Expanded(
-            child: Row(
-              crossAxisAlignment: CrossAxisAlignment.end,
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              children: List.generate(aqiData.take(5).length, (index) {
-                final aqiValue = aqiData[index];
-                final color = _getAQIColor(aqiValue);
-                final date = aqiDates[index]; // Fetch date from aqiDates list
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.end,
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            children: List.generate(aqiData.take(5).length, (index) {
+              final aqiValue = aqiData[index];
+              final color = _getAQIColor(aqiValue);
+              final date = aqiDates[index]; // Fetch date from aqiDates list
 
-                return Column(
-                  mainAxisAlignment: MainAxisAlignment.end,
-                  children: [
-                    Text(
-                      aqiValue.toString(),
-                      style: const TextStyle(fontSize: 12),
+              return Column(
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: [
+                  Text(
+                    aqiValue.toString(),
+                    style: const TextStyle(fontSize: 12),
+                  ),
+                  const SizedBox(height: 4),
+                  Container(
+                    width: 16,
+                    height: aqiValue.toDouble(),
+                    decoration: BoxDecoration(
+                      color: color,
+                      borderRadius: BorderRadius.circular(4),
                     ),
-                    const SizedBox(height: 4),
-                    Container(
-                      width: 16,
-                      height: aqiValue.toDouble(),
-                      decoration: BoxDecoration(
-                        color: color,
-                        borderRadius: BorderRadius.circular(4),
-                      ),
-                    ),
-                    const SizedBox(height: 4),
-                    Text(
-                      date,
-                      style: const TextStyle(fontSize: 10, color: Colors.grey),
-                    ),
-                  ],
-                );
-              }),
-            ),
+                  ),
+                  const SizedBox(height: 4),
+                  Text(
+                    date,
+                    style: const TextStyle(fontSize: 10, color: Colors.grey),
+                  ),
+                ],
+              );
+            }),
           ),
         ],
       ),
