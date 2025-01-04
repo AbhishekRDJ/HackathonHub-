@@ -16,9 +16,8 @@ class SlidingPanel2 extends StatefulWidget {
   final String age;
   final int cost;
   final double fuelConsumption;
-  final Map<String,dynamic> destination;
+  final Map<String, dynamic> destination;
   final LatLng? desti;
-
 
   const SlidingPanel2({
     super.key,
@@ -33,7 +32,6 @@ class SlidingPanel2 extends StatefulWidget {
     required this.cost,
     required this.fuelConsumption,
     required this.desti,
-
   });
 
   @override
@@ -43,6 +41,8 @@ class SlidingPanel2 extends StatefulWidget {
 class _SlidingPanel2State extends State<SlidingPanel2>
     with SingleTickerProviderStateMixin {
   late AnimationController _animationController;
+  String _geminiAdvice = "Fetching advice...";
+  bool isGeminiLoading = false;
 
   double calculateMileage(String vehicleType, String age) {
     if (vehicleType == 'Car') {
@@ -84,7 +84,85 @@ class _SlidingPanel2State extends State<SlidingPanel2>
       duration: const Duration(milliseconds: 800),
     );
     _animationController.forward();
+    _fetchGeminiAdvice();
     _fetchAQIData(widget.desti!);
+  }
+
+  Future<void> _fetchGeminiAdvice() async {
+    setState(() {
+      isGeminiLoading = true;
+    });
+
+    const apiUrl =
+        'https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=AIzaSyCNtba2jyMrB6SWIfad_oSmIefgMMAXIY4'; // Replace with your actual API key
+
+    // Constructing the request body with null checks
+    final requestBody = {
+      "contents": [
+        {
+          "parts": [
+            {
+              "text": """
+Provide two line suggestions based on the following details:
+Destination: ${widget.destination != null ? json.encode(widget.destination) : 'N/A'}
+Vehicle Type: ${widget.vehicleType ?? 'N/A'}
+Fuel Type: ${widget.fuelType ?? 'N/A'}
+Location Info: ${widget.locInfo ?? 'N/A'}
+Distance: ${widget.dis ?? 'N/A'}
+Duration: ${widget.dur ?? 'N/A'}
+Age: ${widget.age ?? 'N/A'}
+Cost: ${widget.cost ?? 'N/A'}
+Fuel Consumption: ${widget.fuelConsumption ?? 'N/A'}
+"""
+            }
+          ]
+        }
+      ]
+    };
+
+    try {
+      final response = await http.post(
+        Uri.parse(apiUrl),
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: json.encode(requestBody),
+      );
+
+      if (response.statusCode == 200) {
+        final data = json.decode(response.body);
+        print('API Response: $data');
+
+        setState(() {
+          final candidates = data['candidates'] ?? [];
+          if (candidates.isNotEmpty) {
+            final content = candidates[0]['content'] ?? {};
+            final parts = content['parts'] ?? [];
+            if (parts.isNotEmpty) {
+              _geminiAdvice = parts[0]['text'] ?? 'No advice provided';
+            } else {
+              _geminiAdvice = 'No parts provided in content.';
+            }
+          } else {
+            _geminiAdvice = 'No candidates provided.';
+          }
+        });
+      } else {
+        final errorData = json.decode(response.body);
+        print('Error Response: ${response.body}');
+        setState(() {
+          _geminiAdvice = 'Error: ${errorData['error']['message']}';
+        });
+      }
+    } catch (error) {
+      setState(() {
+        _geminiAdvice = 'Error: $error';
+      });
+    } finally {
+      setState(() {
+        isGeminiLoading = false;
+      });
+    }
   }
 
   Future<void> _fetchAQIData(LatLng desti) async {
@@ -105,13 +183,13 @@ class _SlidingPanel2State extends State<SlidingPanel2>
           final forecast = data["data"]["forecast"]["daily"]["pm25"];
           setState(() {
             aqiData = forecast.map<int>((item) => item["avg"] as int).toList();
-           aqiDates = forecast.map<String>((item) {
-            DateTime date = DateTime.parse(item["day"]);
-            return DateFormat("dd/MM").format(date); // Example: 02 Jan 2025
-          }).toList();
+            aqiDates = forecast.map<String>((item) {
+              DateTime date = DateTime.parse(item["day"]);
+              return DateFormat("dd/MM").format(date); // Example: 02 Jan 2025
+            }).toList();
 
-          isLoading = false;
-        });
+            isLoading = false;
+          });
         } else {
           setState(() {
             errorMessage = data["data"]["message"] ?? "Unknown error";
@@ -200,95 +278,101 @@ class _SlidingPanel2State extends State<SlidingPanel2>
               ],
             ),
             const SizedBox(height: 20),
-
-           Container(
-             padding: const EdgeInsets.symmetric(horizontal: 10,vertical: 10),
-             decoration: BoxDecoration(
-               color: Colors.blue,
-               borderRadius: BorderRadius.circular(16)
-             ),
-             child: Row(
-               mainAxisAlignment: MainAxisAlignment.center,
-               children: [
-                 Icon(widget.vehicleType=='Bike'?Icons.motorcycle_rounded:Icons.directions_car,
-                   color: Colors.white,
-                 size: 35,),
-                 const SizedBox(width: 15,),
-                 Text(widget.dur,
-                 style: const TextStyle(fontWeight: FontWeight.bold,fontSize: 18,color: Colors.white),)
-                     
-               ],
-             ),
-           ),
+            Container(
+              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
+              decoration: BoxDecoration(
+                  color: Colors.blue, borderRadius: BorderRadius.circular(16)),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Icon(
+                    widget.vehicleType == 'Bike'
+                        ? Icons.motorcycle_rounded
+                        : Icons.directions_car,
+                    color: Colors.white,
+                    size: 35,
+                  ),
+                  const SizedBox(
+                    width: 15,
+                  ),
+                  Text(
+                    widget.dur,
+                    style: const TextStyle(
+                        fontWeight: FontWeight.bold,
+                        fontSize: 18,
+                        color: Colors.white),
+                  )
+                ],
+              ),
+            ),
             const SizedBox(height: 25),
-            
             Row(
               children: [
-                Text("Estimated fuel consumption :- ${widget.fuelConsumption.toStringAsFixed(2)} litres",
-                style: const TextStyle(
-                  fontSize: 16,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.green
+                Text(
+                  "Estimated fuel consumption :- ${widget.fuelConsumption.toStringAsFixed(2)} litres",
+                  style: const TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.green),
                 ),
+                const SizedBox(
+                  width: 10,
                 ),
-                const SizedBox(width: 10,),
-                const Icon(Icons.energy_savings_leaf,
-                color: Colors.green,)
+                const Icon(
+                  Icons.energy_savings_leaf,
+                  color: Colors.green,
+                )
               ],
             ),
             const SizedBox(height: 20),
             const Divider(),
             const SizedBox(height: 20),
-
             Container(
               decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(16),
-                color: Colors.white
-              ),
+                  borderRadius: BorderRadius.circular(16), color: Colors.white),
               child: ListTile(
                 title: Text(widget.vehicleType),
-                subtitle: Text("Distance :- ${widget.dis}   Fuel type :- ${widget.fuelType},",
-                style: const TextStyle(color: Colors.grey,fontSize: 14),),
+                subtitle: Text(
+                  "Distance :- ${widget.dis}   Fuel type :- ${widget.fuelType},",
+                  style: const TextStyle(color: Colors.grey, fontSize: 14),
+                ),
                 leading: CircleAvatar(
                   backgroundColor: Colors.blue,
                   child: Icon(
-                    color: Colors.white,
-                    size: 33,
-                    widget.vehicleType == 'Bike' ? Icons.motorcycle_rounded :
-                        Icons.directions_car
-                  ),
+                      color: Colors.white,
+                      size: 33,
+                      widget.vehicleType == 'Bike'
+                          ? Icons.motorcycle_rounded
+                          : Icons.directions_car),
                 ),
               ),
             ),
-
-            
             const SizedBox(height: 20),
-
-            const Text("Weather details",
-            style: TextStyle(fontSize: 18,fontWeight: FontWeight.bold),),
-
+            const Text(
+              "Weather details",
+              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+            ),
             const SizedBox(height: 10),
-
             SizedBox(
               height: 120,
               child: ListView.builder(
                   scrollDirection: Axis.horizontal,
                   itemCount: 10,
-                  itemBuilder: (context,index){
-                    final currentSk = widget.destination['list'][index+1]['weather'][0]['main'];
-                    final date = DateTime.parse(widget.destination['list'][index+1]['dt_txt']);
+                  itemBuilder: (context, index) {
+                    final currentSk = widget.destination['list'][index + 1]
+                        ['weather'][0]['main'];
+                    final date = DateTime.parse(
+                        widget.destination['list'][index + 1]['dt_txt']);
                     return HourlyForecast(
-                        icon: currentSk == 'Clouds' || currentSk == 'Rainy'?
-                        Icons.cloud : Icons.sunny,
+                        icon: currentSk == 'Clouds' || currentSk == 'Rainy'
+                            ? Icons.cloud
+                            : Icons.sunny,
                         time: DateFormat.j().format(date),
-                        val: "${(widget.destination['list'][index+1]['main']['temp'].toString().substring(0,2))} °C"
-                    );
+                        val:
+                            "${(widget.destination['list'][index + 1]['main']['temp'].toString().substring(0, 2))} °C");
                   }),
             ),
-
-
             const SizedBox(height: 25),
-
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
@@ -300,8 +384,12 @@ class _SlidingPanel2State extends State<SlidingPanel2>
                     });
                     // Handle AQI estimation
                   },
-                  icon: const Icon(Icons.report,color: Colors.black,),
-                  label: const Text('AQI Estimate',style: TextStyle(color: Colors.black)),
+                  icon: const Icon(
+                    Icons.report,
+                    color: Colors.black,
+                  ),
+                  label: const Text('AQI Estimate',
+                      style: TextStyle(color: Colors.black)),
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Colors.redAccent,
                     shape: RoundedRectangleBorder(
@@ -316,8 +404,14 @@ class _SlidingPanel2State extends State<SlidingPanel2>
                       isVisible2 = true;
                     });
                   },
-                  icon: const Icon(Icons.car_crash_rounded,color: Colors.black,),
-                  label: const Text('Carbon emission',style: TextStyle(color: Colors.black),),
+                  icon: const Icon(
+                    Icons.car_crash_rounded,
+                    color: Colors.black,
+                  ),
+                  label: const Text(
+                    'Carbon emission',
+                    style: TextStyle(color: Colors.black),
+                  ),
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Colors.blueAccent,
                     shape: RoundedRectangleBorder(
@@ -327,20 +421,18 @@ class _SlidingPanel2State extends State<SlidingPanel2>
                 ),
               ],
             ),
-
-            const SizedBox(height: 20,),
-
-            Visibility(
-              visible: isVisible,
-                child: _buildAQIGraph()),
-
-            const SizedBox(height: 20,),
-
+            const SizedBox(
+              height: 20,
+            ),
+            Visibility(visible: isVisible, child: _buildAQIGraph()),
+            const SizedBox(
+              height: 20,
+            ),
             Visibility(
               visible: isVisible2,
               child: Container(
-                padding: const EdgeInsets.symmetric(horizontal: 15,vertical: 20),
-
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 15, vertical: 20),
                 decoration: BoxDecoration(
                   color: Colors.grey[200],
                   borderRadius: BorderRadius.circular(12),
@@ -353,24 +445,21 @@ class _SlidingPanel2State extends State<SlidingPanel2>
                       widget.vehicleType == "Cycle"
                           ? "Cycles do not consume fuel."
                           : (widget.fuelType == "Petrol")
-                          ? "Carbon emission : ${(widget.fuelConsumption * 2.31).toStringAsFixed(2)} kg of CO2"
-                          : (widget.fuelType == "Diesel")
-                          ? "Carbon emission : ${(widget.fuelConsumption * 2.68).toStringAsFixed(2)} kg of CO2"
-                          : (widget.fuelType == "CNG")
-                          ? "Carbon emission : ${(widget.fuelConsumption * 1.52).toStringAsFixed(2)} kg of CO2"
-                          : (widget.fuelType == "Electric")
-                          ? "Carbon emission : ${(widget.fuelConsumption * 0.0).toStringAsFixed(2)} kg of CO2"
-                          : "Carbon emission : ${(widget.fuelConsumption * 2.31).toStringAsFixed(2)} kg of CO2",
+                              ? "Carbon emission : ${(widget.fuelConsumption * 2.31).toStringAsFixed(2)} kg of CO2"
+                              : (widget.fuelType == "Diesel")
+                                  ? "Carbon emission : ${(widget.fuelConsumption * 2.68).toStringAsFixed(2)} kg of CO2"
+                                  : (widget.fuelType == "CNG")
+                                      ? "Carbon emission : ${(widget.fuelConsumption * 1.52).toStringAsFixed(2)} kg of CO2"
+                                      : (widget.fuelType == "Electric")
+                                          ? "Carbon emission : ${(widget.fuelConsumption * 0.0).toStringAsFixed(2)} kg of CO2"
+                                          : "Carbon emission : ${(widget.fuelConsumption * 2.31).toStringAsFixed(2)} kg of CO2",
                       style: const TextStyle(fontSize: 16),
                     ),
-
                   ],
                 ),
               ),
             ),
-
             const SizedBox(height: 16),
-
             const SizedBox(height: 20),
             _buildGeminiSuggestions(),
           ],
@@ -378,7 +467,6 @@ class _SlidingPanel2State extends State<SlidingPanel2>
       ),
     );
   }
-
 
   Widget _buildAQIGraph() {
     if (isLoading) {
@@ -418,13 +506,12 @@ class _SlidingPanel2State extends State<SlidingPanel2>
             child: Row(
               crossAxisAlignment: CrossAxisAlignment.end,
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              children: List.generate(aqiData.take(5).length, 
-              (index) {
+              children: List.generate(aqiData.take(5).length, (index) {
                 final aqiValue = aqiData[index];
                 final color = _getAQIColor(aqiValue);
                 final date = aqiDates[index]; // Fetch date from aqiDates list
 
-                 return Column(
+                return Column(
                   mainAxisAlignment: MainAxisAlignment.end,
                   children: [
                     Text(
@@ -447,7 +534,6 @@ class _SlidingPanel2State extends State<SlidingPanel2>
                     ),
                   ],
                 );
-                
               }),
             ),
           ),
@@ -498,7 +584,6 @@ class _SlidingPanel2State extends State<SlidingPanel2>
     );
   }
 
-
   Widget _buildGeminiSuggestions() {
     return AnimatedBuilder(
       animation: _animationController,
@@ -532,10 +617,12 @@ class _SlidingPanel2State extends State<SlidingPanel2>
             ),
             const SizedBox(width: 16),
             Expanded(
-              child: Text(
-                "Here's Gemini's advice based on your input.",
-                style: const TextStyle(fontSize: 16),
-              ),
+              child: isGeminiLoading
+                  ? const CircularProgressIndicator()
+                  : Text(
+                      _geminiAdvice,
+                      style: const TextStyle(fontSize: 16),
+                    ),
             ),
           ],
         ),
