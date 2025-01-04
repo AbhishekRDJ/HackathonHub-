@@ -7,7 +7,9 @@ class CustomTextField extends StatelessWidget {
   final IconData? icon;
   final IconData? preIcon;
   final bool isIcon;
+  final bool isPreIcon;
   final TextEditingController? controller;
+
 
   const CustomTextField({super.key,
     required this.text,
@@ -15,7 +17,9 @@ class CustomTextField extends StatelessWidget {
     this.icon,
     this.preIcon,
     required this.isIcon,
-    this.controller
+    this.controller,
+    required this.isPreIcon
+
   }
   );
 
@@ -24,6 +28,7 @@ class CustomTextField extends StatelessWidget {
     return TextField(
       controller: controller,
       obscureText: isIcon ? true : false,
+
       decoration: InputDecoration(
         fillColor: const Color.fromARGB(10, 50, 100, 100),
         filled: true,
@@ -34,7 +39,7 @@ class CustomTextField extends StatelessWidget {
             color: Colors.grey
         ),
         suffixIcon: isIcon ? Icon(icon) : null,
-          prefixIcon: Icon(preIcon),
+          prefixIcon: isPreIcon ? Icon(preIcon) : null,
 
         enabledBorder: OutlineInputBorder(
           borderSide: const BorderSide(color: Color.fromARGB(50, 80,80,80)),

@@ -1,8 +1,15 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-
-class ProfilePage extends StatelessWidget {
+import 'package:routing_app/pages/start_screen.dart';
+class ProfilePage extends StatefulWidget {
   const ProfilePage({super.key});
 
+  @override
+  State<ProfilePage> createState() => _ProfilePageState();
+}
+
+class _ProfilePageState extends State<ProfilePage> {
   void _showEditDialog({
     required BuildContext context,
     required String title,
@@ -49,108 +56,139 @@ class ProfilePage extends StatelessWidget {
         centerTitle: true,
         actions: [
           IconButton(
-            icon: const Icon(Icons.notifications),
+            icon: const Icon(Icons.output_outlined),
             onPressed: () {
-              // Handle notification icon press
+              showDialog(context: context,
+                  builder: (context){
+                    return AlertDialog(
+                      title: const Text("Are you sure you want to sign out ?"),
+                      actions: [
+                        TextButton(onPressed: () async{
+                          await FirebaseAuth.instance.signOut();
+                          Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (context)=>const StartScreen()));
+
+                        },
+                            child: const Text("Yes",style: TextStyle(color: Colors.red),)),
+
+                        TextButton(onPressed: (){
+
+                          Navigator.of(context).pop();
+                        },
+                            child: const Text("No",style: TextStyle(color: Colors.blue),))
+                      ],
+                    );
+                  });
             },
           ),
         ],
       ),
       backgroundColor: Colors.white, // Set background color to white
-      body: SingleChildScrollView(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            const SizedBox(height: 20),
-            CircleAvatar(
-              radius: 50,
-              backgroundColor: Colors.grey[300],
-              child: IconButton(
-                icon: const Icon(Icons.upload, size: 30),
-                onPressed: () {
-                  // Handle profile picture upload
-                },
-              ),
-            ),
-            const SizedBox(height: 10),
-            const Text(
-              'Aditya',
-              style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
-            ),
-            const SizedBox(height: 10),
-            ProfileDetailCard(
-              title: 'Name',
-              value: 'Aditya',
-              onTap: () {
-                _showEditDialog(
-                  context: context,
-                  title: 'Name',
-                  initialValue: 'Aditya',
-                  onSave: (newValue) {
-                    // Handle name save
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(content: Text("Name updated to $newValue")),
-                    );
-                  },
-                );
-              },
-            ),
-            ProfileDetailCard(
-              title: 'Email',
-              value: 'sid@growthx.com',
-              onTap: () {
-                _showEditDialog(
-                  context: context,
-                  title: 'Email',
-                  initialValue: 'sid@growthx.com',
-                  onSave: (newValue) {
-                    // Handle email save
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(content: Text("Email updated to $newValue")),
-                    );
-                  },
-                );
-              },
-            ),
-            ProfileDetailCard(
-              title: 'Phone Number',
-              value: '+91 6952346752',
-              onTap: () {
-                _showEditDialog(
-                  context: context,
-                  title: 'Phone Number',
-                  initialValue: '+91 6952346752',
-                  onSave: (newValue) {
-                    // Handle phone number save
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(
-                          content: Text("Phone number updated to $newValue")),
-                    );
-                  },
-                );
-              },
-            ),
-            ProfileAboutSection(
-              aboutText:
-                  'Lorem ipsum dolor sit amet consectetur. Erat auctor a aliquam vel congue luctus.',
-              onTap: () {
-                _showEditDialog(
-                  context: context,
-                  title: 'About',
-                  initialValue:
-                      'Lorem ipsum dolor sit amet consectetur. Erat auctor a aliquam vel congue luctus.',
-                  onSave: (newValue) {
-                    // Handle about save
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(content: Text("About updated to $newValue")),
-                    );
-                  },
-                );
-              },
-            ),
-          ],
-        ),
-      ),
+      body: StreamBuilder(
+        stream: FirebaseFirestore.instance.collection('userInfo').where("userid",
+        isEqualTo: FirebaseAuth.instance.currentUser!.uid).snapshots(),
+         builder: (context,snapshot) {
+
+           return SingleChildScrollView(
+
+             child: Column(
+               crossAxisAlignment: CrossAxisAlignment.center,
+               children: [
+                 const SizedBox(height: 20),
+                 CircleAvatar(
+                   radius: 50,
+                   backgroundColor: Colors.orange,
+                   child: Text(snapshot.data!.docs[0].data()['name'].toString().substring(0,1).toUpperCase(),
+                   style: const TextStyle(fontSize: 32,color: Colors.white),)
+                 ),
+                 const SizedBox(height: 10),
+                 Text(
+
+                     "${snapshot.data!.docs[0].data()['name']}",
+                   style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
+                 ),
+                 const SizedBox(height: 10),
+
+                 ProfileDetailCard(
+                   title: 'Name',
+                   value: '${snapshot.data!.docs[0].data()['name']}',
+                   onTap: () {
+                     _showEditDialog(
+                       context: context,
+                       title: 'Name',
+                       initialValue: '${snapshot.data!.docs[0].data()['name']}',
+                       onSave: (newValue) {
+                         setState(() {
+
+                         });
+                         ScaffoldMessenger.of(context).showSnackBar(
+                           SnackBar(content: Text("Name updated to $newValue")),
+                         );
+                       },
+                     );
+                   },
+                 ),
+                 ProfileDetailCard(
+                   title: 'Email',
+                   value: '${snapshot.data!.docs[0].data()['email']}',
+                   onTap: () {
+                     _showEditDialog(
+                       context: context,
+                       title: 'Email',
+                       initialValue: 'sid@growthx.com',
+                       onSave: (newValue) {
+                         // Handle email save
+                         ScaffoldMessenger.of(context).showSnackBar(
+                           SnackBar(
+                               content: Text("Email updated to $newValue")),
+                         );
+                       },
+                     );
+                   },
+                 ),
+                 ProfileDetailCard(
+                   title: 'Phone Number',
+                   value: '${snapshot.data!.docs[0].data()['phone']}',
+                   onTap: () {
+                     _showEditDialog(
+                       context: context,
+                       title: 'Phone Number',
+                       initialValue: '+91 6952346752',
+                       onSave: (newValue) {
+                         // Handle phone number save
+                         ScaffoldMessenger.of(context).showSnackBar(
+                           SnackBar(
+                               content: Text(
+                                   "Phone number updated to $newValue")),
+                         );
+                       },
+                     );
+                   },
+                 ),
+                 ProfileAboutSection(
+                   aboutText:
+                   'tell us about you',
+                   onTap: () {
+                     _showEditDialog(
+                       context: context,
+                       title: 'About',
+                       initialValue:
+                       '',
+                       onSave: (newValue) {
+                         // Handle about save
+                         ScaffoldMessenger.of(context).showSnackBar(
+                           SnackBar(
+                               content: Text("About updated to $newValue")),
+                         );
+                       },
+                     );
+                   },
+                 ),
+               ],
+             ),
+           );
+        }
+
+         )
     );
   }
 }
