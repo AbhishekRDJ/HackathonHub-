@@ -464,10 +464,8 @@ Fuel Consumption: ${widget.fuelConsumption ?? 'N/A'}
                 ),
               ),
             ),
-
             const SizedBox(height: 15),
-
-          _buildGeminiSuggestions()
+            _buildGeminiSuggestions()
           ],
         ),
       ),
