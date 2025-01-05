@@ -81,6 +81,7 @@ flutter:
     - assets/images/logo3.svg
     - assets/images/map.png
     - assets/images/map_logo.png
+    - assets/images/incident_icon.png
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/to/resolution-aware-images

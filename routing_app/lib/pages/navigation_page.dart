@@ -7,6 +7,7 @@ import 'package:http/http.dart' as http;
 import 'package:routing_app/utils/secrets.dart';
 import 'package:routing_app/widget/sliding_panel2.dart';
 import 'package:sliding_up_panel/sliding_up_panel.dart';
+import 'package:routing_app/pages/TrafficIncidentsPage.dart';
 
 class RealTimeSearchMap extends StatefulWidget {
   final String destination;
@@ -197,9 +198,7 @@ class _RealTimeSearchMapState extends State<RealTimeSearchMap> {
         final location = locations.first;
         setState(() {
           _searchedLocation = LatLng(location.latitude, location.longitude);
-
-        }
-        );
+        });
 
         // Animate the camera to the searched location
         _mapController.animateCamera(
@@ -282,7 +281,8 @@ class _RealTimeSearchMapState extends State<RealTimeSearchMap> {
   }
 
   Future<Map<String, dynamic>> getWeatherDetails(LatLng location) async {
-    final String apiKey = weatherKey; // Replace with your OpenWeatherMap API key
+    final String apiKey =
+        weatherKey; // Replace with your OpenWeatherMap API key
     final String url =
         "https://api.openweathermap.org/data/2.5/forecast?lat=${location.latitude}&lon=${location.longitude}&appid=$apiKey&units=metric";
 
@@ -301,6 +301,94 @@ class _RealTimeSearchMapState extends State<RealTimeSearchMap> {
       throw Exception("Error fetching weather details: $error");
     }
   }
+
+  Future<List<Map<String, dynamic>>> _fetchTrafficIncidents() async {
+    const String apiKey =
+        'ASmKG9cPObk7ysxV4c5KAUvXYGuEim7M'; // Replace with your API key
+  if (_currentLocation == null) return [];
+  final bbox = calculateBoundingBox(_currentLocation!, _searchedLocation!);
+    final String url =
+        'https://api.tomtom.com/traffic/services/5/incidentDetails?key=$apiKey&bbox=${_currentLocation!.longitude},${_currentLocation!.latitude},${_searchedLocation!.longitude},${_searchedLocation!.latitude}&fields={incidents{type,geometry{type,coordinates},properties{iconCategory}}}&language=en-GB&t=1111&timeValidityFilter=present';
+
+    try {
+      final response = await http.get(Uri.parse(url));
+      if (response.statusCode == 200) {
+        final data = json.decode(response.body);
+        final incidents = data['incidents'] as List<dynamic>;
+        return incidents
+            .map((incident) => incident as Map<String, dynamic>)
+            .toList();
+      } else {
+        throw Exception('Failed to fetch traffic incidents');
+      }
+    } catch (e) {
+      debugPrint('Error fetching traffic incidents: $e');
+      return [];
+    }
+  }
+
+  Future<void> _addTrafficIncidentMarkers(
+      List<Map<String, dynamic>> incidents) async {
+    Set<Marker> trafficMarkers = {};
+      // Load the custom icon
+  BitmapDescriptor customIcon = await BitmapDescriptor.fromAssetImage(
+    ImageConfiguration(size: Size(1, 1)), // Adjust the size if needed
+    'assets/images/incident_icon.png', // Path to your custom icon
+  );
+
+    for (var i = 0; i < incidents.length; i++) {
+      final incident = incidents[i];
+      final coordinates = incident['geometry']['coordinates'] as List<dynamic>;
+
+      // Add a marker for each incident's first coordinate
+      if (coordinates.isNotEmpty) {
+        final LatLng position =
+            LatLng(coordinates[0][1], coordinates[0][0]); // Lat, Long
+        trafficMarkers.add(
+          Marker(
+            markerId: MarkerId('traffic_incident_$i'),
+            position: position,
+            infoWindow: InfoWindow(
+              title: "Traffic Incident",
+              snippet:
+                  "Type: ${incident['type']} | Icon: ${incident['properties']['iconCategory']}",
+            ),
+            icon:
+                customIcon, // Use the custom icon for traffic incidents (optional)
+          ),
+        );
+      }
+    }
+
+    setState(() {
+      _markers.addAll(trafficMarkers); // Add incident markers to map markers
+    });
+  }
+
+  String calculateBoundingBox(LatLng source, LatLng destination) {
+  double minLat = source.latitude < destination.latitude
+      ? source.latitude
+      : destination.latitude;
+  double maxLat = source.latitude > destination.latitude
+      ? source.latitude
+      : destination.latitude;
+  double minLng = source.longitude < destination.longitude
+      ? source.longitude
+      : destination.longitude;
+  double maxLng = source.longitude > destination.longitude
+      ? source.longitude
+      : destination.longitude;
+
+  // Expand the bbox slightly to include nearby areas
+  const double padding = 0.01; // Adjust padding as needed
+  minLat -= padding;
+  maxLat += padding;
+  minLng -= padding;
+  maxLng += padding;
+
+  return "$minLng,$minLat,$maxLng,$maxLat"; // bbox format: "minLng,minLat,maxLng,maxLat"
+}
+
 
   @override
   void initState() {
@@ -343,7 +431,6 @@ class _RealTimeSearchMapState extends State<RealTimeSearchMap> {
                     onMapCreated: (GoogleMapController controller) {
                       _mapController = controller;
                       _updateMapLocation(widget.destination);
-
                     },
                     myLocationButtonEnabled: true,
                     myLocationEnabled: true,
@@ -359,8 +446,7 @@ class _RealTimeSearchMapState extends State<RealTimeSearchMap> {
                     onPressed: () {
                       setState(() {
                         _showTraffic = !_showTraffic; // Toggle traffic layer
-                      }
-                      );
+                      });
                     },
                     child: Icon(
                       _showTraffic ? Icons.traffic : Icons.traffic_outlined,
@@ -370,8 +456,34 @@ class _RealTimeSearchMapState extends State<RealTimeSearchMap> {
                         : "Show Traffic Layer",
                   ),
                 ),
+                Positioned(
+                  bottom: 50,
+                  right: 20,
+                  child: FloatingActionButton(
+                    onPressed: () async {
+                      final incidents = await _fetchTrafficIncidents();
+                      if (incidents.isNotEmpty) {
+                        await _addTrafficIncidentMarkers(incidents);
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(
+                              content: Text(
+                                  "${incidents.length} traffic incidents displayed on map.")),
+                        );
+                      } else {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(
+                              content: Text("No traffic incidents found.")),
+                        );
+                      }
+                    },
+                    child: Icon(Icons.warning_amber_rounded),
+                    tooltip: "View Traffic Incidents",
+                  ),
+                ),
               ],
             ),
     );
   }
+
+  // Fetch traffic incidents from TomTom API
 }
