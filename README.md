@@ -97,6 +97,30 @@ Here are some screenshots of our app:
   <img src="./assets/histroy.png" alt="History page" width="150"/>
 </p>
 
+<table style="width: 100%;">
+  <tr>
+    <td align="center" width="25%">
+      <img src="./assets/start_screen.png" width="120"/><br>
+      <b>Splash Screen</b><br>
+      Displays the Spoon Share logo upon app launch.
+    </td>
+    <td align="center" width="25%">
+      <img src="./assets/start_screen.png" width="120"/><br>
+      <b>Onboarding Screen</b><br>
+      Allows users to create account or log.
+    </td>
+    <td align="center" width="25%">
+      <img src="./assets/start_screen.png" width="120"/><br>
+      <b>Signup Screen</b><br>
+       Create an account manually or can  using Google credentials.
+    </td>
+    <td align="center" width="25%">
+      <img src="./assets/start_screen.png" width="120"/><br>
+      <b>Signin Screen</b><br>
+       Log in via email or continue using Google credentials.
+    </td>
+  </tr></table>
+
 ### Setup Instructions
 
 1. **Clone the Repository**:
