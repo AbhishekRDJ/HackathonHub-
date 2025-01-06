@@ -86,7 +86,46 @@ class YourInfoPage extends StatelessWidget {
                     ),
                   ),
                   const SizedBox(height: 16),
-                  // Transaction List
+
+                  ListTile(
+                    leading: const Icon(Icons.location_on, color: Colors.red),
+                    title: const Text("Mumbai", style: TextStyle(fontWeight: FontWeight.bold)),
+                    subtitle: const Text("Distance: 150 km | Fuel: 10 L"),
+
+                    onTap: () {
+                      // Handle tap action
+                    },
+                  ),
+                  const Divider(),
+                  ListTile(
+                    leading: const Icon(Icons.location_on, color: Colors.red),
+                    title: const Text("Pune", style: TextStyle(fontWeight: FontWeight.bold)),
+                    subtitle: const Text("Distance: 120 km | Fuel: 8 L"),
+
+                    onTap: () {
+                      // Handle tap action
+                    },
+                  ),
+                  const Divider(),
+                  ListTile(
+                    leading: const Icon(Icons.location_on, color: Colors.red),
+                    title: const Text("Nagpur", style: TextStyle(fontWeight: FontWeight.bold)),
+                    subtitle: const Text("Distance: 300 km | Fuel: 20 L"),
+
+                    onTap: () {
+                      // Handle tap action
+                    },
+                  ),
+                  const Divider(),
+                  ListTile(
+                    leading: const Icon(Icons.location_on, color: Colors.red),
+                    title: const Text("Nashik", style: TextStyle(fontWeight: FontWeight.bold)),
+                    subtitle: const Text("Distance: 180 km | Fuel: 12 L"),
+
+                    onTap: () {
+                      // Handle tap action
+                    },
+                  ),
 
                 ],
               ),

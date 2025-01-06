@@ -166,8 +166,7 @@ Fuel Consumption: ${widget.fuelConsumption ?? 'N/A'}
 
   Future<void> _fetchAQIData(LatLng desti) async {
     const String token = "c2462c6c46be8a23f08c47b110d493265397d745";
-    const double latitude = 26.268249;
-    const double longitude = 73.0193853;
+
 
     final String url =
         "https://api.waqi.info/feed/geo:${desti.latitude};${desti.longitude}/?token=$token";
@@ -307,6 +306,7 @@ Fuel Consumption: ${widget.fuelConsumption ?? 'N/A'}
             const SizedBox(height: 25),
             Row(
               children: [
+
                 Text(
                   "Estimated fuel consumption :- ${widget.fuelConsumption.toStringAsFixed(2)} litres",
                   style: const TextStyle(
@@ -435,36 +435,39 @@ Fuel Consumption: ${widget.fuelConsumption ?? 'N/A'}
             ),
             Visibility(
               visible: isVisible2,
-              child: Container(
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 15, vertical: 20),
-                decoration: BoxDecoration(
-                  color: Colors.grey[200],
-                  borderRadius: BorderRadius.circular(12),
-                ),
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    const SizedBox(height: 8),
-                    Text(
-                      widget.vehicleType == "Cycle"
-                          ? "Cycles do not consume fuel."
-                          : (widget.fuelType == "Petrol")
-                              ? "Carbon emission : ${(widget.fuelConsumption * 2.31).toStringAsFixed(2)} kg of CO2"
-                              : (widget.fuelType == "Diesel")
-                                  ? "Carbon emission : ${(widget.fuelConsumption * 2.68).toStringAsFixed(2)} kg of CO2"
-                                  : (widget.fuelType == "CNG")
-                                      ? "Carbon emission : ${(widget.fuelConsumption * 1.52).toStringAsFixed(2)} kg of CO2"
-                                      : (widget.fuelType == "Electric")
-                                          ? "Carbon emission : ${(widget.fuelConsumption * 0.0).toStringAsFixed(2)} kg of CO2"
-                                          : "Carbon emission : ${(widget.fuelConsumption * 2.31).toStringAsFixed(2)} kg of CO2",
-                      style: const TextStyle(fontSize: 16),
-                    ),
-                  ],
+              child: Center(
+                child: Container(
+                  width: MediaQuery.of(context).size.width*0.95,
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 15, vertical: 20),
+                  decoration: BoxDecoration(
+                    color: Colors.green,
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      const SizedBox(height: 8),
+                      Text(
+                        widget.vehicleType == "Cycle"
+                            ? "Cycles do not consume fuel."
+                            : (widget.fuelType == "Petrol")
+                                ? "Carbon emission : ${(widget.fuelConsumption * 2.31).toStringAsFixed(2)} kg of CO2"
+                                : (widget.fuelType == "Diesel")
+                                    ? "Carbon emission : ${(widget.fuelConsumption * 2.68).toStringAsFixed(2)} kg of CO2"
+                                    : (widget.fuelType == "CNG")
+                                        ? "Carbon emission : ${(widget.fuelConsumption * 1.52).toStringAsFixed(2)} kg of CO2"
+                                        : (widget.fuelType == "Electric")
+                                            ? "Carbon emission : ${(widget.fuelConsumption * 0.0).toStringAsFixed(2)} kg of CO2"
+                                            : "Carbon emission : ${(widget.fuelConsumption * 2.31).toStringAsFixed(2)} kg of CO2",
+                        style: const TextStyle(fontSize: 16),
+                      ),
+                    ],
+                  ),
                 ),
               ),
             ),
-            const SizedBox(height: 15),
+            const SizedBox(height: 25),
             _buildGeminiSuggestions()
           ],
         ),
@@ -560,7 +563,7 @@ Fuel Consumption: ${widget.fuelConsumption ?? 'N/A'}
   Widget _buildHoverButton(IconData icon, String label, Color color) {
     return GestureDetector(
       onTap: () {
-        // Add button functionality here
+
       },
       child: MouseRegion(
         cursor: SystemMouseCursors.click,

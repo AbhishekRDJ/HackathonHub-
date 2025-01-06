@@ -332,7 +332,7 @@ class _RealTimeSearchMapState extends State<RealTimeSearchMap> {
     Set<Marker> trafficMarkers = {};
       // Load the custom icon
   BitmapDescriptor customIcon = await BitmapDescriptor.fromAssetImage(
-    ImageConfiguration(size: Size(1, 1)), // Adjust the size if needed
+    ImageConfiguration(size: Size(24,24),devicePixelRatio: 1), // Adjust the size if needed
     'assets/images/incident_icon.png', // Path to your custom icon
   );
 
@@ -421,7 +421,7 @@ class _RealTimeSearchMapState extends State<RealTimeSearchMap> {
                     desti: _searchedLocation,
                   ),
                   maxHeight: MediaQuery.of(context).size.height * 0.76,
-                  minHeight: MediaQuery.of(context).size.height * 0.09,
+                  minHeight: MediaQuery.of(context).size.height * 0.25,
                   borderRadius: BorderRadius.circular(12),
                   body: GoogleMap(
                     initialCameraPosition: CameraPosition(
