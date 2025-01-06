@@ -82,42 +82,28 @@ Short but detailed introduction to SpoonShare. Click on the image above to watch
 Here are some screenshots of our app:
 
 ### App Pages
-<p align="center">
-  <img src="./assets/start_screen.png" alt="Route Suggestions" width="150"/>
-  <img src="./assets/login.png" alt="Login Page" width="150"/>
-  <img src="./assets/home_page.png" alt="Home Page" width="150"/>
-  <img src="./assets/aqi.png" alt="Emission Estimates" width="150"/>
-  <img src="./assets/map_page.png" alt="Map View" width="150"/>
-</p>
-<p align="center">
-  <img src="./assets/incident.png" alt="Incident View" width="150"/>
-  <img src="./assets/traffic.png" alt="Traffic Page" width="150"/>
-  <img src="./assets/location_detials.png" alt="Location Details" width="150"/>
-  <img src="./assets/profile.png" alt="Profile page" width="150"/>
-  <img src="./assets/histroy.png" alt="History page" width="150"/>
-</p>
 
 <table style="width: 100%;">
   <tr>
     <td align="center" width="25%">
       <img src="./assets/start_screen.png" width="120"/><br>
-      <b>Splash Screen</b><br>
-      Displays the Spoon Share logo upon app launch.
+      <b>Start Screen</b><br>
+      Displays the NeoRoute logo and allow users login or signup .
     </td>
     <td align="center" width="25%">
-      <img src="./assets/start_screen.png" width="120"/><br>
-      <b>Onboarding Screen</b><br>
-      Allows users to create account or log.
+      <img src="./assets/sign_up.png" width="120"/><br>
+      <b>Sign up page</b><br>
+      Allows users to create account.
     </td>
     <td align="center" width="25%">
-      <img src="./assets/start_screen.png" width="120"/><br>
-      <b>Signup Screen</b><br>
-       Create an account manually or can  using Google credentials.
+      <img src="./assets/home_page.png" width="120"/><br>
+      <b>Home screen</b><br>
+       home screen showing current location of user.
     </td>
     <td align="center" width="25%">
-      <img src="./assets/start_screen.png" width="120"/><br>
-      <b>Signin Screen</b><br>
-       Log in via email or continue using Google credentials.
+      <img src="./assets/add_info.png" width="120"/><br>
+      <b>Adding details screen</b><br>
+        user can specify the details like destination vehicle type, fule type to featch route.
     </td>
   </tr></table>
 
