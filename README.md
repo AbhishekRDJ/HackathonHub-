@@ -6,6 +6,13 @@
 
 **Solution**: This solution uses a Python-based backend with Flask and a Flutter-based frontend in Dart. The system connects multiple APIs, including TomTom, Google Maps, AQICN, and OSRM, to recommend efficient routes and estimate vehicle emissions. It aims to enhance delivery efficiency, improve customer satisfaction, and reduce carbon footprints, promoting sustainability in logistics.
 
+## Intro To SpoonShare Video
+
+[![Intro To NeoRoute](https://www.youtube.com/watch?v=RaYNFWcBbUM)
+
+
+Short but detailed introduction to SpoonShare. Click on the image above to watch the video.
+
 ---
 
 ## 🎯 Goals and Objectives
@@ -35,6 +42,23 @@
 - **Emissions Estimation**: Calculates and displays carbon emissions for every route option.
 - **Customizable Inputs**: Allows users to input specific vehicle details for tailored route suggestions.
 - **Interactive Visualizations**: Displays route options and emissions data clearly.
+
+---
+## 🛳 User Guide
+
+### Walkthrough
+add
+<table style="width: 100%;">
+  <tr>
+    <td align="center" width="25%">
+      <img src="https://ibb.co/tckyg8V" width="120"/><br>
+      <b>Splash Screen</b><br>
+      Displays the Spoon Share logo upon app launch.
+    </td>
+   
+  </tr>
+</table>
+---
 
 ---
 
