@@ -8,7 +8,7 @@
 
 ## Intro To SpoonShare Video
 
-[![Intro To NeoRoute](https://www.youtube.com/watch?v=RaYNFWcBbUM)
+[![Intro To NeoRoute](https://www.youtube.com/watch?v=RaYNFWcBbUM)]
 
 
 Short but detailed introduction to SpoonShare. Click on the image above to watch the video.
