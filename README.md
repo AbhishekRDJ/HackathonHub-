@@ -89,48 +89,73 @@ Here are some screenshots of our app:
     <td align="center" width="25%">
       <img src="./assets/start_screen.png" width="120"/><br>
       <b>Start Screen</b><br>
-      Displays the NeoRoute logo and allow users login or signup .
+      Displays the NeoRoute logo and allow users login or signup
     </td>
     <td align="center" width="25%">
       <img src="./assets/sign_up.png" width="120"/><br>
       <b>Sign up page</b><br>
-      Allows users to create account.
+      Allows users to create account with entering his email and password
+    </td>
+     <td align="center" width="25%">
+      <img src="./assets/login.png" width="120"/><br>
+      <b>Sign up page</b><br>
+      allows users to login if they already have account
     </td>
     <td align="center" width="25%">
       <img src="./assets/home_page.png" width="120"/><br>
       <b>Home screen</b><br>
-       home screen showing current location of user.
+       home screen showing current location of user
     </td>
-    <td align="center" width="25%">
-      <img src="./assets/add_info.png" width="120"/><br>
-      <b>Adding details screen</b><br>
-        user can specify the details like destination vehicle type, fule type to featch route.
-    </td>
-  </tr></table>
+   
+  </tr>
 
-  <table style="width: 100%;">
   <tr>
-    <td align="center" width="25%">
-      <img src="./assets/start_screen.png" width="120"/><br>
-      <b>Start Screen</b><br>
-      Displays the NeoRoute logo and allow users login or signup .
-    </td>
-    <td align="center" width="25%">
-      <img src="./assets/sign_up.png" width="120"/><br>
-      <b>Sign up page</b><br>
-      Allows users to create account.
-    </td>
-    <td align="center" width="25%">
-      <img src="./assets/home_page.png" width="120"/><br>
-      <b>Home screen</b><br>
-       home screen showing current location of user.
-    </td>
-    <td align="center" width="25%">
+     <td align="center" width="25%">
       <img src="./assets/add_info.png" width="120"/><br>
       <b>Adding details screen</b><br>
-        user can specify the details like destination vehicle type, fule type to featch route.
+        user can specify the destination and featch route
     </td>
-  </tr></table>
+    <td align="center" width="25%">
+      <img src="./assets/map_page.png" width="120"/><br>
+      <b>Route Screen</b><br>
+      Displays the route to specified destination along with other details
+    </td>
+    <td align="center" width="25%">
+      <img src="./assets/location_detials.png" width="120"/><br>
+      <b>Map Screen</b><br>
+      user can see various information realted to destination
+    </td>
+    <td align="center" width="25%">
+      <img src="./assets/aqi.png" width="120"/><br>
+      <b>Details screen</b><br>
+       along with location user can also see other details like weather
+    </td>
+  </tr>
+
+   <tr>
+     <td align="center" width="25%">
+      <img src="./assets/traffic.png" width="120"/><br>
+      <b>Traffic screen</b><br>
+        user can also see the traffic details on the map
+    </td>
+    <td align="center" width="25%">
+      <img src="./assets/incident.png" width="120"/><br>
+      <b>Incident Screen</b><br>
+      Displays the incidents happened in the route
+    </td>
+    <td align="center" width="25%">
+      <img src="./assets/history.png" width="120"/><br>
+      <b>History Screen</b><br>
+      user can save the locations searched that will be displayed here
+    </td>
+    <td align="center" width="25%">
+      <img src="./assets/profile.png" width="120"/><br>
+      <b>Profile screen</b><br>
+       User can see his profile details and also edit them 
+    </td>
+
+  </tr>
+  </table>
 
 ### Setup Instructions
 
