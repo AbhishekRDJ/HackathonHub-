@@ -93,6 +93,8 @@ Here are some screenshots of our app:
   <img src="./assets/incident.png" alt="Incident View" width="150"/>
   <img src="./assets/traffic.png" alt="Traffic Page" width="150"/>
   <img src="./assets/location_detials.png" alt="Location Details" width="150"/>
+  <img src="./assets/profile.png" alt="Profile page" width="150"/>
+  <img src="./assets/histroy.png" alt="History page" width="150"/>
 </p>
 
 ### Setup Instructions
