@@ -44,13 +44,6 @@ Short but detailed introduction to SpoonShare. Click on the image above to watch
 - **Interactive Visualizations**: Displays route options and emissions data clearly.
 
 ---
-## 🛳 User Guide
-
-### Walkthrough
-
----
-
----
 
 ## 🛠 Tech Stack
 
@@ -90,9 +83,9 @@ Here are some screenshots of our app:
 
 ### App Pages
 <p align="center">
+  <img src="./assets/start_screen.png" alt="Route Suggestions" width="150"/>
   <img src="./assets/login.png" alt="Login Page" width="150"/>
   <img src="./assets/home_page.png" alt="Home Page" width="150"/>
-  <img src="./assets/start_screen.png" alt="Route Suggestions" width="150"/>
   <img src="./assets/aqi.png" alt="Emission Estimates" width="150"/>
   <img src="./assets/map_page.png" alt="Map View" width="150"/>
 </p>
