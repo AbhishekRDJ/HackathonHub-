@@ -49,14 +49,7 @@ Short but detailed introduction to SpoonShare. Click on the image above to watch
 ### Walkthrough
 add
 <table style="width: 100%;">
-  <tr>
-    <td align="center" width="25%">
-      <img src="https://ibb.co/tckyg8V" width="120"/><br>
-      <b>Splash Screen</b><br>
-      Displays the Spoon Share logo upon app launch.
-    </td>
-   
-  </tr>
+ 
 </table>
 ---
 
