@@ -11,7 +11,7 @@
 [![Intro To NeoRoute](https://github.com/AbhishekRDJ/HackathonHub-/blob/main/assets/thumnail.jpg?raw=true)](https://www.youtube.com/watch?v=RaYNFWcBbUM)
 
 
-Short but detailed introduction to SpoonShare. Click on the image above to watch the video.
+Short but detailed introduction to NeoRoute. Click on the image above to watch the video.
 
 ---
 
