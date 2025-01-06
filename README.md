@@ -144,7 +144,7 @@ Here are some screenshots of our app:
       Displays the incidents happened in the route
     </td>
     <td align="center" width="25%">
-      <img src="./assets/history.png" width="120"/><br>
+      <img src="./assets/histroy.png" width="120"/><br>
       <b>History Screen</b><br>
       user can save the locations searched that will be displayed here
     </td>
