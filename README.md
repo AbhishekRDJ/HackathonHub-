@@ -108,6 +108,30 @@ Here are some screenshots of our app:
     </td>
   </tr></table>
 
+  <table style="width: 100%;">
+  <tr>
+    <td align="center" width="25%">
+      <img src="./assets/start_screen.png" width="120"/><br>
+      <b>Start Screen</b><br>
+      Displays the NeoRoute logo and allow users login or signup .
+    </td>
+    <td align="center" width="25%">
+      <img src="./assets/sign_up.png" width="120"/><br>
+      <b>Sign up page</b><br>
+      Allows users to create account.
+    </td>
+    <td align="center" width="25%">
+      <img src="./assets/home_page.png" width="120"/><br>
+      <b>Home screen</b><br>
+       home screen showing current location of user.
+    </td>
+    <td align="center" width="25%">
+      <img src="./assets/add_info.png" width="120"/><br>
+      <b>Adding details screen</b><br>
+        user can specify the details like destination vehicle type, fule type to featch route.
+    </td>
+  </tr></table>
+
 ### Setup Instructions
 
 1. **Clone the Repository**:
