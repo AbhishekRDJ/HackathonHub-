@@ -19,7 +19,19 @@
 
 ## 📊 Features
 
-- **Dynamic Route Optimization**: Suggests real-time efficient routes based on traffic and weather conditions.
+- **Dynamic Route Optimization**: NeoRoute leverages the power of OSRM (Open Source Routing Machine) to calculate the best routes in real-time while considering critical factors like:
+🛣️ Traffic conditions
+🌦️ Weather forecasts
+🌿 Carbon emissions
+⛽ Fuel consumption
+💡 Smart API Integration
+
+### Our app fetches real-time data using APIs like:
+- **TomTom for live traffic updates**
+- **OpenWeather for weather conditions**
+- **Google Maps for geospatial data**
+- **Gemini API for personalized suggestions**
+
 - **Emissions Estimation**: Calculates and displays carbon emissions for every route option.
 - **Customizable Inputs**: Allows users to input specific vehicle details for tailored route suggestions.
 - **Interactive Visualizations**: Displays route options and emissions data clearly.
@@ -36,11 +48,16 @@
 - **Framework**: Flask
 - **Language**: Python
 
+### DataBase
+- **🔐 User authentication handled via Firebase.**
+- **📂 Route and user data stored securely in Firebase Firestore.**
+
 ### APIs Utilized
 - **TomTom**: Real-time traffic data
 - **Google Maps**: Mapping and geospatial data
 - **AQICN**: Air quality and meteorological data
 - **OSRM**: Route generation and optimization
+- **Gemini API**
 
 ---
 
@@ -57,14 +74,14 @@
 
 1. **Clone the Repository**:
    ```bash
-   git clone https://github.com/YourUsername/DynamicRouteOptimization.git
-   cd DynamicRouteOptimization
+   git clone https://github.com/AbhishekRDJ/HackathonHub-.git
+   cd HackathonHub-
    ```
 
 2. **Backend Setup**:
    - Navigate to the backend directory:
      ```bash
-     cd backend
+     cd flask_backend
      ```
    - Create and activate a virtual environment:
      ```bash
@@ -83,7 +100,7 @@
 3. **Frontend Setup**:
    - Navigate to the frontend directory:
      ```bash
-     cd frontend
+     cd routing_app
      ```
    - Install dependencies:
      ```bash
@@ -121,6 +138,8 @@ We welcome contributions to enhance this project! Please follow these steps:
 
 - **Real-Time Data Integration**: Ensures the most accurate and up-to-date route suggestions.
 - **Enhanced Sustainability**: Actively contributes to reducing carbon emissions.
+- **Give Fuel Consumption**: Based on AI logic give fuel consumption.
+- **Give emission Detail**: Actively .
 - **User-Friendly Interface**: Intuitive design allows for easy navigation and use.
 
 ---
