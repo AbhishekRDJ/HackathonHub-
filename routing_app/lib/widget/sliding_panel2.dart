@@ -47,9 +47,8 @@ class SlidingPanel2 extends StatefulWidget {
 class _SlidingPanel2State extends State<SlidingPanel2>
     with SingleTickerProviderStateMixin {
   late AnimationController _animationController;
-  String _geminiAdvice = "Fetching advice...";
+  String _geminiAdvice = "";
   bool isGeminiLoading = false;
-  late Future<void> _geminiAdviceFuture;
 
   double calculateMileage(String vehicleType, String age) {
     if (vehicleType == 'Car') {
@@ -83,6 +82,7 @@ class _SlidingPanel2State extends State<SlidingPanel2>
   bool isVisible2 = false;
   String errorMessage = '';
 
+
   final List<String> _apiKeys = [
     'AIzaSyApOuJrHglGoxym04m2MGb5SIR1Ud53BfA',
     'AIzaSyA1KK-8WxupyjmC3xjj4k1M4-ZUpg--Xcc',
@@ -97,7 +97,7 @@ class _SlidingPanel2State extends State<SlidingPanel2>
       duration: const Duration(milliseconds: 800),
     );
     _animationController.forward();
-    _geminiAdviceFuture = _fetchGeminiAdvice();
+    
   }
 
   String _getRandomApiKey() {
@@ -254,15 +254,7 @@ class _SlidingPanel2State extends State<SlidingPanel2>
 
   @override
   Widget build(BuildContext context) {
-    return FutureBuilder<void>(
-      future: _geminiAdviceFuture,
-      builder: (context, snapshot) {
-        if (snapshot.connectionState == ConnectionState.waiting) {
-          return const Center(child: CircularProgressIndicator());
-        } else if (snapshot.hasError) {
-          return Text('Error: ${snapshot.error}');
-        } else {
-          return SingleChildScrollView(
+    return SingleChildScrollView(
             controller: widget.controller,
             child: Padding(
               padding: const EdgeInsets.all(16.0),
@@ -526,9 +518,7 @@ class _SlidingPanel2State extends State<SlidingPanel2>
             ),
           );
         }
-      },
-    );
-  }
+      
 
   Widget _buildAQIGraph() {
     if (isLoading) {
@@ -679,23 +669,34 @@ class _SlidingPanel2State extends State<SlidingPanel2>
             ),
           ],
         ),
-        child: Row(
-          children: [
-            const CircleAvatar(
-              backgroundColor: Colors.blue,
-              child: Icon(Icons.person, color: Colors.white),
-            ),
-            const SizedBox(width: 16),
-            Expanded(
-              child: isGeminiLoading == true
-                  ? const Center(child: CircularProgressIndicator())
-                  : Text(
-                      _geminiAdvice,
-                      style: const TextStyle(fontSize: 16),
+        child: GestureDetector(
+          onTap: (){
+            setState(() {
+              _geminiAdvice = "Fetching suggestions ...";
+              _fetchGeminiAdvice();
+            });
+          },
+          child: Container(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.start,
+              children: [
+                const Row(
+                  children: [
+                    CircleAvatar(
+                      backgroundImage: AssetImage("assets/images/gemini.png"),
                     ),
+                    SizedBox(width: 20,),
+
+                    Text("Ask gemini for suggestion")
+                  ],
+                ),
+                const SizedBox(height: 20,),
+
+                Text(_geminiAdvice)
+              ],
             ),
-          ],
-        ),
+          ),
+        )
       ),
     );
   }

@@ -27,6 +27,9 @@
       <excludeFolder url="file://$MODULE_DIR$/routing_app/.dart_tool" />
       <excludeFolder url="file://$MODULE_DIR$/routing_app/.pub" />
       <excludeFolder url="file://$MODULE_DIR$/routing_app/build" />
+      <excludeFolder url="file://$MODULE_DIR$/routing_app/.dart_tool" />
+      <excludeFolder url="file://$MODULE_DIR$/routing_app/.pub" />
+      <excludeFolder url="file://$MODULE_DIR$/routing_app/build" />
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />

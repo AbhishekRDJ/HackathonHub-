@@ -100,7 +100,7 @@ class _HomePageState extends State<HomePage>
               padding: const EdgeInsets.all(8.0),
               child: CircleAvatar(
                 backgroundColor: randomColor,
-                child: Text(user[0],
+                child: Text(user[0].toUpperCase(),
                   style: const TextStyle(color: Colors.white),),
               ),
             )

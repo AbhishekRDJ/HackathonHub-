@@ -84,11 +84,11 @@ class _LogInPageState extends State<SignUpPage> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const Text("Welcome Back! Glade \nto see you, Again!",
+            const Text("Embark on Smarter Journeys with NeoRoute",
 
               style: TextStyle(
                   fontWeight: FontWeight.bold,
-                  fontSize: 36,
+                  fontSize: 30,
                   color: Colors.white
               ),
             ).animate() // uses `Animate.defaultDuration`
@@ -97,7 +97,7 @@ class _LogInPageState extends State<SignUpPage> {
                 delay: const Duration(microseconds: 100)
             ),
 
-            const Spacer(),
+            const SizedBox(height: 30,),
 
             CustomTextField(text: 'Enter name',
               color: Colors.black,
@@ -105,7 +105,7 @@ class _LogInPageState extends State<SignUpPage> {
               isPreIcon: false,
               isIcon: false,
             ),
-            const SizedBox(height: 30,),
+            const SizedBox(height: 25,),
 
             CustomTextField(text: 'Enter phone no',
               color: Colors.black,
@@ -114,7 +114,7 @@ class _LogInPageState extends State<SignUpPage> {
               isPreIcon: false,
 
             ),
-            const SizedBox(height: 30,),
+            const SizedBox(height: 25,),
 
 
             CustomTextField(
@@ -124,7 +124,7 @@ class _LogInPageState extends State<SignUpPage> {
               isIcon: false,
               isPreIcon: false,
             ),
-            const SizedBox(height: 30,),
+            const SizedBox(height: 25,),
 
             CustomTextField(text: 'Enter password',
               color: Colors.black,
@@ -132,7 +132,7 @@ class _LogInPageState extends State<SignUpPage> {
               isIcon: true,
               isPreIcon: false,
             ),
-            const SizedBox(height: 30,),
+            const SizedBox(height: 25,),
 
             CustomTextField(
               text: 'Confirm password',
@@ -142,7 +142,7 @@ class _LogInPageState extends State<SignUpPage> {
               isPreIcon: false,
             ),
 
-            const SizedBox(height: 30,),
+            const SizedBox(height: 25,),
 
             CustomTextField(text: 'About',
               color: Colors.black,

@@ -67,11 +67,11 @@ class _LogInPageState extends State<LogInPage> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const Text("Welcome Back! Glade \nto see you, Again!",
+            const Text("Welcome Back, Let’s Navigate New Paths",
 
             style: TextStyle(
               fontWeight: FontWeight.bold,
-              fontSize: 36,
+              fontSize: 32,
               color: Colors.white
             ),
             ).animate() // uses `Animate.defaultDuration`

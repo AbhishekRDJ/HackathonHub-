@@ -456,7 +456,7 @@ class _RealTimeSearchMapState extends State<RealTimeSearchMap> {
           },
               icon: CircleAvatar(
                 backgroundColor: randomColor,
-                child: Text(user[0],
+                child: Text(user[0].toUpperCase(),
                     style: const TextStyle(color: Colors.white,fontSize: 20)),
               )
           ),
