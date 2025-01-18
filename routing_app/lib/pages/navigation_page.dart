@@ -35,6 +35,7 @@ class _RealTimeSearchMapState extends State<RealTimeSearchMap> {
   final Set<Marker> _markers = {};
   bool _showTraffic = false; // Traffic layer toggle
   String locationInfo = "";
+  String _SourceOrigin = "";
   String _distance = "";
   String _duration = "";
   Map<String, dynamic> weatherData = {};
@@ -102,8 +103,7 @@ class _RealTimeSearchMapState extends State<RealTimeSearchMap> {
 
   Future<void> _fetchDistanceAndDuration(
       LatLng source, LatLng destination) async {
-    final apiKey =
-        '$googleApiKey'; // Replace with your API key
+    final apiKey = '$googleApiKey'; // Replace with your API key
     final url =
         'https://maps.googleapis.com/maps/api/distancematrix/json?origins=${source.latitude},${source.longitude}&destinations=${destination.latitude},${destination.longitude}&key=$apiKey';
     try {
@@ -111,12 +111,20 @@ class _RealTimeSearchMapState extends State<RealTimeSearchMap> {
 
       if (response.statusCode == 200) {
         final data = json.decode(response.body);
+        print('Response Data for source: $data');
 
         if (data['status'] == 'OK' &&
             data['rows'] != null &&
             data['rows'].isNotEmpty) {
           final elements = data['rows'][0]['elements'][0];
-
+          if (data['origin_addresses'] != null &&
+              data['origin_addresses'].isNotEmpty) {
+            // Get the first origin address
+            setState(() {
+              _SourceOrigin = data['origin_addresses'][0];
+            });
+            print('Origin Address: $_SourceOrigin');
+          }
           if (elements['status'] == 'OK') {
             final distance = elements['distance']['text']; // e.g., "5.4 km"
             final duration = elements['duration']['text']; // e.g., "12 mins"
@@ -147,8 +155,7 @@ class _RealTimeSearchMapState extends State<RealTimeSearchMap> {
 
   // Fetch location details using Geocoding API
   Future<void> _fetchLocationDetails(LatLng location) async {
-    final apiKey =
-        '$googleApiKey'; // Replace with your API key
+    final apiKey = '$googleApiKey'; // Replace with your API key
     final url =
         'https://maps.googleapis.com/maps/api/geocode/json?latlng=${location.latitude},${location.longitude}&key=$apiKey';
 
@@ -303,10 +310,9 @@ class _RealTimeSearchMapState extends State<RealTimeSearchMap> {
   }
 
   Future<List<Map<String, dynamic>>> _fetchTrafficIncidents() async {
-    const String apiKey =
-        '$trafficKey'; // Replace with your API key
-  if (_currentLocation == null) return [];
-  final bbox = calculateBoundingBox(_currentLocation!, _searchedLocation!);
+    const String apiKey = '$trafficKey'; // Replace with your API key
+    if (_currentLocation == null) return [];
+    final bbox = calculateBoundingBox(_currentLocation!, _searchedLocation!);
     final String url =
         'https://api.tomtom.com/traffic/services/5/incidentDetails?key=$apiKey&bbox=${_currentLocation!.longitude},${_currentLocation!.latitude},${_searchedLocation!.longitude},${_searchedLocation!.latitude}&fields={incidents{type,geometry{type,coordinates},properties{iconCategory}}}&language=en-GB&t=1111&timeValidityFilter=present';
 
@@ -330,11 +336,12 @@ class _RealTimeSearchMapState extends State<RealTimeSearchMap> {
   Future<void> _addTrafficIncidentMarkers(
       List<Map<String, dynamic>> incidents) async {
     Set<Marker> trafficMarkers = {};
-      // Load the custom icon
-  BitmapDescriptor customIcon = await BitmapDescriptor.fromAssetImage(
-    ImageConfiguration(size: Size(24,24),devicePixelRatio: 1), // Adjust the size if needed
-    'assets/images/incident_icon.png', // Path to your custom icon
-  );
+    // Load the custom icon
+    BitmapDescriptor customIcon = await BitmapDescriptor.fromAssetImage(
+      ImageConfiguration(
+          size: Size(24, 24), devicePixelRatio: 1), // Adjust the size if needed
+      'assets/images/incident_icon.png', // Path to your custom icon
+    );
 
     for (var i = 0; i < incidents.length; i++) {
       final incident = incidents[i];
@@ -366,29 +373,28 @@ class _RealTimeSearchMapState extends State<RealTimeSearchMap> {
   }
 
   String calculateBoundingBox(LatLng source, LatLng destination) {
-  double minLat = source.latitude < destination.latitude
-      ? source.latitude
-      : destination.latitude;
-  double maxLat = source.latitude > destination.latitude
-      ? source.latitude
-      : destination.latitude;
-  double minLng = source.longitude < destination.longitude
-      ? source.longitude
-      : destination.longitude;
-  double maxLng = source.longitude > destination.longitude
-      ? source.longitude
-      : destination.longitude;
+    double minLat = source.latitude < destination.latitude
+        ? source.latitude
+        : destination.latitude;
+    double maxLat = source.latitude > destination.latitude
+        ? source.latitude
+        : destination.latitude;
+    double minLng = source.longitude < destination.longitude
+        ? source.longitude
+        : destination.longitude;
+    double maxLng = source.longitude > destination.longitude
+        ? source.longitude
+        : destination.longitude;
 
-  // Expand the bbox slightly to include nearby areas
-  const double padding = 0.01; // Adjust padding as needed
-  minLat -= padding;
-  maxLat += padding;
-  minLng -= padding;
-  maxLng += padding;
+    // Expand the bbox slightly to include nearby areas
+    const double padding = 0.01; // Adjust padding as needed
+    minLat -= padding;
+    maxLat += padding;
+    minLng -= padding;
+    maxLng += padding;
 
-  return "$minLng,$minLat,$maxLng,$maxLat"; // bbox format: "minLng,minLat,maxLng,maxLat"
-}
-
+    return "$minLng,$minLat,$maxLng,$maxLat"; // bbox format: "minLng,minLat,maxLng,maxLat"
+  }
 
   @override
   void initState() {
@@ -411,6 +417,7 @@ class _RealTimeSearchMapState extends State<RealTimeSearchMap> {
                     destination: weatherData,
                     locInfo: locationInfo,
                     dis: _distance,
+                    source: _SourceOrigin,
                     dur: _duration,
                     vehicleType: widget.vehicleType,
                     fuelType: widget.fuelType,
