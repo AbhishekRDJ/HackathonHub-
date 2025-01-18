@@ -1,9 +1,13 @@
 import 'dart:convert';
+import 'dart:math';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:geocoding/geocoding.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:http/http.dart' as http;
+import 'package:routing_app/pages/profile_page.dart';
 import 'package:routing_app/utils/secrets.dart';
 import 'package:routing_app/widget/sliding_panel2.dart';
 import 'package:sliding_up_panel/sliding_up_panel.dart';
@@ -401,12 +405,64 @@ class _RealTimeSearchMapState extends State<RealTimeSearchMap> {
     super.initState();
     // Fetch the user's current location when the app starts
     _getCurrentLocation();
+    randomColor = _generateRandomColor();
+  }
+
+  String user = 'NA';
+  Color? randomColor ;
+
+
+  Future<String?> fetchNameByUid(String uid) async {
+    final QuerySnapshot querySnapshot = await FirebaseFirestore.instance
+        .collection('userInfo')
+        .where('userid', isEqualTo: uid)
+        .get();
+
+    if (querySnapshot.docs.isNotEmpty) {
+      final String name = querySnapshot.docs.first['name']; // Get the 'name' field
+      return name;
+    } else {
+      return null; // No matching documents found
+    }
+  }
+
+  Color _generateRandomColor() {
+    final Random random = Random();
+    return Color.fromARGB(
+      255,                   // Fully opaque
+      random.nextInt(256),   // Red (0-255)
+      random.nextInt(256),   // Green (0-255)
+      random.nextInt(256),   // Blue (0-255)
+    );
+  }
+
+  void getUserName() async {
+    final String currentUid = FirebaseAuth.instance.currentUser!.uid;
+    final String? name = await fetchNameByUid(currentUid);
+    user = name!;
+
   }
 
   @override
   Widget build(BuildContext context) {
+    getUserName();
     return Scaffold(
-      appBar: AppBar(title: Text("Routes")),
+      appBar: AppBar(title: const Text("Routes"),
+      actions: [
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 10),
+          child: IconButton(onPressed: (){
+            Navigator.of(context).push(MaterialPageRoute(builder: (context)=>ProfilePage()));
+          },
+              icon: CircleAvatar(
+                backgroundColor: randomColor,
+                child: Text(user[0],
+                    style: const TextStyle(color: Colors.white,fontSize: 20)),
+              )
+          ),
+        )
+      ],
+      ),
       body: _currentLocation == null
           ? Center(child: CircularProgressIndicator())
           : Stack(

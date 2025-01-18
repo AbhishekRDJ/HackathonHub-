@@ -1,5 +1,7 @@
 import 'dart:math';
 
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
@@ -615,7 +617,20 @@ class _SlidingPanel2State extends State<SlidingPanel2>
 
   Widget _buildHoverButton(IconData icon, String label, Color color) {
     return GestureDetector(
-      onTap: () {},
+      onTap: () {
+        FirebaseFirestore.instance.collection("history").add({
+          'location': widget.locInfo,
+          'fule': widget.fuelConsumption.toStringAsFixed(2),
+          'time': widget.dis,
+          'vehicle': widget.vehicleType,
+          'fuletype': widget.fuelType,
+          'age': widget.age,
+          'userid': FirebaseAuth.instance.currentUser!.uid
+        });
+
+        ScaffoldMessenger.of(context)
+            .showSnackBar(const SnackBar(content: Text("location saved !")));
+      },
       child: MouseRegion(
         cursor: SystemMouseCursors.click,
         child: Column(

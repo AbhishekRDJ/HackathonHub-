@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:routing_app/pages/home_page.dart';
 import 'package:routing_app/pages/profile_page.dart';
-import 'package:routing_app/pages/your_info_page.dart';
+import 'package:routing_app/pages/history.dart';
 
 class MainPage extends StatefulWidget {
 
