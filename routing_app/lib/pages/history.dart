@@ -3,6 +3,7 @@ import 'dart:math';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:routing_app/widget/history_tile.dart';
 
 class YourInfoPage extends StatelessWidget {
   const YourInfoPage({super.key});
@@ -87,45 +88,10 @@ class YourInfoPage extends StatelessWidget {
                   ),
                   const SizedBox(height: 16),
 
-                  ListTile(
-                    leading: const Icon(Icons.location_on, color: Colors.red),
-                    title: const Text("Mumbai", style: TextStyle(fontWeight: FontWeight.bold)),
-                    subtitle: const Text("Distance: 150 km | Fuel: 10 L"),
+                  const Expanded(
+                      child: HistoryTile())
 
-                    onTap: () {
-                      // Handle tap action
-                    },
-                  ),
-                  const Divider(),
-                  ListTile(
-                    leading: const Icon(Icons.location_on, color: Colors.red),
-                    title: const Text("Pune", style: TextStyle(fontWeight: FontWeight.bold)),
-                    subtitle: const Text("Distance: 120 km | Fuel: 8 L"),
 
-                    onTap: () {
-                      // Handle tap action
-                    },
-                  ),
-                  const Divider(),
-                  ListTile(
-                    leading: const Icon(Icons.location_on, color: Colors.red),
-                    title: const Text("Nagpur", style: TextStyle(fontWeight: FontWeight.bold)),
-                    subtitle: const Text("Distance: 300 km | Fuel: 20 L"),
-
-                    onTap: () {
-                      // Handle tap action
-                    },
-                  ),
-                  const Divider(),
-                  ListTile(
-                    leading: const Icon(Icons.location_on, color: Colors.red),
-                    title: const Text("Nashik", style: TextStyle(fontWeight: FontWeight.bold)),
-                    subtitle: const Text("Distance: 180 km | Fuel: 12 L"),
-
-                    onTap: () {
-                      // Handle tap action
-                    },
-                  ),
 
                 ],
               ),
