@@ -6,6 +6,14 @@
 
 **Solution**: This solution uses a Python-based backend with Flask and a Flutter-based frontend in Dart. The system connects multiple APIs, including TomTom, Google Maps, AQICN, and OSRM, to recommend efficient routes and estimate vehicle emissions. It aims to enhance delivery efficiency, improve customer satisfaction, and reduce carbon footprints, promoting sustainability in logistics.
 
+## Intro To NeoRoute Video
+[![YouTube](https://img.icons8.com/color/48/000000/youtube-play.png)](https://www.youtube.com/your-video-link)
+
+[![Intro To NeoRoute](https://github.com/AbhishekRDJ/HackathonHub-/blob/main/assets/thumnail.jpg?raw=true)](https://www.youtube.com/watch?v=RaYNFWcBbUM)
+
+
+Short but detailed introduction to NeoRoute. Click on the image above to watch the video.
+
 ---
 
 ## 🎯 Goals and Objectives
@@ -52,6 +60,85 @@
 - Flutter SDK
 - Dart SDK
 - Virtual environment for Python
+
+## 📸 App Screenshots
+
+Here are some screenshots of our app:
+
+### App Pages
+
+<table style="width: 100%;">
+  <tr>
+    <td align="center" width="25%">
+      <img src="./assets/start_screen.png" width="120"/><br>
+      <b>Start Screen</b><br>
+      Displays the NeoRoute logo and allow users login or signup
+    </td>
+    <td align="center" width="25%">
+      <img src="./assets/sign_up.png" width="120"/><br>
+      <b>Sign up page</b><br>
+      Allows users to create account with entering his email and password
+    </td>
+     <td align="center" width="25%">
+      <img src="./assets/login.png" width="120"/><br>
+      <b>Sign up page</b><br>
+      allows users to login if they already have account
+    </td>
+    <td align="center" width="25%">
+      <img src="./assets/home_page.png" width="120"/><br>
+      <b>Home screen</b><br>
+       home screen showing current location of user
+    </td>
+   
+  </tr>
+
+  <tr>
+     <td align="center" width="25%">
+      <img src="./assets/add_info.png" width="120"/><br>
+      <b>Adding details screen</b><br>
+        user can specify the destination and featch route
+    </td>
+    <td align="center" width="25%">
+      <img src="./assets/map_page.png" width="120"/><br>
+      <b>Route Screen</b><br>
+      Displays the route to specified destination along with other details
+    </td>
+    <td align="center" width="25%">
+      <img src="./assets/location_detials.png" width="120"/><br>
+      <b>Map Screen</b><br>
+      user can see various information realted to destination
+    </td>
+    <td align="center" width="25%">
+      <img src="./assets/aqi.png" width="120"/><br>
+      <b>Details screen</b><br>
+       along with location user can also see other details like weather
+    </td>
+  </tr>
+
+   <tr>
+     <td align="center" width="25%">
+      <img src="./assets/traffic.png" width="120"/><br>
+      <b>Traffic screen</b><br>
+        user can also see the traffic details on the map
+    </td>
+    <td align="center" width="25%">
+      <img src="./assets/incident.png" width="120"/><br>
+      <b>Incident Screen</b><br>
+      Displays the incidents happened in the route
+    </td>
+    <td align="center" width="25%">
+      <img src="./assets/histroy.png" width="120"/><br>
+      <b>History Screen</b><br>
+      user can save the locations searched that will be displayed here
+    </td>
+    <td align="center" width="25%">
+      <img src="./assets/profile.png" width="120"/><br>
+      <b>Profile screen</b><br>
+       User can see his profile details and also edit them 
+    </td>
+
+  </tr>
+  </table>
 
 ### Setup Instructions
 
