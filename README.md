@@ -144,14 +144,14 @@ Here are some screenshots of our app:
 
 1. **Clone the Repository**:
    ```bash
-   git clone https://github.com/YourUsername/DynamicRouteOptimization.git
-   cd DynamicRouteOptimization
+   git clone https://github.com/AbhishekRDJ/HackathonHub-.git
+   cd HackathonHub-
    ```
 
 2. **Backend Setup**:
    - Navigate to the backend directory:
      ```bash
-     cd backend
+     cd flask_backend
      ```
    - Create and activate a virtual environment:
      ```bash
@@ -170,7 +170,7 @@ Here are some screenshots of our app:
 3. **Frontend Setup**:
    - Navigate to the frontend directory:
      ```bash
-     cd frontend
+     cd routing_app
      ```
    - Install dependencies:
      ```bash
@@ -212,9 +212,9 @@ We welcome contributions to enhance this project! Please follow these steps:
 
 ---
 
-## 📜 License
+<!-- ## 📜 License
 
-This project is licensed under the [MIT License](LICENSE).
+This project is licensed under the [MIT License](LICENSE). -->
 
 ---
 
