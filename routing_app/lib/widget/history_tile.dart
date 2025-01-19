@@ -24,20 +24,21 @@ class _HistoryTileState extends State<HistoryTile> {
                   return GestureDetector(
                     child: Column(
                       children: [
-                        Container(
-                          decoration: BoxDecoration(
-                            color: const Color.fromARGB(30, 100, 100, 100),
-                            borderRadius: BorderRadius.circular(12)
-                          ),
-                          child: Dismissible(
-                            key: ValueKey(index),
-                            onDismissed: (direction){
-                               setState(() {
-                                 FirebaseFirestore.instance.collection('history').doc(
-                                     snapshot.data!.docs[index].id
-                                 ).delete();
-                               });
-                            },
+                        Dismissible(
+                          key: Key(index.toString()),
+                          onDismissed: (direction){
+                            setState(() {
+                              FirebaseFirestore.instance.collection('history').doc(
+                                  snapshot.data!.docs[index].id
+                              ).delete();
+                            });
+
+                          },
+                          child: Container(
+                            decoration: BoxDecoration(
+                              color: const Color.fromARGB(30, 100, 100, 100),
+                              borderRadius: BorderRadius.circular(12)
+                            ),
                             child: ListTile(
                               onTap: (){
                                 Navigator.of(context).push(MaterialPageRoute(builder: (context)=>RealTimeSearchMap(
