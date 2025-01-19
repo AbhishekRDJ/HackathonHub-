@@ -93,15 +93,7 @@ class _StartScreenState extends State<StartScreen> with SingleTickerProviderStat
                   ],
                 ),
               ),
-              const SizedBox(height: 20),
-              const Text(
-                "Continue as guest",
-                style: TextStyle(
-                  color: Colors.blue,
-                  fontSize: 16,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
+
             ],
           );
         },

@@ -9,9 +9,11 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:intl/intl.dart';
 import 'package:routing_app/widget/hourly_forcaste.dart';
+import 'package:sliding_up_panel/sliding_up_panel.dart';
 
 class SlidingPanel2 extends StatefulWidget {
   final ScrollController controller;
+  final PanelController panelController;
   final String locInfo;
   final String dis;
   final String dur;
@@ -27,6 +29,7 @@ class SlidingPanel2 extends StatefulWidget {
   const SlidingPanel2({
     super.key,
     required this.controller,
+    required this.panelController,
     required this.destination,
     required this.dis,
     required this.dur,
@@ -132,7 +135,7 @@ class _SlidingPanel2State extends State<SlidingPanel2>
           "parts": [
             {
               "text":
-                  """Analyze the following trsourceavel details and provide two advanced, actionable suggestions. The advice should consider optimizing fuel efficiency, reducing environmental impact, ensuring travel safety, and any other relevant improvements for a smoother and more sustainable journey:
+                  """Analyze the following trsourceavel details and provide two advanced, actionable suggestions within 2 lines. The advice should consider optimizing fuel efficiency, reducing environmental impact, ensuring travel safety, and any other relevant improvements for a smoother and more sustainable journey also it should be only 2 lines max:
 - Starting Point: ${widget.source ?? 'N/A'}
 - Destination: ${widget.locInfo ?? 'Value not provided'}"}
 - Distance: ${widget.dis ?? 'N/A'} km
@@ -142,15 +145,15 @@ class _SlidingPanel2State extends State<SlidingPanel2>
 - Vehicle Age: ${widget.age ?? 'N/A'}
 - Estimated Fuel Consumption: ${widget.fuelConsumption ?? 'N/A'} liters/100km
 
-### Provide advice tailored to the context:
-1. **If fuel type is gasoline or diesel:** Suggest improvements for fuel consumption and emissions.
-2. **If vehicle type is EV:** Recommend optimal charging station stops and battery care tips.
-3. **For older vehicles:** Highlight maintenance tips or precautions for long journeys.
-4. **Carbon emissions:** If data permits, estimate the environmental impact and suggest greener options.
+Provide advice tailored to the context:
+1.If fuel type is gasoline or diesel: Suggest improvements for fuel consumption and emissions.
+2.If vehicle type is EV: Recommend optimal charging station stops and battery care tips.
+3.For older vehicles: Highlight maintenance tips or precautions for long journeys.
+4.Carbon emissions: If data permits, estimate the environmental impact and suggest greener options.
 
 ### Format:
 - Provide insights in a friendly and engaging tone, suitable for a general audience.
-- give only 2 suggestion one in few lines (1-2)**
+- give only 2 suggestion one in few lines 1-2 only
 """
             }
           ]
@@ -309,11 +312,32 @@ class _SlidingPanel2State extends State<SlidingPanel2>
                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                     children: [
                       _buildHoverButton(
-                          Icons.directions, 'Directions', Colors.blue),
-                      _buildHoverButton(
-                          Icons.play_arrow, 'Start', Colors.green),
-                      _buildHoverButton(Icons.bookmark, 'Save', Colors.orange),
-                      _buildHoverButton(Icons.share, 'Share', Colors.red),
+                          Icons.directions,
+                          'Back on map',
+                          Colors.blue,
+                            (){
+                                  widget.panelController.close();
+                            }),
+
+
+
+                      _buildHoverButton(Icons.bookmark, 'Save', Colors.orange,() {
+                        FirebaseFirestore.instance.collection("history").add({
+                          'location': widget.locInfo,
+                          'fule': widget.fuelConsumption.toStringAsFixed(2),
+                          'time': widget.dis,
+                          'vehicle': widget.vehicleType,
+                          'fuletype': widget.fuelType,
+                          'age': widget.age,
+                          'userid': FirebaseAuth.instance.currentUser!.uid
+                        });
+
+                        ScaffoldMessenger.of(context)
+                            .showSnackBar(const SnackBar(content: Text("location saved !")));
+                      }),
+
+                      _buildHoverButton(Icons.share, 'Share', Colors.red,(){}),
+
                     ],
                   ),
                   const SizedBox(height: 20),
@@ -605,22 +629,9 @@ class _SlidingPanel2State extends State<SlidingPanel2>
     }
   }
 
-  Widget _buildHoverButton(IconData icon, String label, Color color) {
+  Widget _buildHoverButton(IconData icon, String label, Color color,VoidCallback onTap) {
     return GestureDetector(
-      onTap: () {
-        FirebaseFirestore.instance.collection("history").add({
-          'location': widget.locInfo,
-          'fule': widget.fuelConsumption.toStringAsFixed(2),
-          'time': widget.dis,
-          'vehicle': widget.vehicleType,
-          'fuletype': widget.fuelType,
-          'age': widget.age,
-          'userid': FirebaseAuth.instance.currentUser!.uid
-        });
-
-        ScaffoldMessenger.of(context)
-            .showSnackBar(const SnackBar(content: Text("location saved !")));
-      },
+      onTap: onTap,
       child: MouseRegion(
         cursor: SystemMouseCursors.click,
         child: Column(
@@ -656,18 +667,13 @@ class _SlidingPanel2State extends State<SlidingPanel2>
           ),
         );
       },
+
       child: Container(
-        padding: const EdgeInsets.all(16.0),
+        padding: const EdgeInsets.symmetric(horizontal: 16,vertical: 10),
         decoration: BoxDecoration(
-          color: Colors.blue.shade50,
+          gradient: const LinearGradient(colors: [Colors.black12,Colors.black26]),
           borderRadius: BorderRadius.circular(12),
-          boxShadow: const [
-            BoxShadow(
-              color: Colors.black12,
-              blurRadius: 8,
-              offset: Offset(0, 4),
-            ),
-          ],
+
         ),
         child: GestureDetector(
           onTap: (){
@@ -678,7 +684,7 @@ class _SlidingPanel2State extends State<SlidingPanel2>
           },
           child: Container(
             child: Column(
-              mainAxisAlignment: MainAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 const Row(
                   children: [
@@ -687,7 +693,7 @@ class _SlidingPanel2State extends State<SlidingPanel2>
                     ),
                     SizedBox(width: 20,),
 
-                    Text("Ask gemini for suggestion")
+                    Text("Ask suggestion to gemini")
                   ],
                 ),
                 const SizedBox(height: 20,),

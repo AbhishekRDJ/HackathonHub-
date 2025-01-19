@@ -5,10 +5,17 @@ import 'package:routing_app/pages/navigation_page.dart';
 import 'package:http/http.dart' as http;
 
 import 'package:routing_app/widget/custome_dropdown.dart';
+import 'package:sliding_up_panel/sliding_up_panel.dart';
 
 class PanelWidget extends StatefulWidget {
+  final PanelController panelController;
+
   final ScrollController controller;
-  const PanelWidget({super.key, required this.controller});
+  const PanelWidget({super.key,
+    required this.controller,
+    required this.panelController
+  }
+  );
 
   @override
   State<PanelWidget> createState() => _PanelWidgetState();
@@ -83,6 +90,11 @@ class _PanelWidgetState extends State<PanelWidget> {
                   FocusNode focusNode,
                   VoidCallback onEditingComplete) {
                 return TextField(
+                  onTap: (){
+                    widget.panelController.isPanelOpen ?
+                        widget.panelController.close() :
+                        widget.panelController.open();
+                  },
                   controller: textController,
                   focusNode: focusNode,
                   decoration: InputDecoration(
@@ -139,11 +151,13 @@ class _PanelWidgetState extends State<PanelWidget> {
           ),
           CustomeDropdown(
             selectedVehicle: flue,
-            value: selectedFule,
+            value: selectedVehicle == 'Bike' ? "petrol" :
+            selectedFule,
             onChanged: (value) {
               setState(() {
                 selectedFuelType = value;
-                selectedFule = value!;
+                selectedFule = selectedVehicle == 'Bike' ? "petrol" :
+                value!;
               });
             },
           ),

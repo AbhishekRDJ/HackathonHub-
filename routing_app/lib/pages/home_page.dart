@@ -78,6 +78,7 @@ class _HomePageState extends State<HomePage>
       random.nextInt(256),   // Blue (0-255)
     );
   }
+  final PanelController panelController = PanelController();
 
 
   @override
@@ -97,7 +98,7 @@ class _HomePageState extends State<HomePage>
           ),
           actions: [
             Padding(
-              padding: const EdgeInsets.all(8.0),
+              padding: const EdgeInsets.symmetric(horizontal: 15),
               child: CircleAvatar(
                 backgroundColor: randomColor,
                 child: Text(user[0].toUpperCase(),
@@ -111,8 +112,10 @@ class _HomePageState extends State<HomePage>
                 child: CircularProgressIndicator(),
               )
             : SlidingUpPanel(
+                controller: panelController,
                 panelBuilder: (controller) =>
-                    PanelWidget(controller: controller),
+                    PanelWidget(controller: controller,
+                    panelController: panelController,),
                 maxHeight: MediaQuery.of(context).size.height * 0.8,
                 minHeight: MediaQuery.of(context).size.height * 0.2,
                 borderRadius: BorderRadius.circular(6),

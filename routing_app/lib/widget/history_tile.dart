@@ -29,33 +29,49 @@ class _HistoryTileState extends State<HistoryTile> {
                             color: const Color.fromARGB(30, 100, 100, 100),
                             borderRadius: BorderRadius.circular(12)
                           ),
-                          child: ListTile(
-                            onTap: (){
-                              Navigator.of(context).push(MaterialPageRoute(builder: (context)=>RealTimeSearchMap(
-                                  destination: snapshot.data!.docs[index].data()['location'],
-                                  age: snapshot.data!.docs[index].data()['age'],
-                                  fuelType: snapshot.data!.docs[index].data()['fuletype'],
-                                  vehicleType: snapshot.data!.docs[index].data()['vehicle'])
-                              )
-                              );
+                          child: Dismissible(
+                            key: ValueKey(index),
+                            onDismissed: (direction){
+                              if(direction == DismissDirection.endToStart){
+                               setState(() {
+                                 FirebaseFirestore.instance.collection('history').doc(
+                                     snapshot.data!.docs[index].id
+                                 ).delete();
+                               });
+                              }
 
                             },
-                            leading: const CircleAvatar(
-                              backgroundColor: Colors.white,
-                              child: Icon(Icons.location_on,color: Colors.red,),
-                            ),
-                            title: Text("${snapshot.data!.docs[index].data()['location']}",
-                            overflow: TextOverflow.ellipsis,
-                            maxLines: 2,),
-                            subtitle: Row(
-                              children: [
-                                Text("Distance :- ${snapshot.data!.docs[index].data()['time']}"),
-                                const SizedBox(width: 20,),
-                                Text("Fuel :- ${snapshot.data!.docs[index].data()['fule']}")
-                              ],
+                            child: ListTile(
+                              onTap: (){
+                                Navigator.of(context).push(MaterialPageRoute(builder: (context)=>RealTimeSearchMap(
+                                    destination: snapshot.data!.docs[index].data()['location'],
+                                    age: snapshot.data!.docs[index].data()['age'],
+                                    fuelType: snapshot.data!.docs[index].data()['fuletype'],
+                                    vehicleType: snapshot.data!.docs[index].data()['vehicle'])
+                                )
+                                );
+
+                              },
+
+
+                              leading: const CircleAvatar(
+                                backgroundColor: Colors.white,
+                                child: Icon(Icons.location_on,color: Colors.red,),
+                              ),
+                              title: Text("${snapshot.data!.docs[index].data()['location']}",
+                              overflow: TextOverflow.ellipsis,
+                              maxLines: 2,),
+                              subtitle: Row(
+                                children: [
+                                  Text("Distance :- ${snapshot.data!.docs[index].data()['time']}"),
+                                  const SizedBox(width: 20,),
+                                  Text("Fuel :- ${snapshot.data!.docs[index].data()['fule']}")
+                                ],
+                              ),
                             ),
                           ),
                         ),
+
                         const SizedBox(height: 10,),
 
                       ],

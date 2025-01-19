@@ -440,8 +440,9 @@ class _RealTimeSearchMapState extends State<RealTimeSearchMap> {
     final String currentUid = FirebaseAuth.instance.currentUser!.uid;
     final String? name = await fetchNameByUid(currentUid);
     user = name!;
-
   }
+
+  final PanelController panelController = PanelController();
 
   @override
   Widget build(BuildContext context) {
@@ -468,7 +469,9 @@ class _RealTimeSearchMapState extends State<RealTimeSearchMap> {
           : Stack(
               children: [
                 SlidingUpPanel(
+                  controller: panelController,
                   panelBuilder: (controller) => SlidingPanel2(
+                    panelController: panelController,
                     controller: controller,
                     destination: weatherData,
                     locInfo: locationInfo,
