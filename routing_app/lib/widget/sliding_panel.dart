@@ -136,6 +136,9 @@ class _PanelWidgetState extends State<PanelWidget> {
               setState(() {
                 selectedVehicleType = value;
                 selectedVehicle = value!;
+                if(selectedVehicle == "Bike"){
+                  selectedFuelType = "Petrol";
+                }
               });
             },
           ),
@@ -156,7 +159,7 @@ class _PanelWidgetState extends State<PanelWidget> {
             onChanged: (value) {
               setState(() {
                 selectedFuelType = value;
-                selectedFule = selectedVehicle == 'Bike' ? "petrol" :
+                selectedFule = selectedVehicle == 'Bike' ? "Petrol" :
                 value!;
               });
             },

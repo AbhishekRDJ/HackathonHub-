@@ -336,7 +336,10 @@ Provide advice tailored to the context:
                             .showSnackBar(const SnackBar(content: Text("location saved !")));
                       }),
 
-                      _buildHoverButton(Icons.share, 'Share', Colors.red,(){}),
+                      _buildHoverButton(Icons.share, 'Share', Colors.red,(){
+
+
+                      }),
 
                     ],
                   ),
@@ -376,7 +379,7 @@ Provide advice tailored to the context:
                       Text(
                         "Estimated fuel consumption :- ${widget.fuelConsumption.toStringAsFixed(2)} litres",
                         style: const TextStyle(
-                            fontSize: 16,
+                            fontSize: 14,
                             fontWeight: FontWeight.bold,
                             color: Colors.green),
                       ),

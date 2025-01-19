@@ -32,14 +32,11 @@ class _HistoryTileState extends State<HistoryTile> {
                           child: Dismissible(
                             key: ValueKey(index),
                             onDismissed: (direction){
-                              if(direction == DismissDirection.endToStart){
                                setState(() {
                                  FirebaseFirestore.instance.collection('history').doc(
                                      snapshot.data!.docs[index].id
                                  ).delete();
                                });
-                              }
-
                             },
                             child: ListTile(
                               onTap: (){
