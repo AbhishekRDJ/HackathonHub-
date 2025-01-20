@@ -13,71 +13,151 @@ class HistoryTile extends StatefulWidget {
 class _HistoryTileState extends State<HistoryTile> {
   @override
   Widget build(BuildContext context) {
-    return StreamBuilder(stream: FirebaseFirestore.instance.collection('history').where('userid',
-    isEqualTo: FirebaseAuth.instance.currentUser!.uid).snapshots(),
+    return StreamBuilder(
+      stream: FirebaseFirestore.instance
+          .collection('history')
+          .where('userid', isEqualTo: FirebaseAuth.instance.currentUser!.uid)
+          .snapshots(),
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return const Center(
+            child: CircularProgressIndicator(),
+          );
+        }
 
-        builder: (context,snapshot){
-        return snapshot.connectionState==ConnectionState.waiting ? const Center(child: CircularProgressIndicator(),) :
-            ListView.builder(
-              itemCount: snapshot.data!.docs.length,
-              itemBuilder: (context,index){
-                  return GestureDetector(
-                    child: Column(
-                      children: [
-                        Dismissible(
-                          key: Key(index.toString()),
-                          onDismissed: (direction){
-                            setState(() {
-                              FirebaseFirestore.instance.collection('history').doc(
-                                  snapshot.data!.docs[index].id
-                              ).delete();
-                            });
+        if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
+          return const Center(
+            child: Text(
+              'No history available.',
+              style: AppStyles.noDataText,
+            ),
+          );
+        }
 
-                          },
-                          child: Container(
-                            decoration: BoxDecoration(
-                              color: const Color.fromARGB(30, 100, 100, 100),
-                              borderRadius: BorderRadius.circular(12)
-                            ),
-                            child: ListTile(
-                              onTap: (){
-                                Navigator.of(context).push(MaterialPageRoute(builder: (context)=>RealTimeSearchMap(
-                                    destination: snapshot.data!.docs[index].data()['location'],
-                                    age: snapshot.data!.docs[index].data()['age'],
-                                    fuelType: snapshot.data!.docs[index].data()['fuletype'],
-                                    vehicleType: snapshot.data!.docs[index].data()['vehicle'])
-                                )
-                                );
-
-                              },
-
-
-                              leading: const CircleAvatar(
-                                backgroundColor: Colors.white,
-                                child: Icon(Icons.location_on,color: Colors.red,),
+        return ListView.builder(
+          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
+          itemCount: snapshot.data!.docs.length,
+          itemBuilder: (context, index) {
+            var data = snapshot.data!.docs[index].data();
+            return GestureDetector(
+              child: Column(
+                children: [
+                  Dismissible(
+                    key: Key(snapshot.data!.docs[index].id),
+                    direction: DismissDirection.endToStart,
+                    background: Container(
+                      alignment: Alignment.centerRight,
+                      padding: const EdgeInsets.symmetric(horizontal: 16),
+                      color: AppColors.danger,
+                      child: const Icon(Icons.delete, color: Colors.white),
+                    ),
+                    onDismissed: (direction) {
+                      setState(() {
+                        FirebaseFirestore.instance
+                            .collection('history')
+                            .doc(snapshot.data!.docs[index].id)
+                            .delete();
+                      });
+                    },
+                    child: Container(
+                      padding: const EdgeInsets.all(12),
+                      decoration: BoxDecoration(
+                        color: AppColors.tileBackground,
+                        borderRadius: BorderRadius.circular(10),
+                        boxShadow: const [
+                          BoxShadow(
+                            color: Colors.black12,
+                            blurRadius: 4,
+                            offset: Offset(0, 2),
+                          ),
+                        ],
+                      ),
+                      child: ListTile(
+                        onTap: () {
+                          Navigator.of(context).push(
+                            MaterialPageRoute(
+                              builder: (context) => RealTimeSearchMap(
+                                destination: data['location'],
+                                age: data['age'],
+                                fuelType: data['fuletype'],
+                                vehicleType: data['vehicle'],
                               ),
-                              title: Text("${snapshot.data!.docs[index].data()['location']}",
-                              overflow: TextOverflow.ellipsis,
-                              maxLines: 2,),
-                              subtitle: Row(
-                                children: [
-                                  Text("Distance :- ${snapshot.data!.docs[index].data()['time']}"),
-                                  const SizedBox(width: 20,),
-                                  Text("Fuel :- ${snapshot.data!.docs[index].data()['fule']}")
-                                ],
-                              ),
                             ),
+                          );
+                        },
+                        leading: CircleAvatar(
+                          radius: 24,
+                          backgroundColor: AppColors.avatarBackground,
+                          child: const Icon(
+                            Icons.location_on,
+                            color: AppColors.primary,
                           ),
                         ),
-
-                        const SizedBox(height: 10,),
-
-                      ],
+                        title: Text(
+                          data['location'] ?? 'Unknown location',
+                          style: AppStyles.tileTitle,
+                          overflow: TextOverflow.ellipsis,
+                          maxLines: 1,
+                        ),
+                        subtitle: Padding(
+                          padding: const EdgeInsets.only(top: 6),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                "Distance: ${data['time'] ?? 'N/A'}",
+                                style: AppStyles.tileSubtitle,
+                              ),
+                              const SizedBox(height: 4),
+                              Text(
+                                "Fuel: ${data['fule'] ?? 'N/A'}",
+                                style: AppStyles.tileSubtitle,
+                              ),
+                            ],
+                          ),
+                        ),
+                        trailing: const Icon(
+                          Icons.arrow_forward_ios,
+                          color: AppColors.iconColor,
+                          size: 18,
+                        ),
+                      ),
                     ),
-                  );
-              },
+                  ),
+                  const SizedBox(height: 10),
+                ],
+              ),
             );
-    }
+          },
+        );
+      },
     );
   }
+}
+
+class AppColors {
+  static const Color primary = Colors.blueAccent;
+  static const Color danger = Colors.red;
+  static const Color tileBackground = Colors.white;
+  static const Color avatarBackground = Color(0xFFE6F4FF);
+  static const Color iconColor = Colors.grey;
+}
+
+class AppStyles {
+  static const TextStyle noDataText = TextStyle(
+    fontSize: 16,
+    color: Colors.grey,
+    fontWeight: FontWeight.w500,
+  );
+
+  static const TextStyle tileTitle = TextStyle(
+    fontSize: 18,
+    fontWeight: FontWeight.w600,
+    color: Colors.black87,
+  );
+
+  static const TextStyle tileSubtitle = TextStyle(
+    fontSize: 14,
+    color: Colors.black54,
+  );
 }
