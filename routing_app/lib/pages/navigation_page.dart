@@ -506,8 +506,8 @@ class _RealTimeSearchMapState extends State<RealTimeSearchMap> {
                   ),
                 ),
                 Positioned(
-                  bottom: 111,
-                  right: 20,
+                  top: 120,
+                  right: 10,
                   child: FloatingActionButton(
                     onPressed: () {
                       setState(() {
@@ -523,8 +523,8 @@ class _RealTimeSearchMapState extends State<RealTimeSearchMap> {
                   ),
                 ),
                 Positioned(
-                  bottom: 50,
-                  right: 20,
+                  top: 60,
+                  right: 10,
                   child: FloatingActionButton(
                     onPressed: () async {
                       final incidents = await _fetchTrafficIncidents();
