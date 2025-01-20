@@ -51,7 +51,10 @@ class _SlidingPanel2State extends State<SlidingPanel2>
     with SingleTickerProviderStateMixin {
   late AnimationController _animationController;
   String _geminiAdvice = "";
+  bool aqiColor = false;
+  bool carbonColor = false;
   bool isGeminiLoading = false;
+  bool isAqiSelected = true;
 
   double calculateMileage(String vehicleType, String age) {
     if (vehicleType == 'Car') {
@@ -80,11 +83,10 @@ class _SlidingPanel2State extends State<SlidingPanel2>
 
   List<int> aqiData = [];
   List<String> aqiDates = [];
-  bool isVisible = false;
+  bool isVisible = true;
   bool isLoading = true;
   bool isVisible2 = false;
   String errorMessage = '';
-
 
   final List<String> _apiKeys = [
     'AIzaSyApOuJrHglGoxym04m2MGb5SIR1Ud53BfA',
@@ -100,7 +102,6 @@ class _SlidingPanel2State extends State<SlidingPanel2>
       duration: const Duration(milliseconds: 800),
     );
     _animationController.forward();
-    
   }
 
   String _getRandomApiKey() {
@@ -258,294 +259,327 @@ Provide advice tailored to the context:
   @override
   Widget build(BuildContext context) {
     return SingleChildScrollView(
-            controller: widget.controller,
-            child: Padding(
-              padding: const EdgeInsets.all(16.0),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
+      controller: widget.controller,
+      child: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Center(
+              child: Container(
+                width: 50,
+                height: 6,
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                    colors: [Colors.blue, Colors.purple],
+                  ),
+                  borderRadius: BorderRadius.circular(12),
+                ),
+              ),
+            ),
+            const SizedBox(height: 16),
+            Text(
+              widget.locInfo,
+              style: const TextStyle(fontSize: 22, fontWeight: FontWeight.w600),
+            ),
+            const SizedBox(height: 12),
+            Row(
+              children: [
+                RatingBarIndicator(
+                  rating: 4.6,
+                  itemBuilder: (context, index) => const Icon(
+                    Icons.star,
+                    color: Colors.amber,
+                  ),
+                  itemCount: 5,
+                  itemSize: 20.0,
+                  direction: Axis.horizontal,
+                ),
+                const SizedBox(width: 8),
+                const Text(
+                  '4.6',
+                  style: TextStyle(fontWeight: FontWeight.bold),
+                ),
+                const SizedBox(width: 8),
+                const Text(
+                  '(3,510)',
+                  style: TextStyle(color: Colors.grey),
+                ),
+              ],
+            ),
+            const SizedBox(height: 20),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: [
+                _buildHoverButton(Icons.directions, 'Back on map', Colors.blue,
+                    () {
+                  widget.panelController.close();
+                }),
+                _buildHoverButton(Icons.bookmark, 'Save', Colors.orange, () {
+                  FirebaseFirestore.instance.collection("history").add({
+                    'location': widget.locInfo,
+                    'fule': widget.fuelConsumption.toStringAsFixed(2),
+                    'time': widget.dis,
+                    'vehicle': widget.vehicleType,
+                    'fuletype': widget.fuelType,
+                    'age': widget.age,
+                    'userid': FirebaseAuth.instance.currentUser!.uid
+                  });
+
+                  ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(content: Text("location saved !")));
+                }),
+                _buildHoverButton(Icons.share, 'Share', Colors.red, () {}),
+              ],
+            ),
+            const SizedBox(height: 20),
+            Container(
+              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
+              decoration: BoxDecoration(
+                  color: Colors.blue, borderRadius: BorderRadius.circular(16)),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Center(
-                    child: Container(
-                      width: 50,
-                      height: 6,
-                      decoration: BoxDecoration(
-                        gradient: LinearGradient(
-                          colors: [Colors.blue, Colors.purple],
-                        ),
-                        borderRadius: BorderRadius.circular(12),
-                      ),
-                    ),
+                  Icon(
+                    widget.vehicleType == 'Bike'
+                        ? Icons.motorcycle_rounded
+                        : Icons.directions_car,
+                    color: Colors.white,
+                    size: 35,
                   ),
-                  const SizedBox(height: 16),
+                  const SizedBox(
+                    width: 15,
+                  ),
                   Text(
-                    widget.locInfo,
+                    widget.dur,
                     style: const TextStyle(
-                        fontSize: 22, fontWeight: FontWeight.w600),
-                  ),
-                  const SizedBox(height: 12),
-                  Row(
-                    children: [
-                      RatingBarIndicator(
-                        rating: 4.6,
-                        itemBuilder: (context, index) => const Icon(
-                          Icons.star,
-                          color: Colors.amber,
-                        ),
-                        itemCount: 5,
-                        itemSize: 20.0,
-                        direction: Axis.horizontal,
-                      ),
-                      const SizedBox(width: 8),
-                      const Text(
-                        '4.6',
-                        style: TextStyle(fontWeight: FontWeight.bold),
-                      ),
-                      const SizedBox(width: 8),
-                      const Text(
-                        '(3,510)',
-                        style: TextStyle(color: Colors.grey),
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: 20),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                    children: [
-                      _buildHoverButton(
-                          Icons.directions,
-                          'Back on map',
-                          Colors.blue,
-                            (){
-                                  widget.panelController.close();
-                            }),
-
-
-
-                      _buildHoverButton(Icons.bookmark, 'Save', Colors.orange,() {
-                        FirebaseFirestore.instance.collection("history").add({
-                          'location': widget.locInfo,
-                          'fule': widget.fuelConsumption.toStringAsFixed(2),
-                          'time': widget.dis,
-                          'vehicle': widget.vehicleType,
-                          'fuletype': widget.fuelType,
-                          'age': widget.age,
-                          'userid': FirebaseAuth.instance.currentUser!.uid
-                        });
-
-                        ScaffoldMessenger.of(context)
-                            .showSnackBar(const SnackBar(content: Text("location saved !")));
-                      }),
-
-                      _buildHoverButton(Icons.share, 'Share', Colors.red,(){
-
-
-                      }),
-
-                    ],
-                  ),
-                  const SizedBox(height: 20),
-                  Container(
-                    padding: const EdgeInsets.symmetric(
-                        horizontal: 10, vertical: 10),
-                    decoration: BoxDecoration(
-                        color: Colors.blue,
-                        borderRadius: BorderRadius.circular(16)),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Icon(
-                          widget.vehicleType == 'Bike'
-                              ? Icons.motorcycle_rounded
-                              : Icons.directions_car,
-                          color: Colors.white,
-                          size: 35,
-                        ),
-                        const SizedBox(
-                          width: 15,
-                        ),
-                        Text(
-                          widget.dur,
-                          style: const TextStyle(
-                              fontWeight: FontWeight.bold,
-                              fontSize: 18,
-                              color: Colors.white),
-                        )
-                      ],
-                    ),
-                  ),
-                  const SizedBox(height: 25),
-                  Row(
-                    children: [
-                      Text(
-                        "Estimated fuel consumption :- ${widget.fuelConsumption.toStringAsFixed(2)} litres",
-                        style: const TextStyle(
-                            fontSize: 14,
-                            fontWeight: FontWeight.bold,
-                            color: Colors.green),
-                      ),
-                      const SizedBox(
-                        width: 10,
-                      ),
-                      const Icon(
-                        Icons.energy_savings_leaf,
-                        color: Colors.green,
-                      )
-                    ],
-                  ),
-                  const SizedBox(height: 20),
-                  const Divider(),
-                  const SizedBox(height: 20),
-                  Container(
-                    decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(16),
+                        fontWeight: FontWeight.bold,
+                        fontSize: 18,
                         color: Colors.white),
-                    child: ListTile(
-                      title: Text(widget.vehicleType),
-                      subtitle: Text(
-                        "Distance :- ${widget.dis}   Fuel type :- ${widget.fuelType},",
-                        style:
-                            const TextStyle(color: Colors.grey, fontSize: 14),
-                      ),
-                      leading: CircleAvatar(
-                        backgroundColor: Colors.blue,
-                        child: Icon(
-                            color: Colors.white,
-                            size: 33,
-                            widget.vehicleType == 'Bike'
-                                ? Icons.motorcycle_rounded
-                                : Icons.directions_car),
-                      ),
-                    ),
-                  ),
-                  const SizedBox(height: 20),
-                  const Text(
-                    "Weather details",
-                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-                  ),
-                  const SizedBox(height: 10),
-                  Center(
-                    child: SizedBox(
-                      height: 120,
-                      child: widget.destination.isEmpty
-                          ? const Center(child: CircularProgressIndicator())
-                          : ListView.builder(
-                              scrollDirection: Axis.horizontal,
-                              itemCount: 10,
-                              itemBuilder: (context, index) {
-                                final currentSk = widget.destination['list']
-                                    [index + 1]['weather'][0]['main'];
-                                final date = DateTime.parse(widget
-                                    .destination['list'][index + 1]['dt_txt']);
-                                return HourlyForecast(
-                                    icon: currentSk == 'Clouds' ||
-                                            currentSk == 'Rainy'
-                                        ? Icons.cloud
-                                        : Icons.sunny,
-                                    time: DateFormat.j().format(date),
-                                    val:
-                                        "${(widget.destination['list'][index + 1]['main']['temp'].toString().substring(0, 2))} °C");
-                              }),
-                    ),
-                  ),
-                  const SizedBox(height: 25),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      ElevatedButton.icon(
-                        onPressed: () {
-                          _fetchAQIData(widget.desti!);
-                          setState(() {
-                            isVisible = true;
-                            isVisible2 = false;
-                          });
-                          // Handle AQI estimation
-                        },
-                        icon: const Icon(
-                          Icons.report,
-                          color: Colors.black,
-                        ),
-                        label: const Text('AQI Estimate',
-                            style: TextStyle(color: Colors.black)),
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: Colors.redAccent,
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(12),
-                          ),
-                        ),
-                      ),
-                      ElevatedButton.icon(
-                        onPressed: () {
-                          setState(() {
-                            isVisible = false;
-                            isVisible2 = true;
-                          });
-                        },
-                        icon: const Icon(
-                          Icons.car_crash_rounded,
-                          color: Colors.black,
-                        ),
-                        label: const Text(
-                          'Carbon emission',
-                          style: TextStyle(color: Colors.black),
-                        ),
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: Colors.blueAccent,
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(12),
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                  const SizedBox(
-                    height: 20,
-                  ),
-                  Visibility(visible: isVisible, child: _buildAQIGraph()),
-                  const SizedBox(
-                    height: 20,
-                  ),
-                  Visibility(
-                    visible: isVisible2,
-                    child: Center(
-                      child: Container(
-                        width: MediaQuery.of(context).size.width * 0.95,
-                        padding: const EdgeInsets.symmetric(
-                            horizontal: 15, vertical: 20),
-                        decoration: BoxDecoration(
-                          color: Colors.green,
-                          borderRadius: BorderRadius.circular(12),
-                        ),
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            const SizedBox(height: 8),
-                            Text(
-                              widget.vehicleType == "Cycle"
-                                  ? "Cycles do not consume fuel."
-                                  : (widget.fuelType == "Petrol")
-                                      ? "Carbon emission : ${(widget.fuelConsumption * 2.31).toStringAsFixed(2)} kg of CO2"
-                                      : (widget.fuelType == "Diesel")
-                                          ? "Carbon emission : ${(widget.fuelConsumption * 2.68).toStringAsFixed(2)} kg of CO2"
-                                          : (widget.fuelType == "CNG")
-                                              ? "Carbon emission : ${(widget.fuelConsumption * 1.52).toStringAsFixed(2)} kg of CO2"
-                                              : (widget.fuelType == "Electric")
-                                                  ? "Carbon emission : ${(widget.fuelConsumption * 0.0).toStringAsFixed(2)} kg of CO2"
-                                                  : "Carbon emission : ${(widget.fuelConsumption * 2.31).toStringAsFixed(2)} kg of CO2",
-                              style: const TextStyle(fontSize: 16),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
-                  ),
-                  const SizedBox(height: 25),
-                  _buildGeminiSuggestions()
+                  )
                 ],
               ),
             ),
-          );
-        }
-      
+            const SizedBox(height: 25),
+            Row(
+              children: [
+                Text(
+                  "Estimated fuel consumption :- ${widget.fuelConsumption.toStringAsFixed(2)} litres",
+                  style: const TextStyle(
+                      fontSize: 14,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.green),
+                ),
+                const SizedBox(
+                  width: 10,
+                ),
+                const Icon(
+                  Icons.energy_savings_leaf,
+                  color: Colors.green,
+                )
+              ],
+            ),
+            const SizedBox(height: 20),
+            const Divider(),
+            const SizedBox(height: 20),
+            Container(
+              decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(16), color: Colors.white),
+              child: ListTile(
+                title: Text(widget.vehicleType),
+                subtitle: Text(
+                  "Distance :- ${widget.dis}   Fuel type :- ${widget.fuelType},",
+                  style: const TextStyle(color: Colors.grey, fontSize: 14),
+                ),
+                leading: CircleAvatar(
+                  backgroundColor: Colors.blue,
+                  child: Icon(
+                      color: Colors.white,
+                      size: 33,
+                      widget.vehicleType == 'Bike'
+                          ? Icons.motorcycle_rounded
+                          : Icons.directions_car),
+                ),
+              ),
+            ),
+            const SizedBox(height: 20),
+            const Text(
+              "Weather details",
+              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+            ),
+            const SizedBox(height: 10),
+            Center(
+              child: SizedBox(
+                height: 120,
+                child: widget.destination.isEmpty
+                    ? const Center(child: CircularProgressIndicator())
+                    : ListView.builder(
+                        scrollDirection: Axis.horizontal,
+                        itemCount: 10,
+                        itemBuilder: (context, index) {
+                          final currentSk = widget.destination['list']
+                              [index + 1]['weather'][0]['main'];
+                          final date = DateTime.parse(
+                              widget.destination['list'][index + 1]['dt_txt']);
+                          return HourlyForecast(
+                              icon:
+                                  currentSk == 'Clouds' || currentSk == 'Rainy'
+                                      ? Icons.cloud
+                                      : Icons.sunny,
+                              time: DateFormat.j().format(date),
+                              val:
+                                  "${(widget.destination['list'][index + 1]['main']['temp'].toString().substring(0, 2))} °C");
+                        }),
+              ),
+            ),
+            const SizedBox(height: 25),
+            Center(
+              child: Padding(
+                padding: const EdgeInsets.symmetric(
+                    horizontal: 20.0), // Equal padding
+                child: Container(
+                  width: MediaQuery.of(context).size.width * 0.6,
+                  height: 60,
+                  decoration: BoxDecoration(
+                    color:
+                        const Color(0xFFDCEAFF), // Light blue background color
+                    borderRadius: BorderRadius.circular(30),
+                  ),
+                  child: Stack(
+                    children: [
+                      AnimatedAlign(
+                        alignment: isAqiSelected
+                            ? Alignment.centerLeft
+                            : Alignment.centerRight,
+                        duration: const Duration(milliseconds: 300),
+                        curve: Curves.easeInOut,
+                        child: Container(
+                          width: 140,
+                          height: 45,
+                          margin: const EdgeInsets.all(
+                              7), // Inner padding for neat spacing
+                          decoration: BoxDecoration(
+                            color: Colors.white, // Sliding white background
+                            borderRadius: BorderRadius.circular(30),
+                            boxShadow: [
+                              BoxShadow(
+                                color: Colors.grey.withOpacity(0.2),
+                                blurRadius: 6,
+                                offset: const Offset(0, 3),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                      Row(
+                        children: [
+                          Expanded(
+                            child: GestureDetector(
+                              onTap: () {
+                                _fetchAQIData(widget.desti!);
+                                setState(() {
+                                  carbonColor = false;
+                                  aqiColor = true;
+                                  isVisible = true;
+                                  isVisible2 = false;
+                                  isAqiSelected = true;
+                                });
+                              },
+                              child: Center(
+                                child: Text(
+                                  "AQI Estimate",
+                                  style: TextStyle(
+                                    fontSize: 16,
+                                    fontWeight: FontWeight.w500,
+                                    color: isAqiSelected
+                                        ? Colors.black
+                                        : const Color(
+                                            0xFF7A7A7A), // Grey text color
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ),
+                          Expanded(
+                            child: GestureDetector(
+                              onTap: () {
+                                setState(() {
+                                  isAqiSelected = false;
+                                  carbonColor = true;
+                                  aqiColor = false;
+                                  isVisible = false;
+                                  isVisible2 = true;
+                                });
+                              },
+                              child: Center(
+                                child: Text(
+                                  "Carbon Emission",
+                                  style: TextStyle(
+                                    fontSize: 16,
+                                    fontWeight: FontWeight.w500,
+                                    color: isAqiSelected
+                                        ? const Color(0xFF7A7A7A)
+                                        : Colors.black,
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ),
+            const SizedBox(
+              height: 20,
+            ),
+            Visibility(visible: isVisible, child: _buildAQIGraph()),
+            const SizedBox(
+              height: 20,
+            ),
+            Visibility(
+              visible: isVisible2,
+              child: Center(
+                child: Container(
+                  width: MediaQuery.of(context).size.width * 0.95,
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 15, vertical: 20),
+                  decoration: BoxDecoration(
+                    color: Colors.green,
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      const SizedBox(height: 8),
+                      Text(
+                        widget.vehicleType == "Cycle"
+                            ? "Cycles do not consume fuel."
+                            : (widget.fuelType == "Petrol")
+                                ? "Carbon emission : ${(widget.fuelConsumption * 2.31).toStringAsFixed(2)} kg of CO2"
+                                : (widget.fuelType == "Diesel")
+                                    ? "Carbon emission : ${(widget.fuelConsumption * 2.68).toStringAsFixed(2)} kg of CO2"
+                                    : (widget.fuelType == "CNG")
+                                        ? "Carbon emission : ${(widget.fuelConsumption * 1.52).toStringAsFixed(2)} kg of CO2"
+                                        : (widget.fuelType == "Electric")
+                                            ? "Carbon emission : ${(widget.fuelConsumption * 0.0).toStringAsFixed(2)} kg of CO2"
+                                            : "Carbon emission : ${(widget.fuelConsumption * 2.31).toStringAsFixed(2)} kg of CO2",
+                        style: const TextStyle(fontSize: 16),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ),
+            const SizedBox(height: 25),
+            _buildGeminiSuggestions()
+          ],
+        ),
+      ),
+    );
+  }
 
   Widget _buildAQIGraph() {
     if (isLoading) {
@@ -632,7 +666,8 @@ Provide advice tailored to the context:
     }
   }
 
-  Widget _buildHoverButton(IconData icon, String label, Color color,VoidCallback onTap) {
+  Widget _buildHoverButton(
+      IconData icon, String label, Color color, VoidCallback onTap) {
     return GestureDetector(
       onTap: onTap,
       child: MouseRegion(
@@ -670,43 +705,43 @@ Provide advice tailored to the context:
           ),
         );
       },
-
       child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 16,vertical: 10),
-        decoration: BoxDecoration(
-          gradient: const LinearGradient(colors: [Colors.black12,Colors.black26]),
-          borderRadius: BorderRadius.circular(12),
-
-        ),
-        child: GestureDetector(
-          onTap: (){
-            setState(() {
-              _geminiAdvice = "Fetching suggestions ...";
-              _fetchGeminiAdvice();
-            });
-          },
-          child: Container(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                const Row(
-                  children: [
-                    CircleAvatar(
-                      backgroundImage: AssetImage("assets/images/gemini.png"),
-                    ),
-                    SizedBox(width: 20,),
-
-                    Text("Ask suggestion to gemini")
-                  ],
-                ),
-                const SizedBox(height: 20,),
-
-                Text(_geminiAdvice)
-              ],
-            ),
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+          decoration: BoxDecoration(
+            gradient:
+                const LinearGradient(colors: [Colors.black12, Colors.black26]),
+            borderRadius: BorderRadius.circular(12),
           ),
-        )
-      ),
+          child: GestureDetector(
+            onTap: () {
+              setState(() {
+                _geminiAdvice = "Fetching suggestions ...";
+                _fetchGeminiAdvice();
+              });
+            },
+            child: Container(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const Row(
+                    children: [
+                      CircleAvatar(
+                        backgroundImage: AssetImage("assets/images/gemini.png"),
+                      ),
+                      SizedBox(
+                        width: 20,
+                      ),
+                      Text("Ask suggestion to gemini")
+                    ],
+                  ),
+                  const SizedBox(
+                    height: 20,
+                  ),
+                  Text(_geminiAdvice)
+                ],
+              ),
+            ),
+          )),
     );
   }
 }
