@@ -83,7 +83,7 @@ class _SlidingPanel2State extends State<SlidingPanel2>
 
   List<int> aqiData = [];
   List<String> aqiDates = [];
-  bool isVisible = false;
+  bool isVisible = true;
   bool isLoading = true;
   bool isVisible2 = false;
   String errorMessage = '';
@@ -438,7 +438,7 @@ Provide advice tailored to the context:
                 padding: const EdgeInsets.symmetric(
                     horizontal: 20.0), // Equal padding
                 child: Container(
-                  width: 300,
+                  width: MediaQuery.of(context).size.width * 0.6,
                   height: 60,
                   decoration: BoxDecoration(
                     color:
