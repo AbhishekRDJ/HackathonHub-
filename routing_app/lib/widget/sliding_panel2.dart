@@ -1,5 +1,5 @@
 import 'dart:math';
-
+import 'bar_chart.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -55,6 +55,11 @@ class _SlidingPanel2State extends State<SlidingPanel2>
   bool carbonColor = false;
   bool isGeminiLoading = false;
   bool isAqiSelected = true;
+  final TextEditingController _vehicleTypeController = TextEditingController();
+  final TextEditingController _fuelTypeController = TextEditingController();
+  final TextEditingController _vehicleAgeController = TextEditingController();
+  Map<String, double> _emissions = {};
+
 
   double calculateMileage(String vehicleType, String age) {
     if (vehicleType == 'Car') {
@@ -80,6 +85,28 @@ class _SlidingPanel2State extends State<SlidingPanel2>
     }
     return 0;
   }
+    Future<void> _predictEmissions() async {
+    final response = await http.post(
+      Uri.parse('https://hackathonhub-1-ewui.onrender.com/predict'), // Ensure this is correct
+      headers: <String, String>{
+        'Content-Type': 'application/json; charset=UTF-8',
+      },
+      body: jsonEncode(<String, dynamic>{
+        'vehicle_type': vehicleType.text,
+        'fuel_type': _fuelTypeController.text,
+        'vehicle_age': int.parse(_vehicleAgeController.text),
+      }),
+    );
+
+    if (response.statusCode == 200) {
+      setState(() {
+        _emissions = Map<String, double>.from(json.decode(response.body));
+      });
+    } else {
+      throw Exception('Failed to load predictions');
+    }
+  }
+
 
   List<int> aqiData = [];
   List<String> aqiDates = [];
