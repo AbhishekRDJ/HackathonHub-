@@ -6,18 +6,14 @@ import 'package:firebase_auth/firebase_auth.dart';
 import '../widget/custom_button.dart';
 import '../widget/custom_textfeild.dart';
 
-
 class SignUpPage extends StatefulWidget {
   const SignUpPage({super.key});
-
-
 
   @override
   State<SignUpPage> createState() => _LogInPageState();
 }
 
 class _LogInPageState extends State<SignUpPage> {
-
   TextEditingController name = TextEditingController();
   TextEditingController email = TextEditingController();
   TextEditingController pass = TextEditingController();
@@ -25,48 +21,40 @@ class _LogInPageState extends State<SignUpPage> {
   TextEditingController phone = TextEditingController();
   TextEditingController about = TextEditingController();
 
-
-  Future<void> createUserAndPassword() async{
-    try{
+  Future<void> createUserAndPassword() async {
+    try {
       await FirebaseAuth.instance.createUserWithEmailAndPassword(
-          email: email.text.trim(),
-          password: pass.text.trim()
-      );
+          email: email.text.trim(), password: pass.text.trim());
 
-       await FirebaseFirestore.instance.collection('userInfo').add({
-        'name':name.text.trim(),
-        'phone':phone.text.trim(),
-        'email':email.text.trim(),
-        'pass':pass.text.trim(),
-         'about':about.text.trim(),
-        'userid':FirebaseAuth.instance.currentUser!.uid,
-      }
-      );
+      await FirebaseFirestore.instance.collection('userInfo').add({
+        'name': name.text.trim(),
+        'phone': phone.text.trim(),
+        'email': email.text.trim(),
+        'pass': pass.text.trim(),
+        'about': about.text.trim(),
+        'userid': FirebaseAuth.instance.currentUser!.uid,
+      });
 
       Navigator.of(context).pushReplacement(
-        MaterialPageRoute(builder: (context)=> const MainPage())
-      );
-
-    }
-
-    on FirebaseAuthException catch(e){
-    showAdaptiveDialog(context: context,
-    builder: (context){
-    return AlertDialog.adaptive(
-    icon: const Icon(Icons.warning),
-    title: Text(e.message.toString()),
-    actions: [
-    TextButton(onPressed: (){
-    Navigator.of(context).pop();
-    }, child: const Text("ok"))
-    ],
-    );
-    }
-    );
+          MaterialPageRoute(builder: (context) => const MainPage()));
+    } on FirebaseAuthException catch (e) {
+      showAdaptiveDialog(
+          context: context,
+          builder: (context) {
+            return AlertDialog.adaptive(
+              icon: const Icon(Icons.warning),
+              title: Text(e.message.toString()),
+              actions: [
+                TextButton(
+                    onPressed: () {
+                      Navigator.of(context).pop();
+                    },
+                    child: const Text("ok"))
+              ],
+            );
+          });
     }
   }
-
-
 
   @override
   Widget build(BuildContext context) {
@@ -74,49 +62,51 @@ class _LogInPageState extends State<SignUpPage> {
       resizeToAvoidBottomInset: false,
       appBar: AppBar(
         leading: IconButton(
-            onPressed: (){
+            onPressed: () {
               Navigator.of(context).pop();
-            } ,
-            icon : const Icon(Icons.arrow_back_ios)),
+            },
+            icon: const Icon(Icons.arrow_back_ios)),
       ),
       body: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 20),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const Text("Embark on Smarter Journeys with NeoRoute",
-
+            const Text(
+              "Embark on Smarter Journeys with NeoRoute",
               style: TextStyle(
                   fontWeight: FontWeight.bold,
                   fontSize: 30,
-                  color: Colors.white
-              ),
-            ).animate() // uses `Animate.defaultDuration`
-                .slideX(duration: const Duration(milliseconds: 650)).
-            tint(color: Colors.black,
-                delay: const Duration(microseconds: 100)
+                  color: Colors.white),
+            )
+                .animate() // uses `Animate.defaultDuration`
+                .slideX(duration: const Duration(milliseconds: 650))
+                .tint(
+                    color: Colors.black,
+                    delay: const Duration(microseconds: 100)),
+            const SizedBox(
+              height: 30,
             ),
-
-            const SizedBox(height: 30,),
-
-            CustomTextField(text: 'Enter name',
+            CustomTextField(
+              text: 'Enter name',
               color: Colors.black,
               controller: name,
               isPreIcon: false,
               isIcon: false,
             ),
-            const SizedBox(height: 25,),
-
-            CustomTextField(text: 'Enter phone no',
+            const SizedBox(
+              height: 25,
+            ),
+            CustomTextField(
+              text: 'Enter phone no',
               color: Colors.black,
               controller: phone,
               isIcon: false,
               isPreIcon: false,
-
             ),
-            const SizedBox(height: 25,),
-
-
+            const SizedBox(
+              height: 25,
+            ),
             CustomTextField(
               text: 'Enter email',
               color: Colors.black,
@@ -124,16 +114,19 @@ class _LogInPageState extends State<SignUpPage> {
               isIcon: false,
               isPreIcon: false,
             ),
-            const SizedBox(height: 25,),
-
-            CustomTextField(text: 'Enter password',
+            const SizedBox(
+              height: 25,
+            ),
+            CustomTextField(
+              text: 'Enter password',
               color: Colors.black,
               controller: pass,
               isIcon: true,
               isPreIcon: false,
             ),
-            const SizedBox(height: 25,),
-
+            const SizedBox(
+              height: 25,
+            ),
             CustomTextField(
               text: 'Confirm password',
               color: Colors.black,
@@ -141,45 +134,39 @@ class _LogInPageState extends State<SignUpPage> {
               isIcon: true,
               isPreIcon: false,
             ),
-
-            const SizedBox(height: 25,),
-
-            CustomTextField(text: 'About',
+            const SizedBox(
+              height: 25,
+            ),
+            CustomTextField(
+              text: 'About',
               color: Colors.black,
               controller: about,
               isPreIcon: false,
               isIcon: false,
             ),
-
-            const Spacer(flex: 2,),
-
-            CustomButton(color: Colors.black87,
-                label: 'Agree and Register',
-                onPressed: (){
-
-                  if(name.text!="" && email.text!="" &&
-                  pass.text == confirmPass.text){
+            const Spacer(
+              flex: 2,
+            ),
+            CustomButton(
+                color: Colors.black87,
+                label: 'Sign Up',
+                onPressed: () {
+                  if (name.text != "" &&
+                      email.text != "" &&
+                      pass.text == confirmPass.text) {
                     createUserAndPassword();
-                  }
-
-                  else if(pass.text != confirmPass.text){
+                  } else if (pass.text != confirmPass.text) {
                     ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-                        content: Text("password does not match ")
-                    )
-                    );
-                  }
-
-                  else{
+                        content: Text("password does not match ")));
+                  } else {
                     ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-                        content: Text("please enter the details ")
-                    )
-                    );
+                        content: Text("please enter the details ")));
                   }
-
                 },
                 textColor: Colors.white),
-
-            const Spacer(flex: 3,)
+            const Spacer(
+              flex: 3,
+            )
           ],
         ),
       ),
