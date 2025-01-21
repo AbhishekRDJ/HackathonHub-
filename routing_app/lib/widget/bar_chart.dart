@@ -43,7 +43,7 @@ class BarChartWidget extends StatelessWidget {
   double _calculateBarHeight(String type, double value, double maxHeight) {
     final range = _emissionRanges[type];
     if (range == null) return maxHeight;
-
+ 
     // Calculate percentage within its own range
     double percentage = (value - range['min']!) / (range['max']! - range['min']!);
     // Ensure the percentage is between 0 and 1

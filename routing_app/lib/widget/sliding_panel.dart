@@ -13,7 +13,7 @@ class PanelWidget extends StatefulWidget {
   final ScrollController controller;
   const PanelWidget({super.key,
     required this.controller,
-    required this.panelController
+    required this.panelController 
   }
   );
 
@@ -22,9 +22,9 @@ class PanelWidget extends StatefulWidget {
 }
 
 class _PanelWidgetState extends State<PanelWidget> {
-  final List<String> vehicles = ['Car', 'Bike', 'Cycle', 'Auto'];
+  final List<String> vehicles = ['Car', 'Motorcycle', 'Truck', 'Bus'];
   final List<String> flue = ['Petrol', 'Diesel'];
-  final List<String> age = ['<1', '2', '3', '4', '>5'];
+  final List<String> age = ['1', '2', '3', '4', '5','6','7','8','9','10'];
 
   String selectedVehicle = 'Choose vehicle';
   String selectedAge = 'Choose age';
