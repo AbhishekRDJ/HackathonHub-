@@ -20,7 +20,7 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage>
     with SingleTickerProviderStateMixin {
   final locationController = Location();
-  final currentLoc = LatLng(19.8758, 75.3393);
+  final currentLoc = const LatLng(19.8758, 75.3393);
   String user = 'NA';
 
   GoogleMapController? mapController;
@@ -140,9 +140,10 @@ class _HomePageState extends State<HomePage>
                   markers: currentPosition != null
                       ? {
                           Marker(
-                            markerId: MarkerId("searchedLocation"),
+                            markerId: const MarkerId("searchedLocation"),
                             position: currentPosition!,
-                            infoWindow: InfoWindow(title: "Your Location"),
+                            infoWindow:
+                                const InfoWindow(title: "Your Location"),
                           ),
                         }
                       : {},

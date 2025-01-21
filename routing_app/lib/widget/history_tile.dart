@@ -144,7 +144,7 @@ class _HistoryTileState extends State<HistoryTile> {
                                       children: [
                                     TextSpan(
                                         text:
-                                            "${((carbonEmission * data['time']) / 1000).toString().substring(0, 5)} kg",
+                                            "${((carbonEmission * data['time']) / 1000).toStringAsFixed(2)} kg",
                                         style: const TextStyle(
                                           fontWeight: FontWeight.bold,
                                         ))

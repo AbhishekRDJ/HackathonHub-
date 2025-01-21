@@ -11,11 +11,8 @@ class PanelWidget extends StatefulWidget {
   final PanelController panelController;
 
   final ScrollController controller;
-  const PanelWidget({super.key,
-    required this.controller,
-    required this.panelController 
-  }
-  );
+  const PanelWidget(
+      {super.key, required this.controller, required this.panelController});
 
   @override
   State<PanelWidget> createState() => _PanelWidgetState();
@@ -24,7 +21,7 @@ class PanelWidget extends StatefulWidget {
 class _PanelWidgetState extends State<PanelWidget> {
   final List<String> vehicles = ['Car', 'Motorcycle', 'Truck', 'Bus'];
   final List<String> flue = ['Petrol', 'Diesel'];
-  final List<String> age = ['1', '2', '3', '4', '5','6','7','8','9','10'];
+  final List<String> age = ['1', '2', '3', '4', '5', '6', '7', '8', '9', '10'];
 
   String selectedVehicle = 'Choose vehicle';
   String selectedAge = 'Choose age';
@@ -90,10 +87,10 @@ class _PanelWidgetState extends State<PanelWidget> {
                   FocusNode focusNode,
                   VoidCallback onEditingComplete) {
                 return TextField(
-                  onTap: (){
-                    widget.panelController.isPanelOpen ?
-                        widget.panelController.close() :
-                        widget.panelController.open();
+                  onTap: () {
+                    widget.panelController.isPanelOpen
+                        ? widget.panelController.close()
+                        : widget.panelController.open();
                   },
                   controller: textController,
                   focusNode: focusNode,
@@ -105,7 +102,7 @@ class _PanelWidgetState extends State<PanelWidget> {
                     hintText: "Search",
                     hintStyle:
                         const TextStyle(fontSize: 16, color: Colors.grey),
-                    prefixIcon: Icon(Icons.location_on),
+                    prefixIcon: const Icon(Icons.location_on),
                     enabledBorder: OutlineInputBorder(
                         borderSide: const BorderSide(
                             color: Color.fromARGB(50, 80, 80, 80)),
@@ -136,8 +133,11 @@ class _PanelWidgetState extends State<PanelWidget> {
               setState(() {
                 selectedVehicleType = value;
                 selectedVehicle = value!;
-                if(selectedVehicle == "Bike"){
+                if (selectedVehicle == "Motorcycle") {
                   selectedFuelType = "Petrol";
+                }
+                if (selectedVehicle == "Truck") {
+                  selectedFuelType = "Diesel";
                 }
               });
             },
@@ -154,13 +154,19 @@ class _PanelWidgetState extends State<PanelWidget> {
           ),
           CustomeDropdown(
             selectedVehicle: flue,
-            value: selectedVehicle == 'Bike' ? "petrol" :
-            selectedFule,
+            value: selectedVehicle == 'Motorcycle'
+                ? "petrol"
+                : selectedVehicle == 'Truck'
+                    ? "Diesel"
+                    : selectedFule,
             onChanged: (value) {
               setState(() {
                 selectedFuelType = value;
-                selectedFule = selectedVehicle == 'Bike' ? "Petrol" :
-                value!;
+                selectedFule = selectedVehicle == 'Motorcycle'
+                    ? "Petrol"
+                    : selectedVehicle == 'Truck'
+                        ? "Diesel"
+                        : value!;
               });
             },
           ),

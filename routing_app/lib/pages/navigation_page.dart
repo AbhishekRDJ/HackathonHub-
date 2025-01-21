@@ -35,7 +35,7 @@ class _RealTimeSearchMapState extends State<RealTimeSearchMap> {
   late GoogleMapController _mapController;
   LatLng? _currentLocation; // User's current location
   LatLng? _searchedLocation;
-  Set<Polyline> _polylines = {};
+  final Set<Polyline> _polylines = {};
   final Set<Marker> _markers = {};
   bool _showTraffic = false; // Traffic layer toggle
   String locationInfo = "";
@@ -45,6 +45,8 @@ class _RealTimeSearchMapState extends State<RealTimeSearchMap> {
   Map<String, dynamic> weatherData = {};
   double _fuelConsumption = 0;
   int distance1 = 0;
+  double? _placeRating;
+
   double calculateMileage(String vehicleType, String age) {
     if (vehicleType == 'Car') {
       if (age == '1') return 18;
@@ -122,7 +124,7 @@ class _RealTimeSearchMapState extends State<RealTimeSearchMap> {
     } catch (e) {
       debugPrint("Error getting current location: $e");
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
+        const SnackBar(
           content: Text("Unable to fetch current location. Please try again."),
         ),
       );
@@ -131,7 +133,7 @@ class _RealTimeSearchMapState extends State<RealTimeSearchMap> {
 
   Future<void> _fetchDistanceAndDuration(
       LatLng source, LatLng destination) async {
-    final apiKey = '$googleApiKey'; // Replace with your API key
+    const apiKey = googleApiKey; // Replace with your API key
     final url =
         'https://maps.googleapis.com/maps/api/distancematrix/json?origins=${source.latitude},${source.longitude}&destinations=${destination.latitude},${destination.longitude}&key=$apiKey';
     try {
@@ -184,7 +186,7 @@ class _RealTimeSearchMapState extends State<RealTimeSearchMap> {
 
   // Fetch location details using Geocoding API
   Future<void> _fetchLocationDetails(LatLng location) async {
-    final apiKey = '$googleApiKey'; // Replace with your API key
+    const apiKey = googleApiKey; // Replace with your API key
     final url =
         'https://maps.googleapis.com/maps/api/geocode/json?latlng=${location.latitude},${location.longitude}&key=$apiKey';
 
@@ -261,6 +263,17 @@ class _RealTimeSearchMapState extends State<RealTimeSearchMap> {
           weatherData = await getWeatherDetails(_searchedLocation!);
         }
 
+        if (_searchedLocation != null) {
+          // Fetch place rating
+          final placeId = await _getPlaceIdFromLocation(_searchedLocation!);
+          if (placeId != null) {
+            final rating = await _fetchPlaceRating(placeId);
+            setState(() {
+              _placeRating = rating;
+            });
+          }
+        }
+
         // Fetch and display the route
         if (_currentLocation != null && _searchedLocation != null) {
           await _drawRoute(_currentLocation!, _searchedLocation!);
@@ -269,7 +282,7 @@ class _RealTimeSearchMapState extends State<RealTimeSearchMap> {
     } catch (e) {
       debugPrint("Error finding location: $e");
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
+        const SnackBar(
           content: Text("Location not found. Try again."),
         ),
       );
@@ -296,7 +309,7 @@ class _RealTimeSearchMapState extends State<RealTimeSearchMap> {
         setState(() {
           _polylines.add(
             Polyline(
-              polylineId: PolylineId('route'),
+              polylineId: const PolylineId('route'),
               points: polylineCoordinates,
               color: Colors.blue,
               width: 5,
@@ -309,7 +322,7 @@ class _RealTimeSearchMapState extends State<RealTimeSearchMap> {
     } catch (e) {
       debugPrint("Error fetching route: $e");
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
+        const SnackBar(
           content: Text("Failed to fetch route. Try again."),
         ),
       );
@@ -317,7 +330,7 @@ class _RealTimeSearchMapState extends State<RealTimeSearchMap> {
   }
 
   Future<Map<String, dynamic>> getWeatherDetails(LatLng location) async {
-    final String apiKey =
+    const String apiKey =
         weatherKey; // Replace with your OpenWeatherMap API key
     final String url =
         "https://api.openweathermap.org/data/2.5/forecast?lat=${location.latitude}&lon=${location.longitude}&appid=$apiKey&units=metric";
@@ -339,7 +352,7 @@ class _RealTimeSearchMapState extends State<RealTimeSearchMap> {
   }
 
   Future<List<Map<String, dynamic>>> _fetchTrafficIncidents() async {
-    const String apiKey = '$trafficKey'; // Replace with your API key
+    const String apiKey = trafficKey; // Replace with your API key
     if (_currentLocation == null) return [];
     final bbox = calculateBoundingBox(_currentLocation!, _searchedLocation!);
     final String url =
@@ -367,7 +380,7 @@ class _RealTimeSearchMapState extends State<RealTimeSearchMap> {
     Set<Marker> trafficMarkers = {};
     // Load the custom icon
     BitmapDescriptor customIcon = await BitmapDescriptor.fromAssetImage(
-      ImageConfiguration(
+      const ImageConfiguration(
           size: Size(24, 24), devicePixelRatio: 1), // Adjust the size if needed
       'assets/images/incident_icon.png', // Path to your custom icon
     );
@@ -423,6 +436,63 @@ class _RealTimeSearchMapState extends State<RealTimeSearchMap> {
     maxLng += padding;
 
     return "$minLng,$minLat,$maxLng,$maxLat"; // bbox format: "minLng,minLat,maxLng,maxLat"
+  }
+
+  Future<double?> _fetchPlaceRating(String placeId) async {
+    const apiKey = googleApiKey; // Replace with your API key
+    final url =
+        'https://maps.googleapis.com/maps/api/place/details/json?place_id=$placeId&key=$apiKey';
+
+    try {
+      final response = await http.get(Uri.parse(url));
+
+      if (response.statusCode == 200) {
+        final data = json.decode(response.body);
+
+        if (data['status'] == 'OK' && data['result'] != null) {
+          final rating = data['result']['rating'];
+          return rating?.toDouble();
+        } else {
+          debugPrint('No results found for the place.');
+          return null;
+        }
+      } else {
+        debugPrint('Failed to fetch place details: ${response.statusCode}');
+        return null;
+      }
+    } catch (e) {
+      debugPrint('Error fetching place details: $e');
+      return null;
+    }
+  }
+
+  Future<String?> _getPlaceIdFromLocation(LatLng location) async {
+    const apiKey = googleApiKey; // Replace with your API key
+    final url =
+        'https://maps.googleapis.com/maps/api/geocode/json?latlng=${location.latitude},${location.longitude}&key=$apiKey';
+
+    try {
+      final response = await http.get(Uri.parse(url));
+
+      if (response.statusCode == 200) {
+        final data = json.decode(response.body);
+
+        if (data['status'] == 'OK' && data['results'].isNotEmpty) {
+          final placeId = data['results'][0]['place_id'];
+          debugPrint('Place ID: $placeId');
+          return placeId;
+        } else {
+          debugPrint('No results found for the location.');
+          return null;
+        }
+      } else {
+        debugPrint('Failed to fetch place ID: ${response.statusCode}');
+        return null;
+      }
+    } catch (e) {
+      debugPrint('Error fetching place ID: $e');
+      return null;
+    }
   }
 
   @override
@@ -493,7 +563,7 @@ class _RealTimeSearchMapState extends State<RealTimeSearchMap> {
         ],
       ),
       body: _currentLocation == null
-          ? Center(child: CircularProgressIndicator())
+          ? const Center(child: CircularProgressIndicator())
           : Stack(
               children: [
                 SlidingUpPanel(
@@ -514,66 +584,70 @@ class _RealTimeSearchMapState extends State<RealTimeSearchMap> {
                     fuelConsumption:
                         _fuelConsumption, // Add the required cost argument
                     desti: _searchedLocation,
+                    placeRating: _placeRating, // Pass the rating
                   ),
                   maxHeight: MediaQuery.of(context).size.height * 0.76,
                   minHeight: MediaQuery.of(context).size.height * 0.25,
                   borderRadius: BorderRadius.circular(12),
-                  body: GoogleMap(
-                    initialCameraPosition: CameraPosition(
-                      target: _currentLocation!,
-                      zoom: 12.0,
+                  body: Stack(children: [
+                    GoogleMap(
+                      initialCameraPosition: CameraPosition(
+                        target: _currentLocation!,
+                        zoom: 12.0,
+                      ),
+                      onMapCreated: (GoogleMapController controller) {
+                        _mapController = controller;
+                        _updateMapLocation(widget.destination);
+                      },
+                      myLocationButtonEnabled: true,
+                      myLocationEnabled: true,
+                      markers: _markers,
+                      polylines: _polylines,
+                      trafficEnabled: _showTraffic, // Enable traffic layer
                     ),
-                    onMapCreated: (GoogleMapController controller) {
-                      _mapController = controller;
-                      _updateMapLocation(widget.destination);
-                    },
-                    myLocationButtonEnabled: true,
-                    myLocationEnabled: true,
-                    markers: _markers,
-                    polylines: _polylines,
-                    trafficEnabled: _showTraffic, // Enable traffic layer
-                  ),
-                ),
-                Positioned(
-                  top: 120,
-                  right: 10,
-                  child: FloatingActionButton(
-                    onPressed: () {
-                      setState(() {
-                        _showTraffic = !_showTraffic; // Toggle traffic layer
-                      });
-                    },
-                    child: Icon(
-                      _showTraffic ? Icons.traffic : Icons.traffic_outlined,
+                    Positioned(
+                      top: 130,
+                      right: 10,
+                      child: FloatingActionButton(
+                        onPressed: () async {
+                          final incidents = await _fetchTrafficIncidents();
+                          if (incidents.isNotEmpty) {
+                            await _addTrafficIncidentMarkers(incidents);
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(
+                                  content: Text(
+                                      "${incidents.length} traffic incidents displayed on map.")),
+                            );
+                          } else {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              const SnackBar(
+                                  content: Text("No traffic incidents found.")),
+                            );
+                          }
+                        },
+                        tooltip: "View Traffic Incidents",
+                        child: Icon(Icons.warning_amber_rounded),
+                      ),
                     ),
-                    tooltip: _showTraffic
-                        ? "Hide Traffic Layer"
-                        : "Show Traffic Layer",
-                  ),
-                ),
-                Positioned(
-                  top: 60,
-                  right: 10,
-                  child: FloatingActionButton(
-                    onPressed: () async {
-                      final incidents = await _fetchTrafficIncidents();
-                      if (incidents.isNotEmpty) {
-                        await _addTrafficIncidentMarkers(incidents);
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(
-                              content: Text(
-                                  "${incidents.length} traffic incidents displayed on map.")),
-                        );
-                      } else {
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(
-                              content: Text("No traffic incidents found.")),
-                        );
-                      }
-                    },
-                    child: Icon(Icons.warning_amber_rounded),
-                    tooltip: "View Traffic Incidents",
-                  ),
+                    Positioned(
+                      top: 60,
+                      right: 10,
+                      child: FloatingActionButton(
+                        onPressed: () {
+                          setState(() {
+                            _showTraffic =
+                                !_showTraffic; // Toggle traffic layer
+                          });
+                        },
+                        tooltip: _showTraffic
+                            ? "Hide Traffic Layer"
+                            : "Show Traffic Layer",
+                        child: Icon(
+                          _showTraffic ? Icons.traffic : Icons.traffic_outlined,
+                        ),
+                      ),
+                    ),
+                  ]),
                 ),
               ],
             ),

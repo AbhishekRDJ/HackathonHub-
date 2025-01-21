@@ -5,19 +5,19 @@ void main() {
 }
 
 class MyApp extends StatelessWidget {
-  const MyApp({Key? key}) : super(key: key);
+  const MyApp({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
+    return const MaterialApp(
       debugShowCheckedModeBanner: false,
-      home: const HomePage(),
+      home: HomePage(),
     );
   }
 }
 
 class HomePage extends StatefulWidget {
-  const HomePage({Key? key}) : super(key: key);
+  const HomePage({super.key});
 
   @override
   State<HomePage> createState() => _HomePageState();
@@ -103,7 +103,7 @@ class _HomePageState extends State<HomePage>
 }
 
 class SlidingButton extends StatefulWidget {
-  const SlidingButton({Key? key}) : super(key: key);
+  const SlidingButton({super.key});
 
   @override
   _SlidingButtonState createState() => _SlidingButtonState();

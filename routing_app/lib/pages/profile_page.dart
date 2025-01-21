@@ -5,7 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:routing_app/pages/start_screen.dart';
 
 class ProfilePage extends StatefulWidget {
-  ProfilePage({super.key});
+  const ProfilePage({super.key});
 
   @override
   State<ProfilePage> createState() => _ProfilePageState();
@@ -229,8 +229,8 @@ class ProfileDetailCard extends StatelessWidget {
     required this.title,
     required this.value,
     required this.onTap,
-    Key? key,
-  }) : super(key: key);
+    super.key,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -259,8 +259,8 @@ class ProfileAboutSection extends StatelessWidget {
   const ProfileAboutSection({
     required this.aboutText,
     required this.onTap,
-    Key? key,
-  }) : super(key: key);
+    super.key,
+  });
 
   @override
   Widget build(BuildContext context) {
