@@ -69,25 +69,51 @@ class _SlidingPanel2State extends State<SlidingPanel2>
 
   double calculateMileage(String vehicleType, String age) {
     if (vehicleType == 'Car') {
-      if (age == '<1') return 18;
-      if (age == '2') return 16;
-      if (age == '3') return 14;
-      if (age == '4') return 12;
-      if (age == '>5') return 10;
+      if (age == '1') return 18;
+      if (age == '2') return 17;
+      if (age == '3') return 15;
+      if (age == '4') return 14;
+      if (age == '5') return 13;
+      if (age == '6') return 12;
+      if (age == '7') return 11;
+      if (age == '8') return 10;
+      if (age == '9') return 9;
+      if (age == '10') return 8; 
     } else if (vehicleType == 'Bike') {
-      if (age == '<1') return 45;
+      if (age == '1') return 45;
       if (age == '2') return 42;
       if (age == '3') return 40;
       if (age == '4') return 38;
-      if (age == '>5') return 35;
-    } else if (vehicleType == 'Cycle') {
-      return 0;
-    } else if (vehicleType == 'Auto') {
-      if (age == '<1') return 25;
-      if (age == '2') return 23;
-      if (age == '3') return 21;
-      if (age == '4') return 20;
-      if (age == '>5') return 18;
+      if (age == '5') return 35;      
+      if (age == '6') return 33;
+      if (age == '7') return 31;
+      if (age == '8') return 28;
+      if (age == '9') return 25;
+      if (age == '10') return 23;
+
+    } else if (vehicleType == 'Truck') {
+      if (age == '1') return 15;
+      if (age == '2') return 14;
+      if (age == '3') return 13;
+      if (age == '4') return 12;
+      if (age == '5') return 10;      
+      if (age == '6') return 9;
+      if (age == '7') return 8;
+      if (age == '8') return 7;
+      if (age == '9') return 6;
+      if (age == '10') return 5;
+    } 
+    else if (vehicleType == 'Bus') {
+      if (age == '1') return 10;
+      if (age == '2') return 9;
+      if (age == '3') return 9;
+      if (age == '4') return 8;
+      if (age == '5') return 7;      
+      if (age == '6') return 6;
+      if (age == '7') return 5;
+      if (age == '8') return 4;
+      if (age == '9') return 4;
+      if (age == '10') return 3;
     }
     return 0;
   }
