@@ -44,6 +44,7 @@ class _RealTimeSearchMapState extends State<RealTimeSearchMap> {
   String _duration = "";
   Map<String, dynamic> weatherData = {};
   double _fuelConsumption = 0;
+  int distance1 = 0;
   double calculateMileage(String vehicleType, String age) {
     // Use nested conditions to assign mileage values
     if (vehicleType == 'Car') {
@@ -140,6 +141,7 @@ class _RealTimeSearchMapState extends State<RealTimeSearchMap> {
             setState(() {
               _distance = distance;
               _duration = duration;
+              distance1 = distanceValue.toInt();
               _fuelConsumption = fuelConsumption;
             });
           } else {
@@ -409,8 +411,7 @@ class _RealTimeSearchMapState extends State<RealTimeSearchMap> {
   }
 
   String user = 'NA';
-  Color? randomColor ;
-
+  Color? randomColor;
 
   Future<String?> fetchNameByUid(String uid) async {
     final QuerySnapshot querySnapshot = await FirebaseFirestore.instance
@@ -419,7 +420,8 @@ class _RealTimeSearchMapState extends State<RealTimeSearchMap> {
         .get();
 
     if (querySnapshot.docs.isNotEmpty) {
-      final String name = querySnapshot.docs.first['name']; // Get the 'name' field
+      final String name =
+          querySnapshot.docs.first['name']; // Get the 'name' field
       return name;
     } else {
       return null; // No matching documents found
@@ -429,10 +431,10 @@ class _RealTimeSearchMapState extends State<RealTimeSearchMap> {
   Color _generateRandomColor() {
     final Random random = Random();
     return Color.fromARGB(
-      255,                   // Fully opaque
-      random.nextInt(256),   // Red (0-255)
-      random.nextInt(256),   // Green (0-255)
-      random.nextInt(256),   // Blue (0-255)
+      255, // Fully opaque
+      random.nextInt(256), // Red (0-255)
+      random.nextInt(256), // Green (0-255)
+      random.nextInt(256), // Blue (0-255)
     );
   }
 
@@ -448,21 +450,24 @@ class _RealTimeSearchMapState extends State<RealTimeSearchMap> {
   Widget build(BuildContext context) {
     getUserName();
     return Scaffold(
-      appBar: AppBar(title: const Text("Routes"),
-      actions: [
-        Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 10),
-          child: IconButton(onPressed: (){
-            Navigator.of(context).push(MaterialPageRoute(builder: (context)=>ProfilePage()));
-          },
-              icon: CircleAvatar(
-                backgroundColor: randomColor,
-                child: Text(user[0].toUpperCase(),
-                    style: const TextStyle(color: Colors.white,fontSize: 20)),
-              )
-          ),
-        )
-      ],
+      appBar: AppBar(
+        title: const Text("Routes"),
+        actions: [
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 10),
+            child: IconButton(
+                onPressed: () {
+                  Navigator.of(context).push(
+                      MaterialPageRoute(builder: (context) => ProfilePage()));
+                },
+                icon: CircleAvatar(
+                  backgroundColor: randomColor,
+                  child: Text(user[0].toUpperCase(),
+                      style:
+                          const TextStyle(color: Colors.white, fontSize: 20)),
+                )),
+          )
+        ],
       ),
       body: _currentLocation == null
           ? Center(child: CircularProgressIndicator())
@@ -474,6 +479,7 @@ class _RealTimeSearchMapState extends State<RealTimeSearchMap> {
                     panelController: panelController,
                     controller: controller,
                     destination: weatherData,
+                    distanceint: distance1,
                     locInfo: locationInfo,
                     dis: _distance,
                     source: _SourceOrigin,

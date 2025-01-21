@@ -27,9 +27,16 @@ class _HistoryTileState extends State<HistoryTile> {
 
         if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
           return const Center(
-            child: Text(
-              'No history available.',
-              style: AppStyles.noDataText,
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Icon(Icons.history),
+                SizedBox(width: 8),
+                Text(
+                  'No history available.',
+                  style: AppStyles.noDataText,
+                ),
+              ],
             ),
           );
         }
@@ -39,6 +46,8 @@ class _HistoryTileState extends State<HistoryTile> {
           itemCount: snapshot.data!.docs.length,
           itemBuilder: (context, index) {
             var data = snapshot.data!.docs[index].data();
+            double carbonEmission = data['carbon'];
+
             return GestureDetector(
               child: Column(
                 children: [
@@ -85,10 +94,10 @@ class _HistoryTileState extends State<HistoryTile> {
                             ),
                           );
                         },
-                        leading: CircleAvatar(
+                        leading: const CircleAvatar(
                           radius: 24,
                           backgroundColor: AppColors.avatarBackground,
-                          child: const Icon(
+                          child: Icon(
                             Icons.location_on,
                             color: AppColors.primary,
                           ),
@@ -104,15 +113,42 @@ class _HistoryTileState extends State<HistoryTile> {
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              Text(
-                                "Distance: ${data['time'] ?? 'N/A'}",
-                                style: AppStyles.tileSubtitle,
-                              ),
+                              RichText(
+                                  text: TextSpan(
+                                      text: "Distance: ",
+                                      style: AppStyles.tileSubtitle,
+                                      children: [
+                                    TextSpan(
+                                        text: "${data['time'] ?? 'N/A'} km",
+                                        style: const TextStyle(
+                                          fontWeight: FontWeight.bold,
+                                        )),
+                                  ])),
                               const SizedBox(height: 4),
-                              Text(
-                                "Fuel: ${data['fule'] ?? 'N/A'}",
-                                style: AppStyles.tileSubtitle,
-                              ),
+                              RichText(
+                                  text: TextSpan(
+                                      text: "Fuel: ",
+                                      style: AppStyles.tileSubtitle,
+                                      children: [
+                                    TextSpan(
+                                        text: "${data['fule'] ?? 'N/A'} litres",
+                                        style: const TextStyle(
+                                          fontWeight: FontWeight.bold,
+                                        )),
+                                  ])),
+                              const SizedBox(width: 10),
+                              RichText(
+                                  text: TextSpan(
+                                      text: "Carbonfoot print: ",
+                                      style: AppStyles.tileSubtitle,
+                                      children: [
+                                    TextSpan(
+                                        text:
+                                            "${((carbonEmission * data['time']) / 1000).toString().substring(0, 5)} kg",
+                                        style: const TextStyle(
+                                          fontWeight: FontWeight.bold,
+                                        ))
+                                  ])),
                             ],
                           ),
                         ),

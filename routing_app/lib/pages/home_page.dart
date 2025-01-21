@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:location/location.dart';
+import 'package:routing_app/pages/profile_page.dart';
 import 'package:routing_app/widget/sliding_panel.dart';
 import 'package:sliding_up_panel/sliding_up_panel.dart';
 
@@ -20,10 +21,10 @@ class _HomePageState extends State<HomePage>
     with SingleTickerProviderStateMixin {
   final locationController = Location();
   final currentLoc = LatLng(19.8758, 75.3393);
-  String user ='NA';
+  String user = 'NA';
 
   GoogleMapController? mapController;
-  Color? randomColor ;
+  Color? randomColor;
   LatLng? currentPosition;
   late AnimationController _animationController;
 
@@ -39,7 +40,6 @@ class _HomePageState extends State<HomePage>
     WidgetsBinding.instance
         .addPostFrameCallback((_) async => await fetchLocationUpdate());
     randomColor = _generateRandomColor();
-
   }
 
   @override
@@ -55,7 +55,8 @@ class _HomePageState extends State<HomePage>
         .get();
 
     if (querySnapshot.docs.isNotEmpty) {
-      final String name = querySnapshot.docs.first['name']; // Get the 'name' field
+      final String name =
+          querySnapshot.docs.first['name']; // Get the 'name' field
       return name;
     } else {
       return null; // No matching documents found
@@ -65,21 +66,20 @@ class _HomePageState extends State<HomePage>
   void getUserName() async {
     final String currentUid = FirebaseAuth.instance.currentUser!.uid;
     final String? name = await fetchNameByUid(currentUid);
-      user = name!;
-
+    user = name!;
   }
 
   Color _generateRandomColor() {
     final Random random = Random();
     return Color.fromARGB(
-      255,                   // Fully opaque
-      random.nextInt(256),   // Red (0-255)
-      random.nextInt(256),   // Green (0-255)
-      random.nextInt(256),   // Blue (0-255)
+      255, // Fully opaque
+      random.nextInt(256), // Red (0-255)
+      random.nextInt(256), // Green (0-255)
+      random.nextInt(256), // Blue (0-255)
     );
   }
-  final PanelController panelController = PanelController();
 
+  final PanelController panelController = PanelController();
 
   @override
   Widget build(BuildContext context) {
@@ -99,10 +99,18 @@ class _HomePageState extends State<HomePage>
           actions: [
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 15),
-              child: CircleAvatar(
-                backgroundColor: randomColor,
-                child: Text(user[0].toUpperCase(),
-                  style: const TextStyle(color: Colors.white),),
+              child: GestureDetector(
+                onTap: () {
+                  Navigator.of(context).push(
+                      MaterialPageRoute(builder: (context) => ProfilePage()));
+                },
+                child: CircleAvatar(
+                  backgroundColor: randomColor,
+                  child: Text(
+                    user[0].toUpperCase(),
+                    style: const TextStyle(color: Colors.white),
+                  ),
+                ),
               ),
             )
           ],
@@ -113,9 +121,10 @@ class _HomePageState extends State<HomePage>
               )
             : SlidingUpPanel(
                 controller: panelController,
-                panelBuilder: (controller) =>
-                    PanelWidget(controller: controller,
-                    panelController: panelController,),
+                panelBuilder: (controller) => PanelWidget(
+                  controller: controller,
+                  panelController: panelController,
+                ),
                 maxHeight: MediaQuery.of(context).size.height * 0.8,
                 minHeight: MediaQuery.of(context).size.height * 0.2,
                 borderRadius: BorderRadius.circular(6),
@@ -124,16 +133,18 @@ class _HomePageState extends State<HomePage>
                     target: currentLoc, // Example: San Francisco
                     zoom: 12,
                   ),
-                  myLocationEnabled: true, // Enable default Google Maps location marker
-                  myLocationButtonEnabled: true, // Enable the default location button
+                  myLocationEnabled:
+                      true, // Enable default Google Maps location marker
+                  myLocationButtonEnabled:
+                      true, // Enable the default location button
                   markers: currentPosition != null
                       ? {
-                    Marker(
-                      markerId: MarkerId("searchedLocation"),
-                      position: currentPosition!,
-                      infoWindow: InfoWindow(title: "Your Location"),
-                    ),
-                  }
+                          Marker(
+                            markerId: MarkerId("searchedLocation"),
+                            position: currentPosition!,
+                            infoWindow: InfoWindow(title: "Your Location"),
+                          ),
+                        }
                       : {},
                   onMapCreated: (GoogleMapController controller) {
                     setState(() {

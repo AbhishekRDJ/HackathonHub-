@@ -1,4 +1,5 @@
 import 'dart:math';
+
 import 'bar_chart.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -13,6 +14,7 @@ import 'package:sliding_up_panel/sliding_up_panel.dart';
 
 class SlidingPanel2 extends StatefulWidget {
   final ScrollController controller;
+  final int distanceint;
   final PanelController panelController;
   final String locInfo;
   final String dis;
@@ -28,6 +30,7 @@ class SlidingPanel2 extends StatefulWidget {
 
   const SlidingPanel2({
     super.key,
+    required this.distanceint,
     required this.controller,
     required this.panelController,
     required this.destination,
@@ -48,7 +51,7 @@ class SlidingPanel2 extends StatefulWidget {
 }
 
 class _SlidingPanel2State extends State<SlidingPanel2>
-    with TickerProviderStateMixin  {
+    with TickerProviderStateMixin {
   late AnimationController _animationController;
   String _geminiAdvice = "";
   bool aqiColor = false;
@@ -58,12 +61,11 @@ class _SlidingPanel2State extends State<SlidingPanel2>
   final TextEditingController _vehicleTypeController = TextEditingController();
   final TextEditingController _fuelTypeController = TextEditingController();
   final TextEditingController _vehicleAgeController = TextEditingController();
-  Map<String, double> _emissions = {};bool showAdvancedLayout = false;
-late AnimationController _controller;
-late AnimationController _fadeController;
-late Animation<double> _fadeAnimation;
-
-
+  Map<String, double> _emissions = {};
+  bool showAdvancedLayout = false;
+  late AnimationController _controller;
+  late AnimationController _fadeController;
+  late Animation<double> _fadeAnimation;
 
   double calculateMileage(String vehicleType, String age) {
     if (vehicleType == 'Car') {
@@ -89,12 +91,10 @@ late Animation<double> _fadeAnimation;
     }
     return 0;
   }
-    
-
 
   List<int> aqiData = [];
   List<String> aqiDates = [];
-  bool isVisible = true;
+  bool isVisible = false;
   bool isLoading = true;
   bool isVisible2 = false;
   String errorMessage = '';
@@ -113,13 +113,14 @@ late Animation<double> _fadeAnimation;
       duration: const Duration(milliseconds: 800),
     );
     _animationController.forward();
-  _controller = AnimationController(
-    vsync: this,
-    duration: const Duration(milliseconds: 500),
+    _controller = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 500),
     );
     _fadeController = AnimationController(
       vsync: this,
-    );    _fadeController = AnimationController(
+    );
+    _fadeController = AnimationController(
       duration: const Duration(milliseconds: 500),
       vsync: this,
     );
@@ -127,10 +128,7 @@ late Animation<double> _fadeAnimation;
       parent: _fadeController,
       curve: Curves.easeInOut,
     );
-
-  }  
-  
-
+  }
 
   String _getRandomApiKey() {
     final random = Random();
@@ -146,17 +144,6 @@ late Animation<double> _fadeAnimation;
         'https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=$apiKey'; // Replace with your actual API key
 
     // Constructing the request body with null checks
-    print("Starting Point: ${widget.source ?? 'Value not provided'}");
-    print("Destination: ${widget.locInfo ?? 'Value not provided'}");
-    // print("Destination: ${widget.destination ?? 'Value not provided'}");
-
-    print("Distance: ${widget.dis ?? 'Value not provided'} km");
-    print("Estimated Duration: ${widget.dur ?? 'Value not provided'} minutes");
-    print("Vehicle Type: ${widget.vehicleType ?? 'Value not provided'}");
-    print("Fuel Type: ${widget.fuelType ?? 'Value not provided'}");
-    print("Vehicle Age: ${widget.age ?? 'Value not provided'} years");
-    print(
-        "Estimated Fuel Consumption: ${widget.fuelConsumption != null ? "${widget.fuelConsumption} liters/100km" : 'Value not provided'}");
 
     final requestBody = {
       "contents": [
@@ -237,7 +224,8 @@ Provide advice tailored to the context:
 
   Future<void> _predictEmissions() async {
     final response = await http.post(
-      Uri.parse('https://hackathonhub-1-ewui.onrender.com/predict'), // Ensure this is correct
+      Uri.parse(
+          'https://hackathonhub-1-ewui.onrender.com/predict'), // Ensure this is correct
       headers: <String, String>{
         'Content-Type': 'application/json; charset=UTF-8',
       },
@@ -251,6 +239,7 @@ Provide advice tailored to the context:
     if (response.statusCode == 200) {
       setState(() {
         _emissions = Map<String, double>.from(json.decode(response.body));
+        debugPrint('Emissions: $_emissions');
       });
     } else {
       throw Exception('Failed to load predictions');
@@ -308,9 +297,8 @@ Provide advice tailored to the context:
 
   @override
   Widget build(BuildContext context) {
-    return  GestureDetector(
-      onTap: () {
-      },
+    return GestureDetector(
+      onTap: () {},
       child: SingleChildScrollView(
         controller: widget.controller,
         child: Padding(
@@ -333,7 +321,8 @@ Provide advice tailored to the context:
               const SizedBox(height: 16),
               Text(
                 widget.locInfo,
-                style: const TextStyle(fontSize: 22, fontWeight: FontWeight.w600),
+                style:
+                    const TextStyle(fontSize: 22, fontWeight: FontWeight.w600),
               ),
               const SizedBox(height: 12),
               Row(
@@ -364,21 +353,25 @@ Provide advice tailored to the context:
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: [
-                  _buildHoverButton(Icons.directions, 'Back on map', Colors.blue,
-                      () {
+                  _buildHoverButton(
+                      Icons.directions, 'Back on map', Colors.blue, () {
                     widget.panelController.close();
                   }),
-                  _buildHoverButton(Icons.bookmark, 'Save', Colors.orange, () {
+                  _buildHoverButton(Icons.bookmark, 'Save', Colors.orange,
+                      () async {
+                    await _predictEmissions();
+
                     FirebaseFirestore.instance.collection("history").add({
                       'location': widget.locInfo,
                       'fule': widget.fuelConsumption.toStringAsFixed(2),
-                      'time': widget.dis,
+                      'time': widget.distanceint,
                       'vehicle': widget.vehicleType,
                       'fuletype': widget.fuelType,
+                      'carbon': _emissions['CO2_emission'] ?? 0,
                       'age': widget.age,
                       'userid': FirebaseAuth.instance.currentUser!.uid
                     });
-      
+
                     ScaffoldMessenger.of(context).showSnackBar(
                         const SnackBar(content: Text("location saved !")));
                   }),
@@ -387,9 +380,11 @@ Provide advice tailored to the context:
               ),
               const SizedBox(height: 20),
               Container(
-                padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
                 decoration: BoxDecoration(
-                    color: Colors.blue, borderRadius: BorderRadius.circular(16)),
+                    color: Colors.blue,
+                    borderRadius: BorderRadius.circular(16)),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
@@ -437,7 +432,8 @@ Provide advice tailored to the context:
               const SizedBox(height: 20),
               Container(
                 decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(16), color: Colors.white),
+                    borderRadius: BorderRadius.circular(16),
+                    color: Colors.white),
                 child: ListTile(
                   title: Text(widget.vehicleType),
                   subtitle: Text(
@@ -472,164 +468,166 @@ Provide advice tailored to the context:
                           itemBuilder: (context, index) {
                             final currentSk = widget.destination['list']
                                 [index + 1]['weather'][0]['main'];
-                            final date = DateTime.parse(
-                                widget.destination['list'][index + 1]['dt_txt']);
+                            final date = DateTime.parse(widget
+                                .destination['list'][index + 1]['dt_txt']);
                             return HourlyForecast(
-                                icon:
-                                    currentSk == 'Clouds' || currentSk == 'Rainy'
-                                        ? Icons.cloud
-                                        : Icons.sunny,
+                                icon: currentSk == 'Clouds' ||
+                                        currentSk == 'Rainy'
+                                    ? Icons.cloud
+                                    : Icons.sunny,
                                 time: DateFormat.j().format(date),
                                 val:
                                     "${(widget.destination['list'][index + 1]['main']['temp'].toString().substring(0, 2))} °C");
                           }),
                 ),
               ),
-  // Updated widget code
-  const SizedBox(height: 25),
-  Center(
-    child: Column(
-      children: [
-        if (!showAdvancedLayout)
-          GestureDetector(
-            onTap: () {                            
-                _fetchAQIData(widget.desti!);                           
-                _predictEmissions();
-
-              setState(() {
-                showAdvancedLayout = true;
-                _fadeController.forward();
-              });
-            },
-            child: Container(
-              width: 250,
-              height: 60,
-              decoration: BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.circular(30),
-                border: Border.all(
-                  color: const Color(0xFFDCEAFF),
-                  width: 2,
-                ),
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.grey.withOpacity(0.2),
-                    blurRadius: 6,
-                    offset: const Offset(0, 3),
-                  ),
-                ],
-              ),
-              child: const Center(
-                child: Text(
-                  "Show more",
-                  style: TextStyle(
-                    fontSize: 16,
-                    fontWeight: FontWeight.w500,
-                    color: Colors.black,
-                  ),
-                ),
-              ),
-            ),
-          ),
-        if (showAdvancedLayout)
-          FadeTransition(
-            opacity: _fadeAnimation,
-            child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 20.0),
-              child: Container(
-                width: MediaQuery.of(context).size.width * 0.8,
-                height: 60,
-                decoration: BoxDecoration(
-                  color: const Color(0xFFDCEAFF),
-                  borderRadius: BorderRadius.circular(30),
-                ),
-                child: Stack(
+              // Updated widget code
+              const SizedBox(height: 25),
+              Center(
+                child: Column(
                   children: [
-                    AnimatedAlign(
-                      alignment: isAqiSelected
-                          ? Alignment.centerLeft
-                          : Alignment.centerRight,
-                      duration: const Duration(milliseconds: 300),
-                      curve: Curves.easeInOut,
-                      child: Container(
-                        width: 140,
-                        height: 45,
-                        margin: const EdgeInsets.all(7),
-                        decoration: BoxDecoration(
-                          color: Colors.white,
-                          borderRadius: BorderRadius.circular(30),
-                          boxShadow: [
-                            BoxShadow(
-                              color: Colors.grey.withOpacity(0.2),
-                              blurRadius: 6,
-                              offset: const Offset(0, 3),
+                    if (!showAdvancedLayout)
+                      GestureDetector(
+                        onTap: () {
+                          _fetchAQIData(widget.desti!);
+                          _predictEmissions();
+
+                          setState(() {
+                            showAdvancedLayout = true;
+                            isVisible = true;
+                            _fadeController.forward();
+                          });
+                        },
+                        child: Container(
+                          width: MediaQuery.of(context).size.width * 0.8,
+                          height: 60,
+                          decoration: BoxDecoration(
+                            color: Colors.white,
+                            borderRadius: BorderRadius.circular(30),
+                            border: Border.all(
+                              color: const Color(0xFFDCEAFF),
+                              width: 2,
                             ),
-                          ],
+                            boxShadow: [
+                              BoxShadow(
+                                color: Colors.grey.withOpacity(0.2),
+                                blurRadius: 6,
+                                offset: const Offset(0, 3),
+                              ),
+                            ],
+                          ),
+                          child: const Center(
+                            child: Text(
+                              "Show more",
+                              style: TextStyle(
+                                fontSize: 16,
+                                fontWeight: FontWeight.w500,
+                                color: Colors.black,
+                              ),
+                            ),
+                          ),
                         ),
                       ),
-                    ),
-                    Row(
-                      children: [
-                        Expanded(
-                          child: GestureDetector(
-                            onTap: () {
-                              setState(() {
-                                carbonColor = false;
-                                aqiColor = true;
-                                isVisible = true;
-                                isVisible2 = false;
-                                isAqiSelected = true;
-                              });
-                            },
-                            child: Center(
-                              child: Text(
-                                "AQI Estimate",
-                                style: TextStyle(
-                                  fontSize: 16,
-                                  fontWeight: FontWeight.w500,
-                                  color: isAqiSelected
-                                      ? Colors.black
-                                      : const Color(0xFF7A7A7A),
+                    if (showAdvancedLayout)
+                      FadeTransition(
+                        opacity: _fadeAnimation,
+                        child: Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 20.0),
+                          child: Container(
+                            width: MediaQuery.of(context).size.width * 0.8,
+                            height: 60,
+                            decoration: BoxDecoration(
+                              color: const Color(0xFFDCEAFF),
+                              borderRadius: BorderRadius.circular(30),
+                            ),
+                            child: Stack(
+                              children: [
+                                AnimatedAlign(
+                                  alignment: isAqiSelected
+                                      ? Alignment.centerLeft
+                                      : Alignment.centerRight,
+                                  duration: const Duration(milliseconds: 300),
+                                  curve: Curves.easeInOut,
+                                  child: Container(
+                                    width: 140,
+                                    height: 45,
+                                    margin: const EdgeInsets.all(7),
+                                    decoration: BoxDecoration(
+                                      color: Colors.white,
+                                      borderRadius: BorderRadius.circular(30),
+                                      boxShadow: [
+                                        BoxShadow(
+                                          color: Colors.grey.withOpacity(0.2),
+                                          blurRadius: 6,
+                                          offset: const Offset(0, 3),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
                                 ),
-                              ),
+                                Row(
+                                  children: [
+                                    Expanded(
+                                      child: GestureDetector(
+                                        onTap: () {
+                                          setState(() {
+                                            carbonColor = false;
+                                            aqiColor = true;
+                                            isVisible = true;
+                                            isVisible2 = false;
+                                            isAqiSelected = true;
+                                          });
+                                        },
+                                        child: Center(
+                                          child: Text(
+                                            "AQI Estimate",
+                                            style: TextStyle(
+                                              fontSize: 16,
+                                              fontWeight: FontWeight.w500,
+                                              color: isAqiSelected
+                                                  ? Colors.black
+                                                  : const Color(0xFF7A7A7A),
+                                            ),
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                    Expanded(
+                                      child: GestureDetector(
+                                        onTap: () {
+                                          setState(() {
+                                            isAqiSelected = false;
+                                            carbonColor = true;
+                                            aqiColor = false;
+                                            isVisible = false;
+                                            isVisible2 = true;
+                                          });
+                                        },
+                                        child: Center(
+                                          child: Text(
+                                            "Carbon Emission",
+                                            style: TextStyle(
+                                              fontSize: 16,
+                                              fontWeight: FontWeight.w500,
+                                              color: isAqiSelected
+                                                  ? const Color(0xFF7A7A7A)
+                                                  : Colors.black,
+                                            ),
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ],
                             ),
                           ),
                         ),
-                        Expanded(
-                          child: GestureDetector(
-                            onTap: () {
-                              setState(() {
-                                isAqiSelected = false;
-                                carbonColor = true;
-                                aqiColor = false;
-                                isVisible = false;
-                                isVisible2 = true;
-                              });
-                            },
-                            child: Center(
-                              child: Text(
-                                "Carbon Emission",
-                                style: TextStyle(
-                                  fontSize: 16,
-                                  fontWeight: FontWeight.w500,
-                                  color: isAqiSelected
-                                      ? const Color(0xFF7A7A7A)
-                                      : Colors.black,
-                                ),
-                              ),
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
+                      ),
                   ],
                 ),
               ),
-            ),
-          ),
-      ],
-    ),
-  ),
+
               const SizedBox(
                 height: 20,
               ),
@@ -638,9 +636,8 @@ Provide advice tailored to the context:
                 height: 20,
               ),
               Visibility(
-                visible: isVisible2,child:BarChartWidget(emissions: _emissions)
-          
-              ),
+                  visible: isVisible2,
+                  child: BarChartWidget(emissions: _emissions)),
               const SizedBox(height: 25),
               _buildGeminiSuggestions()
             ],
