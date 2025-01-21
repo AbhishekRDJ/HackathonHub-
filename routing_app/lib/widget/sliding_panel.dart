@@ -136,7 +136,7 @@ class _PanelWidgetState extends State<PanelWidget> {
                 if (selectedVehicle == "Motorcycle") {
                   selectedFuelType = "Petrol";
                 }
-                if (selectedVehicle == "Truck") {
+                if (selectedVehicle == "Truck" || selectedVehicle == "Bus") {
                   selectedFuelType = "Diesel";
                 }
               });
@@ -158,7 +158,9 @@ class _PanelWidgetState extends State<PanelWidget> {
                 ? "petrol"
                 : selectedVehicle == 'Truck'
                     ? "Diesel"
-                    : selectedFule,
+                    : selectedVehicle == 'Bus'
+                        ? "Diesel"
+                        : selectedFule,
             onChanged: (value) {
               setState(() {
                 selectedFuelType = value;
@@ -166,7 +168,9 @@ class _PanelWidgetState extends State<PanelWidget> {
                     ? "Petrol"
                     : selectedVehicle == 'Truck'
                         ? "Diesel"
-                        : value!;
+                        : selectedVehicle == 'Bus'
+                            ? "Diesel"
+                            : value!;
               });
             },
           ),
