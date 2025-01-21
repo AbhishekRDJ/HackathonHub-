@@ -64,7 +64,6 @@ late AnimationController _fadeController;
 late Animation<double> _fadeAnimation;
 
 
-
   double calculateMileage(String vehicleType, String age) {
     if (vehicleType == 'Car') {
       if (age == '<1') return 18;
@@ -89,8 +88,6 @@ late Animation<double> _fadeAnimation;
     }
     return 0;
   }
-    
-
 
   List<int> aqiData = [];
   List<String> aqiDates = [];
@@ -237,7 +234,8 @@ Provide advice tailored to the context:
 
   Future<void> _predictEmissions() async {
     final response = await http.post(
-      Uri.parse('https://hackathonhub-1-ewui.onrender.com/predict'), // Ensure this is correct
+      Uri.parse(
+          'https://hackathonhub-1-ewui.onrender.com/predict'), // Ensure this is correct
       headers: <String, String>{
         'Content-Type': 'application/json; charset=UTF-8',
       },
@@ -308,9 +306,8 @@ Provide advice tailored to the context:
 
   @override
   Widget build(BuildContext context) {
-    return  GestureDetector(
-      onTap: () {
-      },
+    return GestureDetector(
+      onTap: () {},
       child: SingleChildScrollView(
         controller: widget.controller,
         child: Padding(
@@ -333,7 +330,8 @@ Provide advice tailored to the context:
               const SizedBox(height: 16),
               Text(
                 widget.locInfo,
-                style: const TextStyle(fontSize: 22, fontWeight: FontWeight.w600),
+                style:
+                    const TextStyle(fontSize: 22, fontWeight: FontWeight.w600),
               ),
               const SizedBox(height: 12),
               Row(
@@ -364,8 +362,8 @@ Provide advice tailored to the context:
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: [
-                  _buildHoverButton(Icons.directions, 'Back on map', Colors.blue,
-                      () {
+                  _buildHoverButton(
+                      Icons.directions, 'Back on map', Colors.blue, () {
                     widget.panelController.close();
                   }),
                   _buildHoverButton(Icons.bookmark, 'Save', Colors.orange, () {
@@ -378,7 +376,7 @@ Provide advice tailored to the context:
                       'age': widget.age,
                       'userid': FirebaseAuth.instance.currentUser!.uid
                     });
-      
+
                     ScaffoldMessenger.of(context).showSnackBar(
                         const SnackBar(content: Text("location saved !")));
                   }),
@@ -387,9 +385,11 @@ Provide advice tailored to the context:
               ),
               const SizedBox(height: 20),
               Container(
-                padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
                 decoration: BoxDecoration(
-                    color: Colors.blue, borderRadius: BorderRadius.circular(16)),
+                    color: Colors.blue,
+                    borderRadius: BorderRadius.circular(16)),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
@@ -437,7 +437,8 @@ Provide advice tailored to the context:
               const SizedBox(height: 20),
               Container(
                 decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(16), color: Colors.white),
+                    borderRadius: BorderRadius.circular(16),
+                    color: Colors.white),
                 child: ListTile(
                   title: Text(widget.vehicleType),
                   subtitle: Text(
@@ -472,13 +473,13 @@ Provide advice tailored to the context:
                           itemBuilder: (context, index) {
                             final currentSk = widget.destination['list']
                                 [index + 1]['weather'][0]['main'];
-                            final date = DateTime.parse(
-                                widget.destination['list'][index + 1]['dt_txt']);
+                            final date = DateTime.parse(widget
+                                .destination['list'][index + 1]['dt_txt']);
                             return HourlyForecast(
-                                icon:
-                                    currentSk == 'Clouds' || currentSk == 'Rainy'
-                                        ? Icons.cloud
-                                        : Icons.sunny,
+                                icon: currentSk == 'Clouds' ||
+                                        currentSk == 'Rainy'
+                                    ? Icons.cloud
+                                    : Icons.sunny,
                                 time: DateFormat.j().format(date),
                                 val:
                                     "${(widget.destination['list'][index + 1]['main']['temp'].toString().substring(0, 2))} °C");
@@ -638,9 +639,8 @@ Provide advice tailored to the context:
                 height: 20,
               ),
               Visibility(
-                visible: isVisible2,child:BarChartWidget(emissions: _emissions)
-          
-              ),
+                  visible: isVisible2,
+                  child: BarChartWidget(emissions: _emissions)),
               const SizedBox(height: 25),
               _buildGeminiSuggestions()
             ],
