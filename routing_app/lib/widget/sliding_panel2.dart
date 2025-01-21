@@ -48,7 +48,7 @@ class SlidingPanel2 extends StatefulWidget {
 }
 
 class _SlidingPanel2State extends State<SlidingPanel2>
-    with SingleTickerProviderStateMixin {
+    with TickerProviderStateMixin  {
   late AnimationController _animationController;
   String _geminiAdvice = "";
   bool aqiColor = false;
@@ -58,7 +58,11 @@ class _SlidingPanel2State extends State<SlidingPanel2>
   final TextEditingController _vehicleTypeController = TextEditingController();
   final TextEditingController _fuelTypeController = TextEditingController();
   final TextEditingController _vehicleAgeController = TextEditingController();
-  Map<String, double> _emissions = {};
+  Map<String, double> _emissions = {};bool showAdvancedLayout = false;
+late AnimationController _controller;
+late AnimationController _fadeController;
+late Animation<double> _fadeAnimation;
+
 
 
   double calculateMileage(String vehicleType, String age) {
@@ -109,7 +113,24 @@ class _SlidingPanel2State extends State<SlidingPanel2>
       duration: const Duration(milliseconds: 800),
     );
     _animationController.forward();
-  }
+  _controller = AnimationController(
+    vsync: this,
+    duration: const Duration(milliseconds: 500),
+    );
+    _fadeController = AnimationController(
+      vsync: this,
+    );    _fadeController = AnimationController(
+      duration: const Duration(milliseconds: 500),
+      vsync: this,
+    );
+    _fadeAnimation = CurvedAnimation(
+      parent: _fadeController,
+      curve: Curves.easeInOut,
+    );
+
+  }  
+  
+
 
   String _getRandomApiKey() {
     final random = Random();
@@ -464,108 +485,151 @@ Provide advice tailored to the context:
                           }),
                 ),
               ),
-              const SizedBox(height: 25),
-              Center(
-                child: Padding(
-                  padding: const EdgeInsets.symmetric(
-                      horizontal: 20.0), // Equal padding
-                  child: Container(
-                    width: MediaQuery.of(context).size.width * 0.8,
-                    height: 60,
-                    decoration: BoxDecoration(
-                      color:
-                          const Color(0xFFDCEAFF), // Light blue background color
-                      borderRadius: BorderRadius.circular(30),
-                    ),
-                    child: Stack(
-                      children: [
-                        AnimatedAlign(
-                          alignment: isAqiSelected
-                              ? Alignment.centerLeft
-                              : Alignment.centerRight,
-                          duration: const Duration(milliseconds: 300),
-                          curve: Curves.easeInOut,
-                          child: Container(
-                            width: 140,
-                            height: 45,
-                            margin: const EdgeInsets.all(
-                                7), // Inner padding for neat spacing
-                            decoration: BoxDecoration(
-                              color: Colors.white, // Sliding white background
-                              borderRadius: BorderRadius.circular(30),
-                              boxShadow: [
-                                BoxShadow(
-                                  color: Colors.grey.withOpacity(0.2),
-                                  blurRadius: 6,
-                                  offset: const Offset(0, 3),
-                                ),
-                              ],
-                            ),
-                          ),
-                        ),
-                        Row(
-                          children: [
-                            Expanded(
-                              child: GestureDetector(
-                                onTap: () {
-                                  _fetchAQIData(widget.desti!);
-                                  setState(() {
-                                    carbonColor = false;
-                                    aqiColor = true;
-                                    isVisible = true;
-                                    isVisible2 = false;
-                                    isAqiSelected = true;
-                                  });
-                                },
-                                child: Center(
-                                  child: Text(
-                                    "AQI Estimate",
-                                    style: TextStyle(
-                                      fontSize: 16,
-                                      fontWeight: FontWeight.w500,
-                                      color: isAqiSelected
-                                          ? Colors.black
-                                          : const Color(
-                                              0xFF7A7A7A), // Grey text color
-                                    ),
-                                  ),
-                                ),
-                              ),
-                            ),
-                            Expanded(
-                              child: GestureDetector(
-                                onTap: () {
-                                  _predictEmissions();
-                                  setState(() {
-                                    isAqiSelected = false;
-                                    carbonColor = true;
-                                    aqiColor = false;
-                                    isVisible = false;
-                                    isVisible2 = true;
-                                  });
-                                },
-                                
-                                child: Center(
-                                  child: Text(
-                                    "Carbon Emission",
-                                    style: TextStyle(
-                                      fontSize: 16,
-                                      fontWeight: FontWeight.w500,
-                                      color: isAqiSelected
-                                          ? const Color(0xFF7A7A7A)
-                                          : Colors.black,
-                                    )
-                                  ),
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
-                      ],
-                    ),
+  // Updated widget code
+  const SizedBox(height: 25),
+  Center(
+    child: Column(
+      children: [
+        if (!showAdvancedLayout)
+          GestureDetector(
+            onTap: () {                            
+                _fetchAQIData(widget.desti!);                           
+                _predictEmissions();
+
+              setState(() {
+                showAdvancedLayout = true;
+                _fadeController.forward();
+              });
+            },
+            child: Container(
+              width: 250,
+              height: 60,
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(30),
+                border: Border.all(
+                  color: const Color(0xFFDCEAFF),
+                  width: 2,
+                ),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.grey.withOpacity(0.2),
+                    blurRadius: 6,
+                    offset: const Offset(0, 3),
+                  ),
+                ],
+              ),
+              child: const Center(
+                child: Text(
+                  "Show more",
+                  style: TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.w500,
+                    color: Colors.black,
                   ),
                 ),
               ),
+            ),
+          ),
+        if (showAdvancedLayout)
+          FadeTransition(
+            opacity: _fadeAnimation,
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 20.0),
+              child: Container(
+                width: MediaQuery.of(context).size.width * 0.8,
+                height: 60,
+                decoration: BoxDecoration(
+                  color: const Color(0xFFDCEAFF),
+                  borderRadius: BorderRadius.circular(30),
+                ),
+                child: Stack(
+                  children: [
+                    AnimatedAlign(
+                      alignment: isAqiSelected
+                          ? Alignment.centerLeft
+                          : Alignment.centerRight,
+                      duration: const Duration(milliseconds: 300),
+                      curve: Curves.easeInOut,
+                      child: Container(
+                        width: 140,
+                        height: 45,
+                        margin: const EdgeInsets.all(7),
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          borderRadius: BorderRadius.circular(30),
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.grey.withOpacity(0.2),
+                              blurRadius: 6,
+                              offset: const Offset(0, 3),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                    Row(
+                      children: [
+                        Expanded(
+                          child: GestureDetector(
+                            onTap: () {
+                              setState(() {
+                                carbonColor = false;
+                                aqiColor = true;
+                                isVisible = true;
+                                isVisible2 = false;
+                                isAqiSelected = true;
+                              });
+                            },
+                            child: Center(
+                              child: Text(
+                                "AQI Estimate",
+                                style: TextStyle(
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.w500,
+                                  color: isAqiSelected
+                                      ? Colors.black
+                                      : const Color(0xFF7A7A7A),
+                                ),
+                              ),
+                            ),
+                          ),
+                        ),
+                        Expanded(
+                          child: GestureDetector(
+                            onTap: () {
+                              setState(() {
+                                isAqiSelected = false;
+                                carbonColor = true;
+                                aqiColor = false;
+                                isVisible = false;
+                                isVisible2 = true;
+                              });
+                            },
+                            child: Center(
+                              child: Text(
+                                "Carbon Emission",
+                                style: TextStyle(
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.w500,
+                                  color: isAqiSelected
+                                      ? const Color(0xFF7A7A7A)
+                                      : Colors.black,
+                                ),
+                              ),
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ),
+      ],
+    ),
+  ),
               const SizedBox(
                 height: 20,
               ),
