@@ -4,6 +4,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:routing_app/widget/history_tile.dart';
+import 'package:routing_app/widget/history_tile2.dart';
 
 class YourInfoPage extends StatelessWidget {
   const YourInfoPage({super.key});
@@ -11,13 +12,13 @@ class YourInfoPage extends StatelessWidget {
   Color _generateRandomColor() {
     final Random random = Random();
     return Color.fromARGB(
-      255,                   // Fully opaque
-      random.nextInt(256),   // Red (0-255)
-      random.nextInt(256),   // Green (0-255)
-      random.nextInt(256),   // Blue (0-255)
+      255, // Fully opaque
+      random.nextInt(256), // Red (0-255)
+      random.nextInt(256), // Green (0-255)
+      random.nextInt(256), // Blue (0-255)
     );
   }
-  
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -46,61 +47,75 @@ class YourInfoPage extends StatelessWidget {
           ),
         ),
         child: StreamBuilder(
-          stream: FirebaseFirestore.instance.collection('userInfo').where("userid",
-              isEqualTo: FirebaseAuth.instance.currentUser!.uid).snapshots(),
-          builder: (context,snapshot) {
-            return snapshot.data == null ? const Center(child: CircularProgressIndicator()) :
-              Padding(
-              padding: const EdgeInsets.all(16.0),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  // User Info Section
-                  Row(
-                    children: [
-                      CircleAvatar(
-                        radius: 25,
-                        backgroundColor: _generateRandomColor(),
-                        child:
-                        Text(snapshot.data!.docs[0].data()['name'].toString()[0].toUpperCase()
-                        ,style: const TextStyle(fontSize: 28),),
+            stream: FirebaseFirestore.instance
+                .collection('userInfo')
+                .where("userid",
+                    isEqualTo: FirebaseAuth.instance.currentUser!.uid)
+                .snapshots(),
+            builder: (context, snapshot) {
+              return snapshot.data == null
+                  ? const Center(child: CircularProgressIndicator())
+                  : Padding(
+                      padding: const EdgeInsets.all(16.0),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          // User Info Section
+                          Row(
+                            children: [
+                              CircleAvatar(
+                                radius: 25,
+                                backgroundColor: _generateRandomColor(),
+                                child: Text(
+                                  snapshot.data!.docs[0]
+                                      .data()['name']
+                                      .toString()[0]
+                                      .toUpperCase(),
+                                  style: const TextStyle(fontSize: 28),
+                                ),
+                              ),
+                              const SizedBox(width: 16),
+                              Text(
+                                "${snapshot.data!.docs[0].data()['name']}",
+                                style: const TextStyle(
+                                  fontSize: 22,
+                                  fontWeight: FontWeight.bold,
+                                  color: Colors.black87,
+                                ),
+                              ),
+                            ],
+                          ),
+                          const SizedBox(height: 20),
+                          // Transaction List Header
+                          const Text(
+                            "Favorites",
+                            style: TextStyle(
+                              fontSize: 18,
+                              fontWeight: FontWeight.bold,
+                              color: Colors.black54,
+                            ),
+                          ),
+                          const SizedBox(height: 16),
+
+                          const HistoryTile2(),
+                          const SizedBox(height: 16),
+
+                          const Text(
+                            "Recent Locations",
+                            style: TextStyle(
+                              fontSize: 18,
+                              fontWeight: FontWeight.bold,
+                              color: Colors.black54,
+                            ),
+                          ),
+                          const SizedBox(height: 16),
+
+                          const HistoryTile()
+                        ],
                       ),
-                      const SizedBox(width: 16),
-                      Text(
-                        "${snapshot.data!.docs[0].data()['name']}",
-                        style: const TextStyle(
-                          fontSize: 22,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.black87,
-                        ),
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: 20),
-                  // Transaction List Header
-                  const Text(
-                    "Recent Locations",
-                    style: TextStyle(
-                      fontSize: 18,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.black54,
-                    ),
-                  ),
-                  const SizedBox(height: 16),
-
-                  const Expanded(
-                      child: HistoryTile())
-
-
-
-                ],
-              ),
-            );
-          }
-          ),
+                    );
+            }),
       ),
     );
   }
-
-
 }

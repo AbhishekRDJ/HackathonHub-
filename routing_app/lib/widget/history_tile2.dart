@@ -3,21 +3,21 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:routing_app/pages/navigation_page.dart';
 
-class HistoryTile extends StatefulWidget {
-  const HistoryTile({super.key});
+class HistoryTile2 extends StatefulWidget {
+  const HistoryTile2({super.key});
 
   @override
-  State<HistoryTile> createState() => _HistoryTileState();
+  State<HistoryTile2> createState() => _HistoryTile2State();
 }
 
-class _HistoryTileState extends State<HistoryTile> {
+class _HistoryTile2State extends State<HistoryTile2> {
   @override
   Widget build(BuildContext context) {
     return StreamBuilder(
       stream: FirebaseFirestore.instance
           .collection('history')
           .where('userid', isEqualTo: FirebaseAuth.instance.currentUser!.uid)
-          .where('isFav', isEqualTo: false)
+          .where('isFav', isEqualTo: true)
           .snapshots(),
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
@@ -34,7 +34,7 @@ class _HistoryTileState extends State<HistoryTile> {
                 Icon(Icons.history),
                 SizedBox(width: 8),
                 Text(
-                  'No history available.',
+                  'No favorites available.',
                   style: TextStyle(
                     fontSize: 16,
                     color: Colors.grey,

@@ -60,9 +60,7 @@ class _SlidingPanel2State extends State<SlidingPanel2>
   bool carbonColor = false;
   bool isGeminiLoading = false;
   bool isAqiSelected = true;
-  final TextEditingController _vehicleTypeController = TextEditingController();
-  final TextEditingController _fuelTypeController = TextEditingController();
-  final TextEditingController _vehicleAgeController = TextEditingController();
+
   Map<String, double> _emissions = {};
   bool showAdvancedLayout = false;
   late AnimationController _controller;
@@ -178,14 +176,14 @@ class _SlidingPanel2State extends State<SlidingPanel2>
             {
               "text":
                   """Analyze the following trsourceavel details and provide two advanced, actionable suggestions within 2 lines. The advice should consider optimizing fuel efficiency, reducing environmental impact, ensuring travel safety, and any other relevant improvements for a smoother and more sustainable journey also it should be only 2 lines max:
-- Starting Point: ${widget.source ?? 'N/A'}
-- Destination: ${widget.locInfo ?? 'Value not provided'}"}
-- Distance: ${widget.dis ?? 'N/A'} km
-- Estimated Duration: ${widget.dur ?? 'N/A'} minutes
-- Vehicle Type: ${widget.vehicleType ?? 'N/A'}
-- Fuel Type: ${widget.fuelType ?? 'N/A'}
-- Vehicle Age: ${widget.age ?? 'N/A'}
-- Estimated Fuel Consumption: ${widget.fuelConsumption ?? 'N/A'} liters/100km
+- Starting Point: ${widget.source}
+- Destination: ${widget.locInfo}"}
+- Distance: ${widget.dis} km
+- Estimated Duration: ${widget.dur} minutes
+- Vehicle Type: ${widget.vehicleType}
+- Fuel Type: ${widget.fuelType}
+- Vehicle Age: ${widget.age}
+- Estimated Fuel Consumption: ${widget.fuelConsumption} liters/100km
 
 Provide advice tailored to the context:
 1.If fuel type is gasoline or diesel: Suggest improvements for fuel consumption and emissions.
@@ -214,7 +212,6 @@ Provide advice tailored to the context:
 
       if (response.statusCode == 200) {
         final data = json.decode(response.body);
-        print('API Response: $data');
 
         setState(() {
           final candidates = data['candidates'] ?? [];
@@ -232,7 +229,7 @@ Provide advice tailored to the context:
         });
       } else {
         final errorData = json.decode(response.body);
-        print('Error Response: ${response.body}');
+
         setState(() {
           _geminiAdvice = 'Error: ${errorData['error']['message']}';
         });
@@ -353,7 +350,7 @@ Provide advice tailored to the context:
               Row(
                 children: [
                   RatingBarIndicator(
-                    rating: widget.placeRating ?? 0.0,
+                    rating: widget.placeRating ?? 3.5,
                     itemBuilder: (context, index) => const Icon(
                       Icons.star,
                       color: Colors.amber,
@@ -366,7 +363,7 @@ Provide advice tailored to the context:
                   Text(
                     widget.placeRating != null
                         ? widget.placeRating!.toStringAsFixed(1)
-                        : 'N/A',
+                        : '3.5/5',
                     style: const TextStyle(fontWeight: FontWeight.bold),
                   ),
                 ],
@@ -383,7 +380,7 @@ Provide advice tailored to the context:
                       () async {
                     await _predictEmissions();
 
-                    FirebaseFirestore.instance.collection("history").add({
+                    await FirebaseFirestore.instance.collection("history").add({
                       'location': widget.locInfo,
                       'fule': widget.fuelConsumption.toStringAsFixed(2),
                       'time': widget.distanceint,
@@ -391,6 +388,7 @@ Provide advice tailored to the context:
                       'fuletype': widget.fuelType,
                       'carbon': _emissions['CO2_emission'] ?? 0,
                       'age': widget.age,
+                      'isFav': false,
                       'userid': FirebaseAuth.instance.currentUser!.uid
                     });
 
