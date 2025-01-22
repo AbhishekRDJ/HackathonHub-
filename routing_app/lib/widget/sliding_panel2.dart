@@ -120,6 +120,7 @@ class _SlidingPanel2State extends State<SlidingPanel2>
   List<String> aqiDates = [];
   bool isVisible = false;
   bool isLoading = true;
+  bool isLoading2 = true;
   bool isVisible2 = false;
   String errorMessage = '';
 
@@ -262,6 +263,9 @@ Provide advice tailored to the context:
     if (response.statusCode == 200) {
       setState(() {
         _emissions = Map<String, double>.from(json.decode(response.body));
+        setState(() {
+          isLoading2 = false;
+        });
       });
     } else {
       throw Exception('Failed to load predictions');
@@ -378,8 +382,6 @@ Provide advice tailored to the context:
                   }),
                   _buildHoverButton(Icons.bookmark, 'Save', Colors.orange,
                       () async {
-                    await _predictEmissions();
-
                     await FirebaseFirestore.instance.collection("history").add({
                       'location': widget.locInfo,
                       'fule': widget.fuelConsumption.toStringAsFixed(2),
@@ -579,7 +581,7 @@ Provide advice tailored to the context:
                                   curve: Curves.easeInOut,
                                   child: Container(
                                     width: MediaQuery.of(context).size.width *
-                                        0.7 /
+                                        0.75 /
                                         2,
                                     height: 45,
                                     margin: const EdgeInsets.all(7),
@@ -632,6 +634,7 @@ Provide advice tailored to the context:
                                             aqiColor = false;
                                             isVisible = false;
                                             isVisible2 = true;
+                                            _predictEmissions();
                                           });
                                         },
                                         child: Center(
@@ -670,7 +673,7 @@ Provide advice tailored to the context:
                   visible: isVisible2,
                   child: BarChartWidget(
                     emissions: _emissions,
-                    isLoading: isLoading,
+                    isLoading: isLoading2,
                   )),
 
               const SizedBox(height: 25),
