@@ -176,7 +176,7 @@ class _SlidingPanel2State extends State<SlidingPanel2>
           "parts": [
             {
               "text":
-                  """Analyze the following trsourceavel details and provide two advanced, actionable suggestions within 2 lines. The advice should consider optimizing fuel efficiency, reducing environmental impact, ensuring travel safety, and any other relevant improvements for a smoother and more sustainable journey also it should be only 2 lines max:
+                  """Analyze the following travel details and provide two advanced, actionable suggestions within 2 lines. The advice should consider optimizing fuel efficiency, reducing environmental impact, ensuring travel safety, and any other relevant improvements for a smoother and more sustainable journey also it should be only 2 lines max:
 - Starting Point: ${widget.source}
 - Destination: ${widget.locInfo}"}
 - Distance: ${widget.dis} km
