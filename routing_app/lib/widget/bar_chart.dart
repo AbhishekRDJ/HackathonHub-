@@ -28,16 +28,14 @@ class BarChartWidget extends StatelessWidget {
     final normalizedValue =
         (value - range['min']!) / (range['max']! - range['min']!);
 
-    if (normalizedValue <= 0.2) {
-      return Colors.green;
-    } else if (normalizedValue <= 0.4) {
+    if (normalizedValue <= 0.3) {
+      return Colors.lightGreen;
+    } else if (normalizedValue <= 0.5) {
       return Colors.yellow;
-    } else if (normalizedValue <= 0.6) {
+    } else if (normalizedValue <= 0.7) {
       return Colors.orange;
-    } else if (normalizedValue <= 0.8) {
+    }  else {
       return Colors.red;
-    } else {
-      return Colors.purple;
     }
   }
 
