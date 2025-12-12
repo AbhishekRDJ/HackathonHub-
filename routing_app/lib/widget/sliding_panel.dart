@@ -31,9 +31,8 @@ class _PanelWidgetState extends State<PanelWidget> {
   String? selectedFuelType;
   String? _selectedAge;
 
-  TextEditingController controller1 = TextEditingController();
-
-  final TextEditingController _searchController = TextEditingController();
+  // Reference to the Autocomplete widget's internal controller
+  TextEditingController? _autocompleteController;
 
   @override
   Widget build(BuildContext context) {
@@ -77,15 +76,14 @@ class _PanelWidgetState extends State<PanelWidget> {
               },
               displayStringForOption: (String option) => option,
               onSelected: (String selection) {
-                _searchController.text =
-                    selection; // Set the selected value to the controller
-                print(
-                    'Selected: $selection'); // Optional: Action after selection
+                debugPrint('Selected: $selection');
               },
               fieldViewBuilder: (BuildContext context,
                   TextEditingController textController,
                   FocusNode focusNode,
                   VoidCallback onEditingComplete) {
+                // Store reference to the Autocomplete's controller
+                _autocompleteController = textController;
                 return TextField(
                   onTap: () {
                     widget.panelController.isPanelOpen
@@ -200,14 +198,16 @@ class _PanelWidgetState extends State<PanelWidget> {
           const SizedBox(height: 20),
           ElevatedButton(
             onPressed: () {
-              if (_searchController.text != "" &&
+              // Use the Autocomplete's internal controller for validation
+              final destination = _autocompleteController?.text ?? '';
+              if (destination.isNotEmpty &&
                   selectedVehicleType != null &&
                   selectedFuelType != null &&
                   _selectedAge != null) {
                 Navigator.of(context).push(
                   MaterialPageRoute(
                       builder: (context) => RealTimeSearchMap(
-                            destination: _searchController.text,
+                            destination: destination,
                             vehicleType: selectedVehicleType!,
                             fuelType: selectedFuelType!,
                             age: _selectedAge!,
@@ -215,7 +215,7 @@ class _PanelWidgetState extends State<PanelWidget> {
                 );
               } else {
                 ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(content: Text("please select all details")));
+                    const SnackBar(content: Text("Please fill in all details")));
               }
             },
             style: const ButtonStyle(

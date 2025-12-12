@@ -79,7 +79,7 @@ class _SlidingPanel2State extends State<SlidingPanel2>
       if (age == '8') return 10;
       if (age == '9') return 9;
       if (age == '10') return 8;
-    } else if (vehicleType == 'Bike') {
+    } else if (vehicleType == 'Motorcycle') {
       if (age == '1') return 45;
       if (age == '2') return 42;
       if (age == '3') return 40;
